@@ -10,6 +10,7 @@ const navLinks = [
   { href: '/qi-ye-dai-kuan', label: '企業貸款' },
   { href: '/articles', label: '知識專欄' },
   { href: '/faq', label: '常見問題' },
+  { href: '/ming-ci-jie-shi', label: '名詞解釋' },
   { href: '/contact', label: '聯絡我們' },
 ]
 

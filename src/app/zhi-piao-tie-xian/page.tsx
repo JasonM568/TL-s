@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SITE_URL, SITE_NAME } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '支票貼現 | 遠期支票快速換現金',
@@ -60,6 +61,63 @@ export default function ZhiPiaoTieXianPage() {
           }),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'HowTo',
+            name: '如何申請支票貼現',
+            description: '支票貼現申請完整流程，從初步諮詢到取得資金，最快當日完成',
+            totalTime: 'P1D',
+            estimatedCost: {
+              '@type': 'MonetaryAmount',
+              currency: 'TWD',
+              description: '諮詢免費；手續費依票面金額與票期計算，月費率由評估結果決定',
+            },
+            step: [
+              { '@type': 'HowToStep', position: 1, name: '聯繫諮詢', text: '電話或填寫線上表單，說明支票金額與票期，取得初步評估。' },
+              { '@type': 'HowToStep', position: 2, name: '準備文件', text: '準備公司登記文件、負責人身分證件及欲貼現的支票。' },
+              { '@type': 'HowToStep', position: 3, name: '審核評估', text: '專業人員審核支票及相關文件，提供正式報價與合約條件。' },
+              { '@type': 'HowToStep', position: 4, name: '簽約撥款', text: '雙方確認條件後簽署合約，完成後資金快速匯入指定帳戶。' },
+            ],
+          }),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '支票貼現', item: `${SITE_URL}/zhi-piao-tie-xian` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FinancialProduct',
+            '@id': `${SITE_URL}/zhi-piao-tie-xian#service`,
+            name: '支票貼現',
+            description: '持有遠期支票的企業，提前換取現金。費率透明、審核快速，最快當日撥款。',
+            category: '票據融資',
+            provider: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME },
+            areaServed: { '@type': 'Country', name: '台灣' },
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'TWD',
+              description: '月費率 1.5%～3%，依票面金額、票期、發票人信用綜合評估，諮詢免費',
+            },
+          }),
+        }}
+      />
 
       {/* Hero */}
       <section style={{ backgroundColor: '#0D2B5E' }} className="text-white py-16 px-4">
@@ -75,6 +133,20 @@ export default function ZhiPiaoTieXianPage() {
             持有遠期支票的企業，無需等待票期到期，即可透過支票貼現服務提前取得現金，
             有效解決企業資金周轉問題，把握商業機會。
           </p>
+        </div>
+      </section>
+
+      {/* 快速摘要（AEO：AI 答案引擎優先抽取） */}
+      <section className="px-4 py-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div role="note" className="border-l-4 pl-5 py-5 rounded-r-xl bg-[#F0F4FF]" style={{ borderColor: '#0D2B5E' }}>
+            <p className="text-xs font-bold text-[#0D2B5E] uppercase tracking-widest mb-2">快速摘要</p>
+            <p className="text-gray-800 leading-relaxed">
+              <strong>支票貼現</strong>（又稱票貼）是企業將未到期的遠期支票，以扣除手續費後的金額提前換取現金的融資方式。
+              申請只需公司登記文件、負責人身分證及支票，審核通過後最快當日撥款。
+              費率依票面金額、票期與發票人信用計算，常見月費率約 1.5%～3%，適合急需資金周轉的中小企業。
+            </p>
+          </div>
         </div>
       </section>
 

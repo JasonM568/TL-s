@@ -122,10 +122,24 @@ export default async function ArticlePage({ params }: Props) {
     keywords: article.keywords.join(', '),
     datePublished: article.date,
     dateModified: article.updated ?? article.date,
-    author: { '@type': 'Person', name: articleAuthor(article) },
-    publisher: { '@type': 'Organization', name: SITE_NAME },
+    author: {
+      '@type': 'Person',
+      '@id': `https://huangxi.tw/#author-${articleAuthor(article) === '理財顧問 張揚' ? 'zhang-yang' : 'li-cheng-xin'}`,
+      name: articleAuthor(article),
+    },
+    publisher: { '@type': 'Organization', '@id': 'https://huangxi.tw/#organization', name: SITE_NAME },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
   }
+
+  const faqJsonLd = article.faqs && article.faqs.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: article.faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  } : null
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
@@ -147,6 +161,12 @@ export default async function ArticlePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       {/* Hero */}
       <section style={{ backgroundColor: '#0D2B5E' }} className="text-white py-14 px-4">
@@ -175,13 +195,38 @@ export default async function ArticlePage({ params }: Props) {
         </div>
       </section>
 
-      {/* Body */}
-      <article className="py-14 px-4">
+      {/* 快速摘要（AEO Quick Answer box） */}
+      <section className="px-4 py-6 bg-white">
         <div className="max-w-3xl mx-auto">
-          <p className="text-lg text-gray-500 leading-8 mb-8 pb-8 border-b border-gray-100">
-            {article.excerpt}
-          </p>
+          <div role="note" className="border-l-4 pl-5 py-4 rounded-r-xl bg-[#F0F4FF]" style={{ borderColor: '#0D2B5E' }}>
+            <p className="text-xs font-bold text-[#0D2B5E] uppercase tracking-widest mb-1">快速摘要</p>
+            <p className="text-gray-800 leading-relaxed text-sm">{article.excerpt}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Body */}
+      <article className="py-10 px-4">
+        <div className="max-w-3xl mx-auto">
           {article.content.map(renderBlock)}
+
+          {/* 文章 FAQ */}
+          {article.faqs && article.faqs.length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-xl font-bold text-[#0D2B5E] mb-5">常見問題</h2>
+              <div className="space-y-3">
+                {article.faqs.map((faq, i) => (
+                  <details key={i} className="group bg-gray-50 border border-gray-100 rounded-xl overflow-hidden">
+                    <summary className="flex items-center justify-between p-5 cursor-pointer font-semibold text-[#0D2B5E] hover:bg-gray-100 text-sm">
+                      {faq.q}
+                      <span className="ml-4 text-[#C9922A] group-open:rotate-45 transition-transform shrink-0">+</span>
+                    </summary>
+                    <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{faq.a}</div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* 免責 */}
           <div className="mt-10 pt-6 border-t border-gray-100 text-xs text-gray-400 leading-6">

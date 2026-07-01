@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SITE_URL, SITE_NAME } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '企業貸款・企業融資 | 中小企業資金週轉方案',
@@ -89,6 +90,62 @@ export default function QiYeDaiKuanPage() {
           }),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'HowTo',
+            name: '中小企業如何申請企業貸款或企業融資',
+            description: '企業取得營運資金的完整評估流程，協助選擇最合適的融資管道',
+            totalTime: 'P3D',
+            step: [
+              { '@type': 'HowToStep', position: 1, name: '免費諮詢', text: '說明企業狀況與資金需求，專業顧問評估適合的融資管道。' },
+              { '@type': 'HowToStep', position: 2, name: '方案確認', text: '依企業資產、信用、持票狀況，決定信用貸款、擔保貸款或票據融資方案。' },
+              { '@type': 'HowToStep', position: 3, name: '文件準備', text: '依所選方案準備公司文件、財務資料或支票等必要文件。' },
+              { '@type': 'HowToStep', position: 4, name: '審核撥款', text: '完成審核後簽署合約，資金依約定方式撥入指定帳戶。' },
+            ],
+          }),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '企業貸款', item: `${SITE_URL}/qi-ye-dai-kuan` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            '@id': `${SITE_URL}/qi-ye-dai-kuan#service`,
+            name: '企業貸款・企業融資',
+            description: '協助中小企業評估最合適的融資方式，包含信用貸款、擔保貸款、票據融資、應收帳款融資。',
+            provider: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME },
+            areaServed: { '@type': 'Country', name: '台灣' },
+            hasOfferCatalog: {
+              '@type': 'OfferCatalog',
+              name: '企業融資方案',
+              itemListElement: types.map((t, i) => ({
+                '@type': 'Offer',
+                position: i + 1,
+                name: t.title,
+                description: t.desc,
+              })),
+            },
+          }),
+        }}
+      />
 
       {/* Hero */}
       <section style={{ backgroundColor: '#0E4D52' }} className="text-white py-16 px-4">
@@ -104,6 +161,20 @@ export default function QiYeDaiKuanPage() {
             企業營運、備料、擴張都需要資金。我們協助中小企業評估最合適的企業融資方式；
             若您手上有客戶開立的支票，更能透過票據融資快速取得週轉資金。
           </p>
+        </div>
+      </section>
+
+      {/* 快速摘要（AEO：AI 答案引擎優先抽取） */}
+      <section className="px-4 py-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div role="note" className="border-l-4 pl-5 py-5 rounded-r-xl bg-[#F0F9F8]" style={{ borderColor: '#0E4D52' }}>
+            <p className="text-xs font-bold text-[#0E4D52] uppercase tracking-widest mb-2">快速摘要</p>
+            <p className="text-gray-800 leading-relaxed">
+              <strong>企業貸款</strong>與<strong>企業融資</strong>是中小企業取得營運資金的主要方式，包含信用貸款、擔保貸款、票據融資（支票貼現／支票貸款）及應收帳款融資等管道。
+              其中若企業手上有客戶開立的遠期支票，透過票據融資可最快當日撥款，是所有方式中速度最快的選擇。
+              申請前建議免費諮詢，由專業顧問依企業狀況媒合最合適的融資方案。
+            </p>
+          </div>
         </div>
       </section>
 

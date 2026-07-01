@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '常見問題 FAQ | 支票貼現・支票貸款',
@@ -86,6 +87,31 @@ const faqCategories = [
       },
     ],
   },
+  {
+    category: '常見比較與疑慮',
+    faqs: [
+      {
+        q: '支票貼現跟地下錢莊有什麼不同？',
+        a: '主要差異在於合法性與透明度：合法業者依法登記、費率事前明定於合約、交易有白紙黑字保障；地下錢莊則無合法執照、費率不透明、缺乏法律保護。黃璽理財依法合規經營，所有費用事前說明，客戶受法律保障。',
+      },
+      {
+        q: '個人可以申請支票貼現嗎？',
+        a: '支票貼現主要針對企業（公司或商號）持有的商業支票。個人名義開立的支票通常不在服務範圍內，建議以公司名義諮詢，專員會依實際情況評估。',
+      },
+      {
+        q: '支票貼現或支票貸款會影響公司信用評分嗎？',
+        a: '正常進行支票貼現或支票貸款，不會直接影響聯徵信用評分，因為票據融資通常不走銀行聯徵系統。但若貼現的支票本身跳票，則可能影響發票人（客戶）信用。建議選擇信用良好的支票進行融資。',
+      },
+      {
+        q: '支票貼現的費率大概是多少？',
+        a: '市場上支票貼現月費率通常在 1.5%～3% 之間，依票面金額、票期長短、發票人信用等因素浮動。以票面金額 100 萬、票期 3 個月、月費率 1.5% 為例，手續費約 4.5 萬元，實拿約 95.5 萬元。實際費率需個別評估後報價。',
+      },
+      {
+        q: '支票貼現後如果支票跳票怎麼辦？',
+        a: '若貼現的支票到期遭銀行退票，依合約向持票人（貴公司）追索票款，法律責任由持票人承擔。因此辦理前務必確認發票人（客戶）的信用狀況，我們也會協助評估支票品質，降低跳票風險。',
+      },
+    ],
+  },
 ]
 
 export default function FaqPage() {
@@ -101,11 +127,26 @@ export default function FaqPage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
+            dateModified: '2026-07-01',
+            about: { '@type': 'Thing', name: '支票貼現・支票貸款・企業融資' },
             mainEntity: allFaqs.map((faq) => ({
               '@type': 'Question',
               name: faq.q,
               acceptedAnswer: { '@type': 'Answer', text: faq.a },
             })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '常見問題', item: `${SITE_URL}/faq` },
+            ],
           }),
         }}
       />
@@ -122,6 +163,18 @@ export default function FaqPage() {
           <p className="text-gray-300 text-lg">
             關於支票貼現、支票貸款您最想知道的問題，我們一次解答
           </p>
+        </div>
+      </section>
+
+      {/* Quick Answer */}
+      <section className="px-4 py-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div role="note" className="border-l-4 pl-5 py-4 rounded-r-xl bg-[#F0F4FF]" style={{ borderColor: '#0D2B5E' }}>
+            <p className="text-xs font-bold text-[#0D2B5E] uppercase tracking-widest mb-1">快速摘要</p>
+            <p className="text-gray-800 leading-relaxed text-sm">
+              本頁收錄 21 個關於支票貼現、支票貸款的常見問題，涵蓋費率計算、申請條件、辦理流程、合法性說明與常見比較，幫助企業主在諮詢前先掌握關鍵資訊。
+            </p>
+          </div>
         </div>
       </section>
 

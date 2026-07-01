@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SITE_URL, SITE_NAME } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '支票貸款 | 支票擔保企業融資',
@@ -50,6 +51,63 @@ export default function ZhiPiaoDaiKuanPage() {
           }),
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'HowTo',
+            name: '如何申請支票貸款',
+            description: '支票貸款申請完整流程，以支票作為擔保品取得所需資金',
+            totalTime: 'P2D',
+            estimatedCost: {
+              '@type': 'MonetaryAmount',
+              currency: 'TWD',
+              description: '諮詢免費；利率依借款金額、還款期限、擔保品品質綜合評估',
+            },
+            step: [
+              { '@type': 'HowToStep', position: 1, name: '初步諮詢', text: '說明資金需求及持有支票情況，取得初步融資評估。' },
+              { '@type': 'HowToStep', position: 2, name: '文件準備', text: '公司登記文件、財務相關資料、擔保支票等基本文件。' },
+              { '@type': 'HowToStep', position: 3, name: '信用評估', text: '評估企業信用狀況與還款能力，確定貸款額度與條件。' },
+              { '@type': 'HowToStep', position: 4, name: '簽約動撥', text: '雙方確認貸款條件後簽署合約，資金撥入指定帳戶。' },
+            ],
+          }),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '支票貸款', item: `${SITE_URL}/zhi-piao-dai-kuan` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FinancialProduct',
+            '@id': `${SITE_URL}/zhi-piao-dai-kuan#service`,
+            name: '支票貸款',
+            description: '以企業持有支票作為擔保，取得所需融資資金。額度彈性、審核快速，提供分期還款方案。',
+            category: '票據融資',
+            provider: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME },
+            areaServed: { '@type': 'Country', name: '台灣' },
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'TWD',
+              description: '費率依借款金額、還款期限、擔保品品質綜合評估，諮詢免費',
+            },
+          }),
+        }}
+      />
 
       {/* Hero */}
       <section style={{ backgroundColor: '#1B5E20' }} className="text-white py-16 px-4">
@@ -65,6 +123,20 @@ export default function ZhiPiaoDaiKuanPage() {
             不同於支票貼現，支票貸款以您持有的支票作為擔保品，取得所需資金，
             提供更彈性的還款方式，協助企業進行更長期的資金規劃。
           </p>
+        </div>
+      </section>
+
+      {/* 快速摘要（AEO：AI 答案引擎優先抽取） */}
+      <section className="px-4 py-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div role="note" className="border-l-4 pl-5 py-5 rounded-r-xl bg-[#F0F9F2]" style={{ borderColor: '#1B5E20' }}>
+            <p className="text-xs font-bold text-[#1B5E20] uppercase tracking-widest mb-2">快速摘要</p>
+            <p className="text-gray-800 leading-relaxed">
+              <strong>支票貸款</strong>是以企業持有的支票作為擔保品向融資機構借款的方式，可借金額可高於票面金額，並提供分期還款的彈性。
+              與支票貼現（直接兌現票面金額）不同，支票貸款更適合需要較大資金或希望保留現金流彈性的企業。
+              審核通過後資金快速到位，適合中小企業短期至中期的資金需求規劃。
+            </p>
+          </div>
         </div>
       </section>
 

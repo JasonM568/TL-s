@@ -29,12 +29,56 @@ export default function ArticlesPage() {
             '@type': 'CollectionPage',
             name: '知識專欄',
             url: `${SITE_URL}/articles`,
+            description: '支票貼現、支票貸款與企業融資的實用知識文章，協助中小企業做出更好的融資決策。',
+            inLanguage: 'zh-TW',
+            publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
             hasPart: posts.map((p) => ({
               '@type': 'Article',
               headline: p.h1,
+              description: p.excerpt,
               url: `${SITE_URL}/articles/${p.slug}`,
               datePublished: p.date,
+              dateModified: p.date,
+              inLanguage: 'zh-TW',
+              author: {
+                '@type': 'Person',
+                '@id': `${SITE_URL}/#author-${p.author === '理財顧問 張揚' ? 'zhang-yang' : 'li-cheng-xin'}`,
+                name: p.author ?? '理財顧問 李誠信',
+              },
+              publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
             })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: '知識專欄文章列表',
+            url: `${SITE_URL}/articles`,
+            numberOfItems: posts.length,
+            itemListElement: posts.map((p, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              name: p.h1,
+              description: p.excerpt,
+              url: `${SITE_URL}/articles/${p.slug}`,
+            })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '知識專欄', item: `${SITE_URL}/articles` },
+            ],
           }),
         }}
       />

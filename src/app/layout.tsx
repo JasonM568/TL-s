@@ -4,7 +4,28 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 import FloatingLine from '@/components/FloatingLine'
-import { SITE_URL } from '@/lib/site'
+import { SITE_URL, SITE_NAME } from '@/lib/site'
+
+const personJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${SITE_URL}/#author-li-cheng-xin`,
+    name: '理財顧問 李誠信',
+    jobTitle: '理財顧問',
+    worksFor: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME },
+    knowsAbout: ['支票貼現', '支票貸款', '票據融資', '企業融資', '票貼', '遠期支票'],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${SITE_URL}/#author-zhang-yang`,
+    name: '理財顧問 張揚',
+    jobTitle: '理財顧問',
+    worksFor: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME },
+    knowsAbout: ['企業融資', '企業貸款', '中小企業貸款', '周轉金', '應收帳款融資'],
+  },
+]
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -28,6 +49,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="zh-TW">
       <body className="min-h-screen bg-white text-gray-900">
+        {personJsonLd.map((person, i) => (
+          <script
+            key={i}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }}
+          />
+        ))}
         <Header />
         <main>{children}</main>
         <Footer />

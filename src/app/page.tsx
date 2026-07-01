@@ -92,13 +92,14 @@ const faqs = [
 export default function HomePage() {
   return (
     <>
-      {/* JSON-LD 結構化資料 */}
+      {/* JSON-LD：FinancialService 實體（強化 AEO 實體信號） */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'FinancialService',
+            '@id': 'https://huangxi.tw/#organization',
             name: '黃璽理財管理顧問',
             description: '支票貼現、支票貸款專業服務，協助中小企業解決資金周轉問題',
             url: 'https://huangxi.tw',
@@ -109,10 +110,66 @@ export default function HomePage() {
               streetAddress: '新興區民權一路251號21樓',
               addressLocality: '高雄市',
               addressRegion: '高雄市',
+              postalCode: '800',
               addressCountry: 'TW',
             },
-            openingHours: 'Mo-Fr 09:00-18:00',
+            openingHoursSpecification: {
+              '@type': 'OpeningHoursSpecification',
+              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+              opens: '09:00',
+              closes: '18:00',
+            },
+            areaServed: { '@type': 'Country', name: 'Taiwan', alternateName: '台灣' },
+            knowsAbout: ['支票貼現', '票貼', '支票貸款', '企業融資', '企業貸款', '票據融資', '企業資金周轉'],
+            hasOfferCatalog: {
+              '@type': 'OfferCatalog',
+              name: '企業融資服務',
+              itemListElement: [
+                {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'FinancialProduct',
+                    name: '支票貼現',
+                    url: 'https://huangxi.tw/zhi-piao-tie-xian',
+                    description: '持有遠期支票的企業，不必等到票期到期，以扣除手續費後的金額提前換取現金',
+                  },
+                },
+                {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'FinancialProduct',
+                    name: '支票貸款',
+                    url: 'https://huangxi.tw/zhi-piao-dai-kuan',
+                    description: '以企業持有的支票作為擔保品借款，可借金額可高於票面金額，提供彈性還款方式',
+                  },
+                },
+                {
+                  '@type': 'Offer',
+                  itemOffered: {
+                    '@type': 'FinancialProduct',
+                    name: '企業貸款',
+                    url: 'https://huangxi.tw/qi-ye-dai-kuan',
+                    description: '協助中小企業評估信用貸款、擔保貸款、票據融資等多元融資管道',
+                  },
+                },
+              ],
+            },
             serviceType: ['支票貼現', '支票貸款', '企業貸款', '企業融資'],
+          }),
+        }}
+      />
+      {/* JSON-LD：首頁 FAQ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqs.map((faq) => ({
+              '@type': 'Question',
+              name: faq.q,
+              acceptedAnswer: { '@type': 'Answer', text: faq.a },
+            })),
           }),
         }}
       />
