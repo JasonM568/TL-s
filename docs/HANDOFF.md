@@ -1,0 +1,86 @@
+# HANDOFF — 黃璽理財管理顧問 網站
+
+> 交接與工作紀錄。下次啟動先讀「快速上手」段落即可無縫接軌。
+> 最後更新：2026-07-01
+
+---
+
+## ⚡ 快速上手（先讀這段）
+
+- **專案**：`~/TL-s`，Next.js 16（App Router）+ Tailwind v4 + TypeScript
+- **正式站**：https://huangxi.tw （+ www），品牌名「黃璽理財管理顧問」
+- **部署指令**（在 repo 目錄）：
+  ```
+  vercel deploy --prod --yes --scope tjs-projects-435187fd
+  ```
+- **本機驗證**：`npm run build`（部署前務必先跑）
+- **後台**：https://huangxi.tw/admin （單一密碼登入，密碼見 `.env.local` 的 `ADMIN_PASSWORD`）
+- **每次改完流程**：`npm run build` → `git commit` → `vercel deploy --prod` → curl 驗證正式站
+
+---
+
+## 🏗️ 基礎設施
+
+| 項目 | 內容 |
+|------|------|
+| 部署 | Vercel 專案 `tl-s`，team scope `tjs-projects-435187fd` |
+| 網域 | huangxi.tw（GoDaddy DNS；A `@`→76.76.21.21、CNAME `www`→cname.vercel-dns.com） |
+| 資料庫 | Supabase 專案 **hb-erp**（ref `hzegtnihbpweppxsrsck`, ap-southeast-2），表 `huangxi_consultations` |
+| Email 通知 | Resend（網域 huangxi.tw 已驗證）。寄 `notify@huangxi.tw` → 收 `jyuli780@gmail.com`。Resend 帳號註冊於 306465@gmail.com |
+| 分析 | GA4 `G-XG4CMC7JYE` |
+| LINE | 官方帳號加好友 `https://lin.ee/Qw6v7OD` |
+
+### 資料庫細節（Supabase hb-erp，與其他 ERP 資料共用專案、以表名隔離）
+- 表：`public.huangxi_consultations`（欄位 company/name/phone/service/amount/note/status/ip/user_agent/created_at）
+- RLS：匿名只能 INSERT、不能 SELECT。
+- 後台讀取/改狀態透過 security definer 函式 `huangxi_list_consultations(p_secret)` / `huangxi_update_status(p_secret,p_id,p_status)`，密鑰存 `huangxi_admin_config` 表。
+- 可用 Supabase MCP 直接查（`execute_sql` project_id=hzegtnihbpweppxsrsck）。
+
+### 環境變數（值存 Vercel production + 本機 `.env.local`，皆 gitignore）
+`SUPABASE_URL` / `SUPABASE_ANON_KEY` / `HUANGXI_ADMIN_SECRET` / `ADMIN_PASSWORD` / `ADMIN_SESSION_SECRET` / `NEXT_PUBLIC_GA_ID` / `RESEND_API_KEY` / `NOTIFY_EMAIL` / `NOTIFY_FROM`
+> ⚠️ 不要把這些值寫進任何 git 追蹤的檔案。
+
+---
+
+## ✅ 已完成功能
+
+- 網站上線、SSL、Next.js 16（升級修 CVE）
+- 品牌名：黃璽理財管理顧問（全站；nested 頁 title 不再重複品牌）
+- SEO：sitemap.ts（自動含文章）、robots.ts（擋 /admin /api）、metadataBase、canonical、JSON-LD（FinancialService / FAQPage / Article / Breadcrumb）
+- 服務頁：/zhi-piao-tie-xian、/zhi-piao-dai-kuan、**/qi-ye-dai-kuan（企業貸款 pillar，交叉導流到支票兩頁）**
+- 知識專欄 /articles + 文章頁（資料在 `src/lib/articles.ts`，目前 9 篇）
+- GA4 串接（含表單送出 generate_lead 事件）
+- 諮詢表單 → Supabase + Email 通知（Resend）
+- 可登入後台 /admin（列表、狀態管理、登出）
+- LINE 全站浮動按鈕（`src/components/FloatingLine.tsx`）+ 聯絡頁 LINE 卡
+- 聯絡電話 0981-109769（已移除市話）
+- 舊 WordPress 網址 301 轉址（`next.config.ts`：/blogs→/articles、票據融資文章→/zhi-piao-tie-xian）+ 友善 404
+
+---
+
+## 📌 待辦 / 下一步（未完成）
+
+1. **內容產出**：`docs/content-plan.md` 有完整選題。已完成 W1–W4；**W5–W12 尚未寫**，另有「集群 G 企業貸款/企業融資」6 篇待寫（P1 優先）。
+   - 產文方式：在 `src/lib/articles.ts` 的 `articles` 陣列加物件 →（模板自動處理 SEO/sitemap）→ build → deploy → 把 content-plan 對應列 ⬜ 改 ✅。
+2. **公開聯絡資訊仍是 placeholder**：聯絡頁/首頁 JSON-LD 的公開 Email `service@example.com`、公司地址「台北市中山區XX路XX號XX樓」待補真實資料。
+3. **Google Search Console**：確認已提交 `sitemap.xml`；舊 `sitemap_index.xml`（404）若有提交過要移除。可續加舊網址 301（若拿到 `site:huangxi.tw` 清單）。
+4. **後台密碼**：目前是自動產生的隨機密碼，使用者可要求改成好記的（改 Vercel + .env.local 的 `ADMIN_PASSWORD`）。
+5. （可選）後台加篩選/匯出 CSV、諮詢加 LINE/Email 雙通知等增強。
+
+---
+
+## 🗒️ 工作紀錄（時間序，2026-07-01 當日）
+
+1. 建立/連結 Vercel 專案 `tl-s`，升級 Next.js 15.1→16.2.9（修 CVE-2025-66478），部署上線。
+2. 綁定自訂網域 huangxi.tw + www（GoDaddy A/CNAME），簽發 SSL。
+3. 修 SEO：sitemap/robots 由 placeholder 改 huangxi.tw、補 metadataBase/canonical。
+4. 建知識專欄 /articles + 文章頁（Article/Breadcrumb schema），初始 5 篇。
+5. 內容排程 `docs/content-plan.md`（28 選題 + 12 週）。寫 W1–W4（共 9 篇），新增 related 內部連結區塊。
+6. 串 GA4 `G-XG4CMC7JYE`。
+7. 舊站調查（Wayback）：舊為 WordPress 單頁站，無重要舊頁；後續發現 Google 仍索引 /blogs 與英文 slug 文章 → 設 301。
+8. 諮詢表單接 Supabase（hb-erp / huangxi_consultations，RLS + definer 函式）+ 建可登入後台 /admin。
+9. Email 通知（Resend）：驗證 huangxi.tw 網域（DKIM/SPF/MX 加到 GoDaddy），端對端測試 delivered 到 jyuli780@gmail.com。
+10. 網站改名 泰誠企業融資 → 黃璽理財管理顧問（全站）。
+11. LINE 浮動按鈕 + 聯絡頁 LINE 卡；電話改 0981-109769、移除市話。
+12. 新增 /qi-ye-dai-kuan（企業貸款 pillar）+ content-plan 加「企業貸款/企業融資」Pillar-Cluster SEO 策略與集群 G。
+13. 修 nested 頁 title 重複品牌名。
