@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getAllArticles, getArticleBySlug, getAllSlugs, type Block } from '@/lib/articles'
+import { getAllArticles, getArticleBySlug, getAllSlugs, articleAuthor, type Block } from '@/lib/articles'
 import { SITE_URL, SITE_NAME } from '@/lib/site'
 
 // 靜態產生所有文章頁
@@ -122,7 +122,7 @@ export default async function ArticlePage({ params }: Props) {
     keywords: article.keywords.join(', '),
     datePublished: article.date,
     dateModified: article.updated ?? article.date,
-    author: { '@type': 'Organization', name: SITE_NAME },
+    author: { '@type': 'Person', name: articleAuthor(article) },
     publisher: { '@type': 'Organization', name: SITE_NAME },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
   }
@@ -171,6 +171,7 @@ export default async function ArticlePage({ params }: Props) {
             <span className="text-gray-400">・約 {article.readingMinutes} 分鐘</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold leading-snug">{article.h1}</h1>
+          <p className="text-sm text-gray-300 mt-4">作者：{articleAuthor(article)}</p>
         </div>
       </section>
 

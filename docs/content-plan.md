@@ -43,12 +43,14 @@
 
 | 狀態 | 建議標題 | 主關鍵字 | slug | 優先 |
 |---|---|---|---|---|
-| ⬜ | 企業融資是什麼？中小企業取得資金的 5 大管道 | 企業融資 | qi-ye-rong-zi-shi-shen-me | P1 |
-| ⬜ | 企業貸款怎麼申請？流程、條件與所需文件 | 企業貸款怎麼申請 | qi-ye-dai-kuan-shen-qing | P1 |
-| ⬜ | 公司沒有不動產可以貸款嗎？免擔保融資解法 | 公司貸款 免擔保 | gong-si-mian-dan-bao-dai-kuan | P1 |
-| ⬜ | 中小企業貸款不過件的 6 個常見原因 | 中小企業貸款 過件 | zhong-xiao-qi-ye-dai-kuan-guo-jian | P2 |
-| ⬜ | 銀行企業貸款 vs 民間融資：怎麼選才對 | 銀行企業貸款 | yin-hang-qi-ye-dai-kuan-vs-min-jian | P2 |
-| ⬜ | 新公司如何取得第一筆營運資金？ | 新創公司 貸款 | xin-gong-si-ying-yun-zi-jin | P3 |
+| ✅ | 企業融資是什麼？中小企業取得資金的 5 大管道 | 企業融資 | qi-ye-rong-zi-shi-shen-me | — |
+| ✅ | 企業貸款怎麼申請？流程、條件與所需文件 | 企業貸款怎麼申請 | qi-ye-dai-kuan-shen-qing | — |
+| ✅ | 公司沒有不動產可以貸款嗎？免擔保融資解法 | 公司貸款 免擔保 | gong-si-mian-dan-bao-dai-kuan | — |
+| ✅ | 中小企業貸款不過件的 6 個常見原因 | 中小企業貸款 過件 | zhong-xiao-qi-ye-dai-kuan-guo-jian | — |
+| ✅ | 銀行企業貸款 vs 民間融資：怎麼選才對 | 銀行企業貸款 | yin-hang-qi-ye-dai-kuan-vs-min-jian | — |
+| ✅ | 新公司如何取得第一筆營運資金？ | 新創公司 貸款 | xin-gong-si-ying-yun-zi-jin | — |
+
+> 作者署名：企業融資/企業貸款文章＝**理財顧問 張揚**；支票貼現/支票貸款文章＝**理財顧問 李誠信**（`src/lib/articles.ts` 的 `author` 欄位，未指定則預設李誠信）。
 
 > 集群 E（企業周轉金、公司缺錢、應收帳款融資）也同屬企業融資漏斗，一併連向 pillar。
 
