@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '常見問題 FAQ | 支票貼現・支票貸款',
@@ -126,11 +127,26 @@ export default function FaqPage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'FAQPage',
+            dateModified: '2026-07-01',
+            about: { '@type': 'Thing', name: '支票貼現・支票貸款・企業融資' },
             mainEntity: allFaqs.map((faq) => ({
               '@type': 'Question',
               name: faq.q,
               acceptedAnswer: { '@type': 'Answer', text: faq.a },
             })),
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '常見問題', item: `${SITE_URL}/faq` },
+            ],
           }),
         }}
       />
@@ -147,6 +163,18 @@ export default function FaqPage() {
           <p className="text-gray-300 text-lg">
             關於支票貼現、支票貸款您最想知道的問題，我們一次解答
           </p>
+        </div>
+      </section>
+
+      {/* Quick Answer */}
+      <section className="px-4 py-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div role="note" className="border-l-4 pl-5 py-4 rounded-r-xl bg-[#F0F4FF]" style={{ borderColor: '#0D2B5E' }}>
+            <p className="text-xs font-bold text-[#0D2B5E] uppercase tracking-widest mb-1">快速摘要</p>
+            <p className="text-gray-800 leading-relaxed text-sm">
+              本頁收錄 21 個關於支票貼現、支票貸款的常見問題，涵蓋費率計算、申請條件、辦理流程、合法性說明與常見比較，幫助企業主在諮詢前先掌握關鍵資訊。
+            </p>
+          </div>
         </div>
       </section>
 

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SITE_URL, SITE_NAME } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '企業貸款・企業融資 | 中小企業資金週轉方案',
@@ -104,6 +105,44 @@ export default function QiYeDaiKuanPage() {
               { '@type': 'HowToStep', position: 3, name: '文件準備', text: '依所選方案準備公司文件、財務資料或支票等必要文件。' },
               { '@type': 'HowToStep', position: 4, name: '審核撥款', text: '完成審核後簽署合約，資金依約定方式撥入指定帳戶。' },
             ],
+          }),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '企業貸款', item: `${SITE_URL}/qi-ye-dai-kuan` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            '@id': `${SITE_URL}/qi-ye-dai-kuan#service`,
+            name: '企業貸款・企業融資',
+            description: '協助中小企業評估最合適的融資方式，包含信用貸款、擔保貸款、票據融資、應收帳款融資。',
+            provider: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME },
+            areaServed: { '@type': 'Country', name: '台灣' },
+            hasOfferCatalog: {
+              '@type': 'OfferCatalog',
+              name: '企業融資方案',
+              itemListElement: types.map((t, i) => ({
+                '@type': 'Offer',
+                position: i + 1,
+                name: t.title,
+                description: t.desc,
+              })),
+            },
           }),
         }}
       />

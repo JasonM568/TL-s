@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SITE_URL, SITE_NAME } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '支票貸款 | 支票擔保企業融資',
@@ -70,6 +71,40 @@ export default function ZhiPiaoDaiKuanPage() {
               { '@type': 'HowToStep', position: 3, name: '信用評估', text: '評估企業信用狀況與還款能力，確定貸款額度與條件。' },
               { '@type': 'HowToStep', position: 4, name: '簽約動撥', text: '雙方確認貸款條件後簽署合約，資金撥入指定帳戶。' },
             ],
+          }),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '支票貸款', item: `${SITE_URL}/zhi-piao-dai-kuan` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FinancialProduct',
+            '@id': `${SITE_URL}/zhi-piao-dai-kuan#service`,
+            name: '支票貸款',
+            description: '以企業持有支票作為擔保，取得所需融資資金。額度彈性、審核快速，提供分期還款方案。',
+            category: '票據融資',
+            provider: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME },
+            areaServed: { '@type': 'Country', name: '台灣' },
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'TWD',
+              description: '費率依借款金額、還款期限、擔保品品質綜合評估，諮詢免費',
+            },
           }),
         }}
       />
