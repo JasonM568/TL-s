@@ -103,9 +103,12 @@ export default function HomePage() {
             description: '支票貼現、支票貸款專業服務，協助中小企業解決資金周轉問題',
             url: 'https://huangxi.tw',
             telephone: '+886-981-109769',
+            email: 'service@huangxi.tw',
             address: {
               '@type': 'PostalAddress',
-              addressLocality: '台北市',
+              streetAddress: '新興區民權一路251號21樓',
+              addressLocality: '高雄市',
+              addressRegion: '高雄市',
               addressCountry: 'TW',
             },
             openingHours: 'Mo-Fr 09:00-18:00',

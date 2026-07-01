@@ -70,7 +70,7 @@ export default function ContactPage() {
                   <span className="text-2xl">✉️</span>
                   <div>
                     <h3 className="font-bold text-gray-800 mb-1">Email</h3>
-                    <p className="text-[#0D2B5E] font-bold">service@example.com</p>
+                    <a href="mailto:service@huangxi.tw" className="text-[#0D2B5E] font-bold hover:underline">service@huangxi.tw</a>
                     <p className="text-gray-500 text-sm mt-1">1個工作日內回覆</p>
                   </div>
                 </div>
@@ -79,7 +79,7 @@ export default function ContactPage() {
                   <span className="text-2xl">📍</span>
                   <div>
                     <h3 className="font-bold text-gray-800 mb-1">公司地址</h3>
-                    <p className="text-gray-700">台北市中山區XX路XX號XX樓</p>
+                    <p className="text-gray-700">高雄市新興區民權一路251號21樓</p>
                     <p className="text-gray-500 text-sm mt-1">建議來訪前先預約</p>
                   </div>
                 </div>
