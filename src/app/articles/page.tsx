@@ -13,23 +13,52 @@ export const metadata: Metadata = {
 
 const PER_PAGE = 12
 
+// Category display order
+const CATEGORY_ORDER = [
+  '支票貼現',
+  '支票貸款',
+  '企業融資',
+  '費率與成本',
+  '申請教學',
+  '票據知識',
+  '風險管理',
+  '知識入門',
+]
+
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split('-')
   return `${y} 年 ${Number(m)} 月 ${Number(d)} 日`
 }
 
+function buildHref(page: number, category: string | null): string {
+  const params = new URLSearchParams()
+  if (category) params.set('category', category)
+  if (page > 1) params.set('page', String(page))
+  const qs = params.toString()
+  return `/articles${qs ? `?${qs}` : ''}`
+}
+
 export default async function ArticlesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ page?: string; category?: string }>
 }) {
-  const { page: pageParam } = await searchParams
+  const { page: pageParam, category: categoryParam } = await searchParams
   const allPosts = getAllArticles()
-  const totalPages = Math.ceil(allPosts.length / PER_PAGE)
-  const currentPage = Math.min(Math.max(Number(pageParam) || 1, 1), totalPages)
-  const posts = allPosts.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE)
 
-  // page range for pagination buttons: show at most 5 page numbers centred on current
+  // Collect unique categories in display order
+  const categorySet = new Set(allPosts.map((p) => p.category))
+  const categories = CATEGORY_ORDER.filter((c) => categorySet.has(c))
+
+  // Validate & apply category filter
+  const activeCategory = categoryParam && categories.includes(categoryParam) ? categoryParam : null
+  const filteredPosts = activeCategory ? allPosts.filter((p) => p.category === activeCategory) : allPosts
+
+  const totalPages = Math.ceil(filteredPosts.length / PER_PAGE) || 1
+  const currentPage = Math.min(Math.max(Number(pageParam) || 1, 1), totalPages)
+  const posts = filteredPosts.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE)
+
+  // Page range: show at most 5 page numbers centred on current
   const pageRange: number[] = []
   const rangeStart = Math.max(1, currentPage - 2)
   const rangeEnd = Math.min(totalPages, currentPage + 2)
@@ -116,9 +145,53 @@ export default async function ArticlesPage({
         </div>
       </section>
 
+      {/* Category filter tabs */}
+      <section className="sticky top-0 z-10 bg-white border-b border-gray-100 shadow-sm px-4 py-3">
+        <div className="max-w-5xl mx-auto overflow-x-auto">
+          <div className="flex gap-2 min-w-max">
+            <Link
+              href="/articles"
+              className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                !activeCategory
+                  ? 'text-white'
+                  : 'border border-gray-200 text-gray-600 hover:border-[#0D2B5E] hover:text-[#0D2B5E]'
+              }`}
+              style={!activeCategory ? { backgroundColor: '#0D2B5E' } : undefined}
+            >
+              全部 ({allPosts.length})
+            </Link>
+            {categories.map((cat) => {
+              const count = allPosts.filter((p) => p.category === cat).length
+              const isActive = activeCategory === cat
+              return (
+                <Link
+                  key={cat}
+                  href={buildHref(1, cat)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    isActive
+                      ? 'text-white'
+                      : 'border border-gray-200 text-gray-600 hover:border-[#C9922A] hover:text-[#C9922A]'
+                  }`}
+                  style={isActive ? { backgroundColor: '#C9922A' } : undefined}
+                  aria-current={isActive ? 'true' : undefined}
+                >
+                  {cat} ({count})
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Article list */}
-      <section className="py-16 px-4">
+      <section className="py-12 px-4">
         <div className="max-w-5xl mx-auto">
+          {activeCategory && (
+            <p className="text-sm text-gray-500 mb-6">
+              顯示「<span className="font-semibold text-[#0D2B5E]">{activeCategory}</span>」分類，共 {filteredPosts.length} 篇
+            </p>
+          )}
+
           <div className="grid gap-6 md:grid-cols-2">
             {posts.map((post) => (
               <article
@@ -155,7 +228,7 @@ export default async function ArticlesPage({
             <nav aria-label="文章分頁" className="flex items-center justify-center gap-2 mt-12">
               {currentPage > 1 && (
                 <Link
-                  href={currentPage === 2 ? '/articles' : `/articles?page=${currentPage - 1}`}
+                  href={buildHref(currentPage - 1, activeCategory)}
                   className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors"
                 >
                   ← 上一頁
@@ -164,7 +237,7 @@ export default async function ArticlesPage({
 
               {rangeStart > 1 && (
                 <>
-                  <Link href="/articles" className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors">1</Link>
+                  <Link href={buildHref(1, activeCategory)} className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors">1</Link>
                   {rangeStart > 2 && <span className="px-2 text-gray-400">…</span>}
                 </>
               )}
@@ -172,7 +245,7 @@ export default async function ArticlesPage({
               {pageRange.map((p) => (
                 <Link
                   key={p}
-                  href={p === 1 ? '/articles' : `/articles?page=${p}`}
+                  href={buildHref(p, activeCategory)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     p === currentPage
                       ? 'text-white'
@@ -188,13 +261,13 @@ export default async function ArticlesPage({
               {rangeEnd < totalPages && (
                 <>
                   {rangeEnd < totalPages - 1 && <span className="px-2 text-gray-400">…</span>}
-                  <Link href={`/articles?page=${totalPages}`} className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors">{totalPages}</Link>
+                  <Link href={buildHref(totalPages, activeCategory)} className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors">{totalPages}</Link>
                 </>
               )}
 
               {currentPage < totalPages && (
                 <Link
-                  href={`/articles?page=${currentPage + 1}`}
+                  href={buildHref(currentPage + 1, activeCategory)}
                   className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors"
                 >
                   下一頁 →
@@ -204,7 +277,7 @@ export default async function ArticlesPage({
           )}
 
           <p className="text-center text-xs text-gray-400 mt-4">
-            第 {currentPage} 頁，共 {totalPages} 頁（{allPosts.length} 篇文章）
+            第 {currentPage} 頁，共 {totalPages} 頁（{filteredPosts.length} 篇文章）
           </p>
         </div>
       </section>
