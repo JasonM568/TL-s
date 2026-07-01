@@ -1,11 +1,7 @@
 'use client'
 
-import type { Metadata } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
-
-// Note: metadata export doesn't work in 'use client' components;
-// this page uses a parent layout or the default site metadata.
 
 function formatTWD(n: number): string {
   return new Intl.NumberFormat('zh-TW').format(Math.round(n))
