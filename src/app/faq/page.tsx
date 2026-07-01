@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: '常見問題 FAQ | 支票貼現・支票貸款 | 黃璽理財管理顧問',
+  title: '常見問題 FAQ | 支票貼現・支票貸款',
   description: '支票貼現和支票貸款的常見問題整理。包含費率計算、申請條件、辦理流程、合法性說明等。解答您對企業融資的所有疑問。',
 }
 

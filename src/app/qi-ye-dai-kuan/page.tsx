@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: '企業貸款・企業融資 | 中小企業資金週轉方案 | 黃璽理財管理顧問',
+  title: '企業貸款・企業融資 | 中小企業資金週轉方案',
   description:
     '企業貸款、企業融資專業諮詢，協助中小企業取得營運週轉資金。信用貸款、擔保貸款、票據融資多元管道評估。若您手上有客戶支票，更能透過支票貼現、支票貸款快速取得資金。免費評估、費率透明。',
   keywords: ['企業貸款', '企業融資', '中小企業貸款', '公司貸款', '營運資金貸款', '企業週轉金', '企業資金週轉'],

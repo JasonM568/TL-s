@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: '支票貼現 | 遠期支票快速換現金 | 黃璽理財管理顧問',
+  title: '支票貼現 | 遠期支票快速換現金',
   description: '支票貼現服務，持有遠期支票無需等到期日，立即換取現金。費率透明、審核快速、當日可撥款。了解支票貼現條件、費率與申請流程。',
 }
 

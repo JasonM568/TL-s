@@ -4,7 +4,7 @@ import ContactForm from '@/components/ContactForm'
 import { LINE_ADD_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: '聯絡我們 | 免費諮詢支票貸款・支票貼現 | 黃璽理財管理顧問',
+  title: '聯絡我們 | 免費諮詢支票貸款・支票貼現',
   description: '立即聯絡黃璽理財管理顧問，免費諮詢支票貼現、支票貸款服務。電話：0981-109769，週一至週五 09:00-18:00。',
 }
 
