@@ -27,7 +27,8 @@
 | 網域 | huangxi.tw。**DNS/代理已遷到 Cloudflare**（2026-07-01，NS: owen/zelda.ns.cloudflare.com）；網域註冊仍在 GoDaddy。A `@`→76.76.21.21、CNAME `www`→cname.vercel-dns.com 皆 **Proxied（橘雲）**，SSL Full(strict)。詳見 `docs/dns-cloudflare-migration.md` |
 | AI 爬蟲觀測 | Cloudflare 儀表板 → huangxi.tw → Analytics & Logs / AI Audit / Security→Bots（因流量已走 Cloudflare 代理才看得到） |
 | 資料庫 | Supabase 專案 **hb-erp**（ref `hzegtnihbpweppxsrsck`, ap-southeast-2），表 `huangxi_consultations` |
-| Email 通知 | Resend（網域 huangxi.tw 已驗證）。寄 `notify@huangxi.tw` → 收 `jyuli780@gmail.com`。Resend 帳號註冊於 306465@gmail.com |
+| Email 通知（寄） | Resend（網域 huangxi.tw 已驗證）。寄 `notify@huangxi.tw` → 收 `jyuli780@gmail.com`。Resend 帳號註冊於 306465@gmail.com |
+| Email 收信（轉發） | Cloudflare Email Routing：`service@huangxi.tw` → 轉發到 `jyuli780@gmail.com`（2026-07-01 以 Cloudflare API 設定；根網域 MX=route*.mx.cloudflare.net、SPF、DKIM cf2024-1）|
 | 分析 | GA4 `G-XG4CMC7JYE` |
 | LINE | 官方帳號加好友 `https://lin.ee/Qw6v7OD` |
 
