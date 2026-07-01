@@ -27,8 +27,8 @@
 | ✅ | 支票貼現利率怎麼算？費率計算與試算完整說明 | 支票貼現利率 | zhi-piao-tie-xian-li-lv | — |
 | ✅ | 支票貼現 vs 銀行票貼：該選哪一個？ | 銀行票貼 差別 | zhi-piao-tie-xian-vs-yin-hang-piao-tie | — |
 | ✅ | 支票貼現要準備哪些文件？ | 支票貼現文件 | zhi-piao-tie-xian-shen-qing-wen-jian | — |
-| ⬜ | 支票貼現是什麼？一次搞懂原理、流程與適用對象 | 支票貼現是什麼 | zhi-piao-tie-xian-shi-shen-me | P1 |
-| ⬜ | 支票貼現合法嗎？如何分辨合法業者與地下錢莊 | 支票貼現 合法 | zhi-piao-tie-xian-he-fa | P1 |
+| ✅ | 支票貼現是什麼？一次搞懂原理、流程與適用對象 | 支票貼現是什麼 | zhi-piao-tie-xian-shi-shen-me | — |
+| ✅ | 支票貼現合法嗎？如何分辨合法業者與地下錢莊 | 支票貼現 合法 | zhi-piao-tie-xian-he-fa | — |
 | ⬜ | 支票貼現流程全解析：從諮詢到撥款要多久 | 支票貼現流程 | zhi-piao-tie-xian-liu-cheng | P1 |
 | ⬜ | 支票貼現額度怎麼算？可以貼多少現金 | 支票貼現額度 | zhi-piao-tie-xian-e-du | P2 |
 | ⬜ | 客票貼現與自票貼現差在哪？企業該注意什麼 | 客票貼現 | ke-piao-tie-xian | P2 |
@@ -38,7 +38,7 @@
 
 | 狀態 | 建議標題 | 主關鍵字 | slug | 優先 |
 |---|---|---|---|---|
-| ⬜ | 支票貸款是什麼？和支票貼現有什麼不同 | 支票貸款是什麼 | zhi-piao-dai-kuan-shi-shen-me | P1 |
+| ✅ | 支票貸款是什麼？和支票貼現有什麼不同 | 支票貸款是什麼 | zhi-piao-dai-kuan-shi-shen-me | — |
 | ⬜ | 支票貸款利率與額度：影響因素完整說明 | 支票貸款利率 | zhi-piao-dai-kuan-li-lv | P1 |
 | ⬜ | 支票借款條件有哪些？申請前先自我檢查 | 支票借款條件 | zhi-piao-jie-kuan-tiao-jian | P2 |
 | ⬜ | 支票貸款還款方式比較：分期、到期一次清償怎麼選 | 支票貸款還款 | zhi-piao-dai-kuan-huan-kuan | P3 |
@@ -56,7 +56,7 @@
 | 狀態 | 建議標題 | 主關鍵字 | slug | 優先 |
 |---|---|---|---|---|
 | ✅ | 支票跳票怎麼辦？企業票據風險與處理全攻略 | 支票跳票 | zhi-piao-tiao-piao-zen-me-ban | — |
-| ⬜ | 本票與支票差在哪？企業收付款必懂的差異 | 本票 支票 差別 | ben-piao-vs-zhi-piao | P1 |
+| ✅ | 本票與支票差在哪？企業收付款必懂的差異 | 本票 支票 差別 | ben-piao-vs-zhi-piao | — |
 | ⬜ | 支票背書是什麼？禁止背書轉讓的意思與風險 | 支票背書 | zhi-piao-bei-shu | P2 |
 | ⬜ | 退票紀錄多久會消除？拒絕往來戶如何解除 | 退票紀錄 | tui-piao-ji-lu | P2 |
 | ⬜ | 空頭支票的法律責任：發票人與持票人該知道的事 | 空頭支票 | kong-tou-zhi-piao | P3 |

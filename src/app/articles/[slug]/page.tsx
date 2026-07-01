@@ -84,6 +84,21 @@ function renderBlock(block: Block, i: number) {
           {block.text}
         </div>
       )
+    case 'related':
+      return (
+        <Link
+          key={i}
+          href={block.href}
+          className="group my-6 flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-5 hover:border-[#C9922A] hover:shadow-sm transition-all"
+        >
+          <div>
+            <p className="text-xs text-gray-400 mb-1">延伸閱讀</p>
+            <p className="font-bold text-[#0D2B5E]">{block.label}</p>
+            <p className="text-sm text-gray-500 mt-1">{block.note}</p>
+          </div>
+          <span className="text-[#C9922A] text-xl shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+        </Link>
+      )
   }
 }
 
