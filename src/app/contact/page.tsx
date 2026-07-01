@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ContactForm from '@/components/ContactForm'
 
 export const metadata: Metadata = {
   title: '聯絡我們 | 免費諮詢支票貸款・支票貼現 | 泰誠企業融資',
@@ -32,82 +33,7 @@ export default function ContactPage() {
               <p className="text-gray-500 text-sm mb-8">
                 留下您的聯絡資料，顧問將在 1 個工作日內與您聯繫（不收諮詢費）
               </p>
-              <form className="space-y-5">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    公司名稱 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="請輸入公司或商號名稱"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#0D2B5E] transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    聯絡人姓名 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="請輸入姓名"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#0D2B5E] transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    聯絡電話 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="請輸入手機或市話"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#0D2B5E] transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    洽詢服務
-                  </label>
-                  <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#0D2B5E] transition-colors bg-white">
-                    <option value="">請選擇服務項目</option>
-                    <option value="tie-xian">支票貼現</option>
-                    <option value="dai-kuan">支票貸款</option>
-                    <option value="other">其他融資諮詢</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    需求金額（約）
-                  </label>
-                  <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#0D2B5E] transition-colors bg-white">
-                    <option value="">請選擇</option>
-                    <option>50萬以下</option>
-                    <option>50～100萬</option>
-                    <option>100～300萬</option>
-                    <option>300～500萬</option>
-                    <option>500萬以上</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    備註說明
-                  </label>
-                  <textarea
-                    rows={4}
-                    placeholder="請描述您的資金需求或其他問題..."
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#0D2B5E] transition-colors resize-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full py-4 rounded-lg font-bold text-white text-lg transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: '#C9922A' }}
-                >
-                  送出諮詢申請
-                </button>
-                <p className="text-xs text-gray-400 text-center">
-                  送出即代表您同意我們聯繫您提供服務資訊。我們嚴格保護您的個人資料。
-                </p>
-              </form>
+              <ContactForm />
             </div>
 
             {/* Contact Info */}
