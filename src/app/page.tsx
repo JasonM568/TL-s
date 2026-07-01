@@ -94,7 +94,7 @@ export default function HomePage() {
             name: '黃璽理財管理顧問',
             description: '支票貼現、支票貸款專業服務，協助中小企業解決資金周轉問題',
             url: 'https://huangxi.tw',
-            telephone: '02-XXXX-XXXX',
+            telephone: '+886-981-109769',
             address: {
               '@type': 'PostalAddress',
               addressLocality: '台北市',

@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
+import { LINE_ADD_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '聯絡我們 | 免費諮詢支票貸款・支票貼現 | 黃璽理財管理顧問',
-  description: '立即聯絡黃璽理財管理顧問，免費諮詢支票貼現、支票貸款服務。電話：02-XXXX-XXXX，週一至週五 09:00-18:00。',
+  description: '立即聯絡黃璽理財管理顧問，免費諮詢支票貼現、支票貸款服務。電話：0981-109769，週一至週五 09:00-18:00。',
 }
 
 export default function ContactPage() {
@@ -41,23 +42,29 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold text-[#0D2B5E] mb-6">直接聯絡</h2>
 
               <div className="space-y-6">
-                <div className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl">
+                <a href="tel:0981-109769" className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <span className="text-2xl">📞</span>
                   <div>
                     <h3 className="font-bold text-gray-800 mb-1">電話諮詢</h3>
-                    <p className="text-[#0D2B5E] font-bold text-lg">02-XXXX-XXXX</p>
+                    <p className="text-[#0D2B5E] font-bold text-lg">0981-109769</p>
                     <p className="text-gray-500 text-sm mt-1">週一至週五 09:00 – 18:00</p>
                   </div>
-                </div>
+                </a>
 
-                <div className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl">
-                  <span className="text-2xl">📱</span>
+                <a
+                  href={LINE_ADD_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-4 p-5 rounded-xl transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: '#06C755' }}
+                >
+                  <span className="text-2xl">💬</span>
                   <div>
-                    <h3 className="font-bold text-gray-800 mb-1">手機專線</h3>
-                    <p className="text-[#0D2B5E] font-bold text-lg">0900-XXX-XXX</p>
-                    <p className="text-gray-500 text-sm mt-1">緊急案件可洽詢</p>
+                    <h3 className="font-bold text-white mb-1">LINE 線上諮詢</h3>
+                    <p className="text-white font-bold text-lg">加入好友即時諮詢</p>
+                    <p className="text-white/80 text-sm mt-1">點此加入 LINE 官方帳號</p>
                   </div>
-                </div>
+                </a>
 
                 <div className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl">
                   <span className="text-2xl">✉️</span>

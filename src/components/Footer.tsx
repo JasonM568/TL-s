@@ -28,8 +28,7 @@ export default function Footer() {
           <div>
             <h4 className="font-bold mb-3 text-[#C9922A]">聯絡資訊</h4>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li>📞 02-XXXX-XXXX</li>
-              <li>📱 0900-XXX-XXX</li>
+              <li>📞 0981-109769</li>
               <li>✉️ service@example.com</li>
               <li>🕐 週一至週五 09:00–18:00</li>
               <li>📍 台北市中山區XX路XX號</li>

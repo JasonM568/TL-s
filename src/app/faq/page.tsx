@@ -165,7 +165,7 @@ export default function FaqPage() {
               填寫諮詢表單
             </Link>
             <a
-              href="tel:02-XXXX-XXXX"
+              href="tel:0981-109769"
               className="inline-block px-8 py-3 rounded font-bold border-2 transition-colors hover:bg-gray-100"
               style={{ borderColor: '#0D2B5E', color: '#0D2B5E' }}
             >
