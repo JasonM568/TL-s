@@ -11,13 +11,29 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/articles` },
 }
 
+const PER_PAGE = 12
+
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split('-')
   return `${y} 年 ${Number(m)} 月 ${Number(d)} 日`
 }
 
-export default function ArticlesPage() {
-  const posts = getAllArticles()
+export default async function ArticlesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const { page: pageParam } = await searchParams
+  const allPosts = getAllArticles()
+  const totalPages = Math.ceil(allPosts.length / PER_PAGE)
+  const currentPage = Math.min(Math.max(Number(pageParam) || 1, 1), totalPages)
+  const posts = allPosts.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE)
+
+  // page range for pagination buttons: show at most 5 page numbers centred on current
+  const pageRange: number[] = []
+  const rangeStart = Math.max(1, currentPage - 2)
+  const rangeEnd = Math.min(totalPages, currentPage + 2)
+  for (let i = rangeStart; i <= rangeEnd; i++) pageRange.push(i)
 
   return (
     <>
@@ -32,7 +48,7 @@ export default function ArticlesPage() {
             description: '支票貼現、支票貸款與企業融資的實用知識文章，協助中小企業做出更好的融資決策。',
             inLanguage: 'zh-TW',
             publisher: { '@type': 'Organization', '@id': `${SITE_URL}/#organization` },
-            hasPart: posts.map((p) => ({
+            hasPart: allPosts.map((p) => ({
               '@type': 'Article',
               headline: p.h1,
               description: p.excerpt,
@@ -58,8 +74,8 @@ export default function ArticlesPage() {
             '@type': 'ItemList',
             name: '知識專欄文章列表',
             url: `${SITE_URL}/articles`,
-            numberOfItems: posts.length,
-            itemListElement: posts.map((p, i) => ({
+            numberOfItems: allPosts.length,
+            itemListElement: allPosts.map((p, i) => ({
               '@type': 'ListItem',
               position: i + 1,
               name: p.h1,
@@ -96,6 +112,7 @@ export default function ArticlesPage() {
             支票貼現、支票貸款與企業資金周轉的實用知識，
             幫助您在申請前先搞懂費率、文件與風險。
           </p>
+          <p className="text-gray-400 text-sm mt-3">共 {allPosts.length} 篇文章</p>
         </div>
       </section>
 
@@ -132,6 +149,63 @@ export default function ArticlesPage() {
               </article>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <nav aria-label="文章分頁" className="flex items-center justify-center gap-2 mt-12">
+              {currentPage > 1 && (
+                <Link
+                  href={currentPage === 2 ? '/articles' : `/articles?page=${currentPage - 1}`}
+                  className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors"
+                >
+                  ← 上一頁
+                </Link>
+              )}
+
+              {rangeStart > 1 && (
+                <>
+                  <Link href="/articles" className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors">1</Link>
+                  {rangeStart > 2 && <span className="px-2 text-gray-400">…</span>}
+                </>
+              )}
+
+              {pageRange.map((p) => (
+                <Link
+                  key={p}
+                  href={p === 1 ? '/articles' : `/articles?page=${p}`}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    p === currentPage
+                      ? 'text-white'
+                      : 'border border-gray-200 text-[#0D2B5E] hover:bg-gray-50'
+                  }`}
+                  style={p === currentPage ? { backgroundColor: '#0D2B5E' } : undefined}
+                  aria-current={p === currentPage ? 'page' : undefined}
+                >
+                  {p}
+                </Link>
+              ))}
+
+              {rangeEnd < totalPages && (
+                <>
+                  {rangeEnd < totalPages - 1 && <span className="px-2 text-gray-400">…</span>}
+                  <Link href={`/articles?page=${totalPages}`} className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors">{totalPages}</Link>
+                </>
+              )}
+
+              {currentPage < totalPages && (
+                <Link
+                  href={`/articles?page=${currentPage + 1}`}
+                  className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-[#0D2B5E] hover:bg-gray-50 transition-colors"
+                >
+                  下一頁 →
+                </Link>
+              )}
+            </nav>
+          )}
+
+          <p className="text-center text-xs text-gray-400 mt-4">
+            第 {currentPage} 頁，共 {totalPages} 頁（{allPosts.length} 篇文章）
+          </p>
         </div>
       </section>
 
