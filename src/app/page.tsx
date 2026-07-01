@@ -93,7 +93,7 @@ export default function HomePage() {
             '@type': 'FinancialService',
             name: '泰誠企業融資',
             description: '支票貼現、支票貸款專業服務，協助中小企業解決資金周轉問題',
-            url: 'https://example.com',
+            url: 'https://huangxi.tw',
             telephone: '02-XXXX-XXXX',
             address: {
               '@type': 'PostalAddress',
