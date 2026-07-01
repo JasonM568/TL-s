@@ -17,6 +17,7 @@ const PER_PAGE = 12
 const CATEGORY_ORDER = [
   '支票貼現',
   '支票貸款',
+  '支票兌現',
   '企業融資',
   '費率與成本',
   '申請教學',
