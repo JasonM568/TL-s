@@ -6,7 +6,7 @@ import { SITE_URL } from '@/lib/site'
 export const metadata: Metadata = {
   title: '知識專欄 | 支票貼現・支票貸款實用指南',
   description:
-    '泰誠企業融資知識專欄，提供支票貼現利率計算、申請文件、票據風險與企業資金周轉等實用文章，協助中小企業做出更好的融資決策。',
+    '黃璽理財管理顧問知識專欄，提供支票貼現利率計算、申請文件、票據風險與企業資金周轉等實用文章，協助中小企業做出更好的融資決策。',
   keywords: ['支票貼現知識', '票貼教學', '企業融資文章', '支票貸款指南', '資金周轉'],
   alternates: { canonical: `${SITE_URL}/articles` },
 }

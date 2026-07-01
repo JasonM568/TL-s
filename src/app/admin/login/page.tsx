@@ -18,7 +18,7 @@ export default async function LoginPage({
       <div className="w-full max-w-sm">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
           <h1 className="text-2xl font-bold text-[#0D2B5E] mb-1 text-center">後台登入</h1>
-          <p className="text-gray-400 text-sm text-center mb-8">泰誠企業融資 · 諮詢名單管理</p>
+          <p className="text-gray-400 text-sm text-center mb-8">黃璽理財管理顧問 · 諮詢名單管理</p>
 
           <form action={login} className="space-y-4">
             <div>

@@ -19,8 +19,8 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl font-bold" style={{ color: '#0D2B5E' }}>泰誠</span>
-          <span className="text-sm text-gray-500 hidden sm:block">企業融資</span>
+          <span className="text-2xl font-bold" style={{ color: '#0D2B5E' }}>黃璽</span>
+          <span className="text-sm text-gray-500 hidden sm:block">理財管理顧問</span>
         </Link>
 
         {/* Desktop nav */}

@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-3">泰誠企業融資</h3>
+            <h3 className="text-xl font-bold mb-3">黃璽理財管理顧問</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
               專業提供支票貼現、支票貸款服務。<br />
               協助中小企業解決資金周轉問題，<br />
@@ -42,7 +42,7 @@ export default function Footer() {
             免責聲明：本公司所有融資服務均依法辦理。貸款有風險，借貸需謹慎。
             實際核准金額與條件依審核結果為準，本網站資訊僅供參考。
           </p>
-          <p>© {new Date().getFullYear()} 泰誠企業融資 版權所有</p>
+          <p>© {new Date().getFullYear()} 黃璽理財管理顧問 版權所有</p>
         </div>
       </div>
     </footer>

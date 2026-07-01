@@ -5,7 +5,7 @@ import { serviceLabel, type NewConsultation } from './consultations'
 export async function notifyNewConsultation(c: NewConsultation): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY
   const to = process.env.NOTIFY_EMAIL
-  const from = process.env.NOTIFY_FROM || '泰誠企業融資 <onboarding@resend.dev>'
+  const from = process.env.NOTIFY_FROM || '黃璽理財管理顧問 <onboarding@resend.dev>'
   if (!apiKey || !to) return
 
   const rows: [string, string][] = [

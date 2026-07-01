@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: '支票貸款・支票貼現 | 企業資金周轉首選 | 泰誠企業融資',
+  title: '支票貸款・支票貼現 | 企業資金周轉首選 | 黃璽理財管理顧問',
   description: '支票貼現、支票貸款專業服務。遠期支票快速換現金，最快24小時內審核撥款。中小企業資金周轉首選，安全合法，費率透明。立即免費諮詢。',
 }
 
@@ -91,7 +91,7 @@ export default function HomePage() {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'FinancialService',
-            name: '泰誠企業融資',
+            name: '黃璽理財管理顧問',
             description: '支票貼現、支票貸款專業服務，協助中小企業解決資金周轉問題',
             url: 'https://huangxi.tw',
             telephone: '02-XXXX-XXXX',

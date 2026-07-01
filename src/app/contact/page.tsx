@@ -3,8 +3,8 @@ import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
 
 export const metadata: Metadata = {
-  title: '聯絡我們 | 免費諮詢支票貸款・支票貼現 | 泰誠企業融資',
-  description: '立即聯絡泰誠企業融資，免費諮詢支票貼現、支票貸款服務。電話：02-XXXX-XXXX，週一至週五 09:00-18:00。',
+  title: '聯絡我們 | 免費諮詢支票貸款・支票貼現 | 黃璽理財管理顧問',
+  description: '立即聯絡黃璽理財管理顧問，免費諮詢支票貼現、支票貸款服務。電話：02-XXXX-XXXX，週一至週五 09:00-18:00。',
 }
 
 export default function ContactPage() {
