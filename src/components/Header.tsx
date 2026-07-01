@@ -7,6 +7,7 @@ const navLinks = [
   { href: '/', label: '首頁' },
   { href: '/zhi-piao-tie-xian', label: '支票貼現' },
   { href: '/zhi-piao-dai-kuan', label: '支票貸款' },
+  { href: '/qi-ye-dai-kuan', label: '企業貸款' },
   { href: '/articles', label: '知識專欄' },
   { href: '/faq', label: '常見問題' },
   { href: '/contact', label: '聯絡我們' },
@@ -24,7 +25,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden md:flex items-center gap-5">
           {navLinks.map((link) => (
             <Link
               key={link.href}

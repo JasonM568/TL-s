@@ -19,6 +19,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-gray-300">
               <li><Link href="/zhi-piao-tie-xian" className="hover:text-white transition-colors">支票貼現</Link></li>
               <li><Link href="/zhi-piao-dai-kuan" className="hover:text-white transition-colors">支票貸款</Link></li>
+              <li><Link href="/qi-ye-dai-kuan" className="hover:text-white transition-colors">企業貸款</Link></li>
               <li><Link href="/articles" className="hover:text-white transition-colors">知識專欄</Link></li>
               <li><Link href="/faq" className="hover:text-white transition-colors">常見問題</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">聯絡我們</Link></li>

@@ -30,6 +30,14 @@ const services = [
     href: '/zhi-piao-dai-kuan',
     color: '#1B5E20',
   },
+  {
+    title: '企業貸款',
+    subtitle: '中小企業資金週轉',
+    desc: '企業營運、備料、擴張所需資金，提供多元融資管道評估。手上有支票，更能加速取得資金。',
+    features: ['多元融資管道評估', '手上有支票可加速', '中小企業量身規劃', '免費諮詢、費率透明'],
+    href: '/qi-ye-dai-kuan',
+    color: '#0E4D52',
+  },
 ]
 
 const whyUs = [
@@ -101,7 +109,7 @@ export default function HomePage() {
               addressCountry: 'TW',
             },
             openingHours: 'Mo-Fr 09:00-18:00',
-            serviceType: ['支票貼現', '支票貸款', '企業融資'],
+            serviceType: ['支票貼現', '支票貸款', '企業貸款', '企業融資'],
           }),
         }}
       />
@@ -157,7 +165,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold text-[#0D2B5E] mb-3">我們的服務</h2>
             <p className="text-gray-500">提供完整的支票融資解決方案</p>
           </div>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {services.map((svc) => (
               <div key={svc.title} className="bg-white rounded-xl shadow-sm p-8 hover:shadow-md transition-shadow">
                 <div className="w-12 h-1 rounded mb-4" style={{ backgroundColor: svc.color }} />
