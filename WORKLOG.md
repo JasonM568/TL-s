@@ -1,0 +1,46 @@
+# WORKLOG — 黃璽理財管理顧問 網站
+
+> 逐次工作紀錄（日期 + 做了什麼 + 決策原因 + 未完成）。
+> 目前狀態與待辦看 `docs/HANDOFF.md`；SEO 內容排程看 `docs/content-plan.md`。
+
+---
+
+## 2026-07-01
+
+**建置與上線**
+- 建 Vercel 專案 `tl-s`、Next.js 15.1→**16.2.9**（修 CVE-2025-66478）、部署上線。
+- 綁自訂網域 **huangxi.tw**（+www），SSL 簽發。
+
+**SEO 基礎**
+- 修 sitemap/robots 的 placeholder→huangxi.tw、補 metadataBase/canonical。
+- 舊站調查（Wayback）：舊為 WordPress 單頁站；後發現 Google 仍索引 /blogs 與英文 slug 文章 → `next.config.ts` 設 301（/blogs→/articles、票據融資文章→/zhi-piao-tie-xian）+ 友善 404。
+
+**內容**
+- 知識專欄 /articles + 文章頁（Article/Breadcrumb schema）。
+- 文章總數 **15 篇**：支票主題 9 篇（作者 **李誠信**）+ 企業融資集群 6 篇（作者 **張揚**）。作者機制 `author` 欄位 + 顯示署名 + JSON-LD Person。
+- 內容排程 `docs/content-plan.md`（含企業貸款/企業融資 Pillar-Cluster 策略、集群 G）。**W5–W12 尚未寫。**
+
+**服務頁**
+- 新增 **/qi-ye-dai-kuan**（企業貸款/企業融資 pillar），內含「手上有支票嗎？」交叉導流到支票兩頁；首頁服務區改 3 欄。
+- 決策：企業貸款當 SEO 入口（大字流量）→ 導流到利潤較好的支票服務。
+
+**功能**
+- GA4 `G-XG4CMC7JYE`（含表單 generate_lead 事件）。
+- 諮詢表單→Supabase（hb-erp / huangxi_consultations，RLS + security definer 函式）。
+- 可登入後台 /admin（密碼登入、名單列表、狀態管理）。
+- Email 通知：Resend，驗證 huangxi.tw 網域，`notify@huangxi.tw`→`jyuli780@gmail.com`，端對端測試通過。
+- LINE 浮動按鈕（lin.ee/Qw6v7OD）+ 聯絡頁 LINE 卡。
+
+**改名與資訊**
+- 全站 泰誠企業融資 → **黃璽理財管理顧問**；修 nested 頁 title 重複品牌。
+- 聯絡電話 **0981-109769**（移除市話）；公司地址 **高雄市新興區民權一路251號21樓**；公開信箱 **service@huangxi.tw**（使用者原寫 hungxi，確認為筆誤修正）。
+
+**基礎設施：Cloudflare**
+- DNS/代理由 GoDaddy 遷到 **Cloudflare**（NS owen/zelda；網域註冊仍在 GoDaddy）。網站記錄 Proxied、SSL Full(strict)。目的：觀測入站 AI 爬蟲（AI Audit）。完整記錄清單見 `docs/dns-cloudflare-migration.md`。
+- **Cloudflare Email Routing**（用 CF API 設定，因後台自動加 DNS 失敗）：`service@huangxi.tw`→轉發到 `jyuli780@gmail.com`，測試收信成功。
+
+**未完成 / 待辦**
+- ⚠️ 使用者需**撤銷**本次用的兩組 Cloudflare API token（`cfut_`、`cfat_`）。
+- 內容：W5–W12（約 8 篇）尚未寫。
+- Google 商家檔案、GSC 提交/檢查、Bing/IndexNow（增流量）尚未做。
+- 後台密碼仍為隨機產生（使用者可要求改好記的）。

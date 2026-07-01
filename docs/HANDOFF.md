@@ -62,12 +62,17 @@
 
 ## 📌 待辦 / 下一步（未完成）
 
-1. **內容產出**：`docs/content-plan.md` 有完整選題。已完成 W1–W4；**W5–W12 尚未寫**，另有「集群 G 企業貸款/企業融資」6 篇待寫（P1 優先）。
-   - 產文方式：在 `src/lib/articles.ts` 的 `articles` 陣列加物件 →（模板自動處理 SEO/sitemap）→ build → deploy → 把 content-plan 對應列 ⬜ 改 ✅。
-2. **公開聯絡資訊仍是 placeholder**：聯絡頁/首頁 JSON-LD 的公開 Email `service@example.com`、公司地址「台北市中山區XX路XX號XX樓」待補真實資料。
-3. **Google Search Console**：確認已提交 `sitemap.xml`；舊 `sitemap_index.xml`（404）若有提交過要移除。可續加舊網址 301（若拿到 `site:huangxi.tw` 清單）。
+1. ⚠️ **使用者動作**：撤銷 2026-07-01 用來設 Email Routing 的兩組 Cloudflare API token（`cfut_`、`cfat_`）。撤銷不影響已設好的 Email Routing。
+2. **內容產出**：已完成 15 篇（支票 9 + 企業融資集群 G 6）。**W5–W12（約 8 篇）尚未寫**。
+   - 產文方式：在 `src/lib/articles.ts` 的 `articles` 陣列加物件（企業融資主題設 `author: '理財顧問 張揚'`，支票主題不設=預設李誠信）→ build → deploy → 把 content-plan 對應列 ⬜ 改 ✅。
+3. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、GSC 提交/檢查 sitemap、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。
 4. **後台密碼**：目前是自動產生的隨機密碼，使用者可要求改成好記的（改 Vercel + .env.local 的 `ADMIN_PASSWORD`）。
-5. （可選）後台加篩選/匯出 CSV、諮詢加 LINE/Email 雙通知等增強。
+5. （可選）後台加篩選/匯出 CSV、Cloudflare AI 爬蟲封鎖規則等增強。
+
+### 已完成（原待辦）
+- ✅ 公開聯絡資訊：電話 0981-109769、地址 高雄市新興區民權一路251號21樓、信箱 service@huangxi.tw（全站 placeholder 已清）
+- ✅ 企業融資集群 G 6 篇文章
+- ✅ Email 收信：Cloudflare Email Routing service@huangxi.tw→jyuli780@gmail.com
 
 ---
 
