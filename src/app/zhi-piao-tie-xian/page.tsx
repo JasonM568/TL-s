@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { SITE_URL, SITE_NAME } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '支票貼現 | 遠期支票快速換現金',
@@ -80,6 +81,40 @@ export default function ZhiPiaoTieXianPage() {
               { '@type': 'HowToStep', position: 3, name: '審核評估', text: '專業人員審核支票及相關文件，提供正式報價與合約條件。' },
               { '@type': 'HowToStep', position: 4, name: '簽約撥款', text: '雙方確認條件後簽署合約，完成後資金快速匯入指定帳戶。' },
             ],
+          }),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: '首頁', item: SITE_URL },
+              { '@type': 'ListItem', position: 2, name: '支票貼現', item: `${SITE_URL}/zhi-piao-tie-xian` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FinancialProduct',
+            '@id': `${SITE_URL}/zhi-piao-tie-xian#service`,
+            name: '支票貼現',
+            description: '持有遠期支票的企業，提前換取現金。費率透明、審核快速，最快當日撥款。',
+            category: '票據融資',
+            provider: { '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: SITE_NAME },
+            areaServed: { '@type': 'Country', name: '台灣' },
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'TWD',
+              description: '月費率 1.5%～3%，依票面金額、票期、發票人信用綜合評估，諮詢免費',
+            },
           }),
         }}
       />

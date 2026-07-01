@@ -81,7 +81,7 @@
 | ✅ | 支票貸款是什麼？和支票貼現有什麼不同 | 支票貸款是什麼 | zhi-piao-dai-kuan-shi-shen-me | — |
 | ✅ | 支票貸款利率與額度：影響因素完整說明 | 支票貸款利率 | zhi-piao-dai-kuan-li-lv | — |
 | ✅ | 支票借款條件有哪些？申請前先自我檢查 | 支票借款條件 | zhi-piao-jie-kuan-tiao-jian | P2 |
-| ⬜ | 支票貸款還款方式比較：分期、到期一次清償怎麼選 | 支票貸款還款 | zhi-piao-dai-kuan-huan-kuan | P3 |
+| ✅ | 支票貸款還款方式比較：分期、到期一次清償怎麼選 | 支票貸款還款 | zhi-piao-dai-kuan-huan-kuan | P3 |
 
 ### 集群 C｜費率與成本（決策型）
 
@@ -89,7 +89,7 @@
 |---|---|---|---|---|
 | ✅ | 票貼利率行情：市場費率區間與合理性判斷 | 票貼利率 | piao-tie-li-lv-hang-qing | P2 |
 | ✅ | 支票貼現手續費包含哪些？避免隱藏費用的 5 個提醒 | 支票貼現手續費 | zhi-piao-tie-xian-shou-xu-fei | P2 |
-| ⬜ | 找銀行還是民間做票貼？成本與速度的取捨 | 民間票貼 | min-jian-piao-tie | P3 |
+| ✅ | 找銀行還是民間做票貼？成本與速度的取捨 | 民間票貼 | min-jian-piao-tie | P3 |
 
 ### 集群 D｜票據知識與風險管理（信任型 / 漏斗中層）
 
@@ -99,8 +99,8 @@
 | ✅ | 本票與支票差在哪？企業收付款必懂的差異 | 本票 支票 差別 | ben-piao-vs-zhi-piao | — |
 | ✅ | 支票背書是什麼？禁止背書轉讓的意思與風險 | 支票背書 | zhi-piao-bei-shu | P2 |
 | ✅ | 退票紀錄多久會消除？拒絕往來戶如何解除 | 退票紀錄 | tui-piao-ji-lu | P2 |
-| ⬜ | 空頭支票的法律責任：發票人與持票人該知道的事 | 空頭支票 | kong-tou-zhi-piao | P3 |
-| ⬜ | 如何查詢票據信用？往來前的風險把關 | 票據信用查詢 | piao-ju-xin-yong-cha-xun | P3 |
+| ✅ | 空頭支票的法律責任：發票人與持票人該知道的事 | 空頭支票 | kong-tou-zhi-piao | P3 |
+| ✅ | 如何查詢票據信用？往來前的風險把關 | 票據信用查詢 | piao-ju-xin-yong-cha-xun | P3 |
 
 ### 集群 E｜企業融資 / 資金周轉（漏斗上層 / 導流）
 
@@ -109,15 +109,15 @@
 | ✅ | 中小企業資金周轉的 6 種方法比較 | 中小企業資金周轉 | zhong-xiao-qi-ye-zi-jin-zhou-zhuan | — |
 | ✅ | 企業周轉金怎麼申請？管道、條件與注意事項 | 企業周轉金 | qi-ye-zhou-zhuan-jin | — |
 | ✅ | 公司缺錢周轉怎麼辦？5 個急用資金的解法 | 公司缺錢 | gong-si-que-qian-zhou-zhuan | P2 |
-| ⬜ | 應收帳款融資是什麼？帳期太長的解方 | 應收帳款融資 | ying-shou-zhang-kuan-rong-zi | P3 |
+| ✅ | 應收帳款融資是什麼？帳期太長的解方 | 應收帳款融資 | ying-shou-zhang-kuan-rong-zi | P3 |
 
 ### 集群 F｜情境 / 產業長尾（低競爭、高轉換）
 
 | 狀態 | 建議標題 | 主關鍵字 | slug | 優先 |
 |---|---|---|---|---|
 | ✅ | 工程/建設公司資金周轉：工程票如何提前變現 | 工程款周轉 | gong-cheng-zi-jin-zhou-zhuan | P2 |
-| ⬜ | 貿易商如何用支票貼現加速現金流 | 貿易商 資金周轉 | mao-yi-shang-zhou-zhuan | P3 |
-| ⬜ | 傳統產業融資難？中小工廠的資金調度實務 | 傳統產業融資 | chuan-tong-chan-ye-rong-zi | P3 |
+| ✅ | 貿易商如何用支票貼現加速現金流 | 貿易商 資金周轉 | mao-yi-shang-zhou-zhuan | P3 |
+| ✅ | 傳統產業融資難？中小工廠的資金調度實務 | 傳統產業融資 | chuan-tong-chan-ye-rong-zi | P3 |
 
 ---
 
