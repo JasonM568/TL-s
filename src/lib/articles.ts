@@ -5099,7 +5099,7 @@ export const articles: Article[] = [
       },
       {
         type: 'related',
-        href: '/zhi-piao-dui-xian-liu-cheng',
+        href: '/articles/zhi-piao-dui-xian-liu-cheng',
         label: '支票兌現完整流程說明',
         note: '從送件到拿現金，每個步驟詳細解析',
       },
