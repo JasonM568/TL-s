@@ -1,19 +1,23 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getAllArticles, getArticleBySlug, getAllSlugs, articleAuthor, type Block } from '@/lib/articles'
+import { getAllArticles, getArticleBySlug, getAllSlugs, articleAuthor, type Block } from '@/lib/articles-source'
 import { SITE_URL, SITE_NAME } from '@/lib/site'
 
-// 靜態產生所有文章頁
-export function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }))
+// ISR + 動態參數：DB 排程文章到點後首次造訪即時渲染（免重新部署）
+export const revalidate = 120
+export const dynamicParams = true
+
+// 靜態產生所有（目前可見的）文章頁
+export async function generateStaticParams() {
+  return (await getAllSlugs()).map((slug) => ({ slug }))
 }
 
 type Props = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const article = getArticleBySlug(slug)
+  const article = await getArticleBySlug(slug)
   if (!article) return {}
 
   const url = `${SITE_URL}/articles/${article.slug}`
@@ -104,12 +108,12 @@ function renderBlock(block: Block, i: number) {
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params
-  const article = getArticleBySlug(slug)
+  const article = await getArticleBySlug(slug)
   if (!article) notFound()
 
   const url = `${SITE_URL}/articles/${article.slug}`
   // 相關文章：同分類優先，補到 3 篇
-  const related = getAllArticles()
+  const related = (await getAllArticles())
     .filter((a) => a.slug !== article.slug)
     .sort((a) => (a.category === article.category ? -1 : 1))
     .slice(0, 3)
