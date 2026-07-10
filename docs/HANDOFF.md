@@ -16,6 +16,9 @@
 - **本機驗證**：`npm run build`（部署前務必先跑）
 - **後台**：https://huangxi.tw/admin （單一密碼登入，密碼見 `.env.local` 的 `ADMIN_PASSWORD`）
 - **每次改完流程**：`npm run build` → `git commit` → `vercel deploy --prod` → curl 驗證正式站
+- ⚠️ **開工/部署前務必先 `git fetch` 檢查 `origin/main`**（此 repo 有多條平行開發線；vercel deploy 用本地 tree 覆蓋線上、不看遠端。2026-07-10 曾因此把正式站蓋掉，見 WORKLOG）。
+- 📌 **未合併分支 `scheduling-work`**：含「後台排程發文系統」（Supabase `huangxi_articles` 表 + `/admin/articles` 佇列 + ISR + `scripts/seed-articles.mjs`）。DB 已有該表 + 16 篇排程草稿，但 **main 程式不讀取＝休眠、線上不顯示、無害**；要啟用需合併該分支（會與本線內容重疊，需去重）。
+- 聯絡電話：**0982-697803**（2026-07-10 更新）。
 
 ---
 

@@ -5,6 +5,30 @@
 
 ---
 
+## 2026-07-10
+
+**聯絡電話更新**
+- 全站電話 0981-109769 → **0982-697803**（首頁 schema、聯絡頁、FAQ、/zhi-piao-dui-xian、Footer 共 7 處）。已部署。
+
+**⚠️ 平行開發事故與待合併工作（重要交接）**
+- 本日有另一條開發線（此 main）與一條獨立 session 平行進行，起點都是 `b3e66f4`。
+  獨立 session 因未先 `git fetch`，用 `vercel deploy` 反覆把較舊版本覆蓋上線，一度把本 main 的
+  67 篇文章版本從正式站蓋掉；最後 `git reset --hard origin/main` + 重新部署救回，正式站已恢復完整。
+- 教訓：**開工前、`vercel deploy --prod` 前，務必 `git fetch` 檢查 origin/main**（vercel 部署用本地 tree，不看遠端）。
+- 該 session 的成果保存在分支 **`scheduling-work`**（未合併進 main），內含：
+  1. **後台排程發文系統**：Supabase 新表 `huangxi_articles` + 5 支 security definer RPC、
+     `src/lib/articles-db.ts`/`articles-source.ts`、文章頁/列表/sitemap 改 ISR、`/admin/articles` 佇列 UI、
+     `scripts/seed-articles.mjs`。可讓新文章「先進後台草稿→排程→到點免部署自動上線」。
+  2. 16 篇支票兌現/票據知識/票據風險管理長文（已灌進 `huangxi_articles`，排程 07/11–07/26）。
+- **Supabase 現況**：`huangxi_articles` 表 + 16 篇排程草稿存在但**本 main 程式不讀取 → 休眠、線上不顯示、無害**。
+  若要啟用排程功能，需把 `scheduling-work` 的排程系統合併進來（會與本線的文章/分類篩選/支票兌現內容重疊，需去重）。
+
+**未完成 / 待辦**
+- 合併 `scheduling-work` 的排程發文系統（大工程，需處理與本線重疊）。合併後 16 篇排程草稿才會真的上線。
+- Cloudflare API token `Huangxi_Email Routing Addresses` 待使用者後台刪除（安全衛生）。
+
+---
+
 ## 2026-07-01
 
 **建置與上線**
