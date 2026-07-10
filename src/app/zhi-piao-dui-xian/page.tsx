@@ -397,7 +397,7 @@ export default function ZhiPiaoDuiXianPage() {
               免費諮詢
             </Link>
             <a
-              href="tel:0981-109769"
+              href="tel:0982-697803"
               className="inline-block px-10 py-4 rounded font-bold border-2 border-white text-white hover:bg-white hover:text-[#0D2B5E] transition-colors text-lg"
             >
               直接來電

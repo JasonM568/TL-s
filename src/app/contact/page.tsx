@@ -5,7 +5,7 @@ import { LINE_ADD_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '聯絡我們 | 免費諮詢支票貸款・支票貼現',
-  description: '立即聯絡黃璽理財管理顧問，免費諮詢支票貼現、支票貸款服務。電話：0981-109769，週一至週五 09:00-18:00。',
+  description: '立即聯絡黃璽理財管理顧問，免費諮詢支票貼現、支票貸款服務。電話：0982-697803，週一至週五 09:00-18:00。',
 }
 
 export default function ContactPage() {
@@ -42,11 +42,11 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold text-[#0D2B5E] mb-6">直接聯絡</h2>
 
               <div className="space-y-6">
-                <a href="tel:0981-109769" className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <a href="tel:0982-697803" className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <span className="text-2xl">📞</span>
                   <div>
                     <h3 className="font-bold text-gray-800 mb-1">電話諮詢</h3>
-                    <p className="text-[#0D2B5E] font-bold text-lg">0981-109769</p>
+                    <p className="text-[#0D2B5E] font-bold text-lg">0982-697803</p>
                     <p className="text-gray-500 text-sm mt-1">週一至週五 09:00 – 18:00</p>
                   </div>
                 </a>
