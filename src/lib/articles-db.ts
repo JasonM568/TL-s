@@ -64,6 +64,12 @@ export async function getPublicDbArticles(): Promise<Article[]> {
   return ((data ?? []) as DbArticleRow[]).map(rowToArticle)
 }
 
+// 後台預覽：依 slug 取單篇原始列（任何狀態，含草稿/排程中/已下架）
+export async function getDbRowBySlug(slug: string): Promise<DbArticleRow | undefined> {
+  const rows = await listDbArticles()
+  return rows.find((r) => r.slug === slug)
+}
+
 // 後台：整個佇列（原始列，不映射）
 export async function listDbArticles(): Promise<DbArticleRow[]> {
   const supabase = getSupabase()

@@ -113,16 +113,14 @@ export default async function AdminArticlesPage() {
                       /articles/{r.slug} · {r.category}
                     </p>
                   </div>
-                  {info.label === '已發布' && (
-                    <a
-                      href={`/articles/${r.slug}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm text-[#0D2B5E] hover:underline shrink-0"
-                    >
-                      預覽 →
-                    </a>
-                  )}
+                  <a
+                    href={`/admin/articles/preview/${r.slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm text-[#0D2B5E] hover:underline shrink-0"
+                  >
+                    預覽 →
+                  </a>
                 </div>
 
                 {/* 排程表單 */}
