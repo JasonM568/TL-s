@@ -30,6 +30,12 @@
 - 驗證：本機 `npm run build` 綠燈（67 靜態 SSG + [slug] ISR 2m）；prod 部署 READY；暫時把 `piao-ju-zhong-lei` 改 publish_at 過去 → ~100s 後線上 200、列表落「票據知識」tab、在 sitemap、署名李誠信、Article/Breadcrumb JSON-LD 正常 → 復原回 07/11。首頁電話仍 `0982-697803` 未被污染。
 - Commit `318937c`（+merge `883ec28`）已 push origin/main + `vercel deploy --prod`。
 
+**✅ 後台文章預覽（同日再加）**
+- 需求：排程佇列原本只有「已發布」列能預覽，草稿/排程中的點了會 404（前台 `huangxi_public_articles` 會過濾未到點者）。
+- 作法：抽出 `src/app/articles/[slug]/ArticleView.tsx` 共用版面元件（公開頁與預覽頁共用；公開頁 JSON-LD/metadata 不變），新增 `/admin/articles/preview/[slug]`（`isAuthed` 守門、`force-dynamic`、noindex），用 `huangxi_list_articles` 讀任何狀態 DB 列渲染、頂部「預覽模式」橫幅；`articles-db.ts` 加 `getDbRowBySlug`；佇列每列都改成顯示「預覽 →」。
+- 驗證：本機 build 綠燈；prod 預覽路由未登入 307→/admin/login、公開頁仍 200 且 Article JSON-LD/延伸閱讀完整。
+- Commit `9bd5840`（+docs `4439827`）push origin/main + `vercel deploy --prod`（使用者當次授權部署）。
+
 **未完成 / 待辦**
 - Cloudflare API token `Huangxi_Email Routing Addresses` 待使用者後台刪除（安全衛生）。
 - content-plan W5–W12 若有缺口可續補（現在可走排程系統批次上稿）。
