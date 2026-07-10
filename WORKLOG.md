@@ -23,9 +23,16 @@
 - **Supabase 現況**：`huangxi_articles` 表 + 16 篇排程草稿存在但**本 main 程式不讀取 → 休眠、線上不顯示、無害**。
   若要啟用排程功能，需把 `scheduling-work` 的排程系統合併進來（會與本線的文章/分類篩選/支票兌現內容重疊，需去重）。
 
+**✅ 排程發文系統已合併上線（同日稍晚）**
+- 決策：不用 `git merge`（兩分支從 `b3e66f4` 分岔後 main 已大幅前進到 67 篇 + AEO schema，scheduling-work 的 `articles.ts` 仍是舊 ~31 篇版，直接 merge 會在 articles.ts 產生數千行衝突並可能蓋掉 main 較新內容）。改用 **additive cherry-pick**：`git checkout scheduling-work -- <新檔>` 帶入排程系統（`articles-db.ts`/`articles-source.ts`/`admin/articles/*`/`seed-articles.mjs`/`drafts/README`），再手動把 main 版的 `articles/page`/`articles/[slug]`/`sitemap` 改 import `articles-source` 並加 ISR（revalidate=120，[slug] 加 `dynamicParams=true`）、`admin/page` 加「文章排程 →」入口。**完全不動** main 的 `articles.ts`、`contact/faq/page/Footer`（保留較新內容與正確電話）。
+- 資料去重：16 篇 DB 草稿中 2 篇 slug 與既有靜態長文撞名（`zhi-piao-bei-shu`、`kong-tou-zhi-piao`）→ 設 `archived`；4 篇分類 `支票兌換` 正規化為 `支票兌現`（對齊列表頁 tab）。剩 **14 篇 07/11–07/26 自動發文中**。
+- ⚠️ scheduling-work 帶了錯誤電話 `0982-691803`；合併時已排除（保留 main 的 `0982-697803`）。
+- 驗證：本機 `npm run build` 綠燈（67 靜態 SSG + [slug] ISR 2m）；prod 部署 READY；暫時把 `piao-ju-zhong-lei` 改 publish_at 過去 → ~100s 後線上 200、列表落「票據知識」tab、在 sitemap、署名李誠信、Article/Breadcrumb JSON-LD 正常 → 復原回 07/11。首頁電話仍 `0982-697803` 未被污染。
+- Commit `318937c`（+merge `883ec28`）已 push origin/main + `vercel deploy --prod`。
+
 **未完成 / 待辦**
-- 合併 `scheduling-work` 的排程發文系統（大工程，需處理與本線重疊）。合併後 16 篇排程草稿才會真的上線。
 - Cloudflare API token `Huangxi_Email Routing Addresses` 待使用者後台刪除（安全衛生）。
+- content-plan W5–W12 若有缺口可續補（現在可走排程系統批次上稿）。
 
 ---
 

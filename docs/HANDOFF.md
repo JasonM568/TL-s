@@ -1,7 +1,7 @@
 # HANDOFF — 黃璽理財管理顧問 網站
 
 > 交接與工作紀錄。下次啟動先讀「快速上手」段落即可無縫接軌。
-> 最後更新：2026-07-01
+> 最後更新：2026-07-10
 
 ---
 
@@ -17,8 +17,8 @@
 - **後台**：https://huangxi.tw/admin （單一密碼登入，密碼見 `.env.local` 的 `ADMIN_PASSWORD`）
 - **每次改完流程**：`npm run build` → `git commit` → `vercel deploy --prod` → curl 驗證正式站
 - ⚠️ **開工/部署前務必先 `git fetch` 檢查 `origin/main`**（此 repo 有多條平行開發線；vercel deploy 用本地 tree 覆蓋線上、不看遠端。2026-07-10 曾因此把正式站蓋掉，見 WORKLOG）。
-- 📌 **未合併分支 `scheduling-work`**：含「後台排程發文系統」（Supabase `huangxi_articles` 表 + `/admin/articles` 佇列 + ISR + `scripts/seed-articles.mjs`）。DB 已有該表 + 16 篇排程草稿，但 **main 程式不讀取＝休眠、線上不顯示、無害**；要啟用需合併該分支（會與本線內容重疊，需去重）。
-- 聯絡電話：**0982-697803**（2026-07-10 更新）。
+- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **14 篇支票/票據長文排程 07/11–07/26 自動發文中**（2 篇與既有靜態長文撞名已封存）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`，跑 `node scripts/seed-articles.mjs`（進 draft）→ 到 `/admin/articles` 排程。詳見架構段落。
+- 聯絡電話：**0982-697803**（2026-07-10 更新）。⚠️ `scheduling-work` 舊分支曾用錯號 `0982-691803`，合併時已排除、勿再引入。
 
 ---
 
@@ -40,6 +40,14 @@
 - RLS：匿名只能 INSERT、不能 SELECT。
 - 後台讀取/改狀態透過 security definer 函式 `huangxi_list_consultations(p_secret)` / `huangxi_update_status(p_secret,p_id,p_status)`，密鑰存 `huangxi_admin_config` 表。
 - 可用 Supabase MCP 直接查（`execute_sql` project_id=hzegtnihbpweppxsrsck）。
+
+### 排程發文系統架構（2026-07-10 上線）
+- **表**：`public.huangxi_articles`（欄位含 slug/title/h1/description/keywords/category/author/reading_minutes/excerpt/content(jsonb Block[])/updated_display/status(draft|scheduled|archived)/publish_at/sort_order）。
+- **5 支 security definer RPC**：`huangxi_public_articles()`（前台，DB 端已過濾 status=scheduled 且 publish_at≤now）、`huangxi_list_articles(p_secret)`（後台全佇列）、`huangxi_upsert_article(p_secret,p_article)`（灌稿，預設 draft、on-conflict 只更新內容不動排程）、`huangxi_update_article_schedule(...)`、`huangxi_delete_article(...)`。
+- **程式**：`src/lib/articles-db.ts`（DB 存取 + `rowToArticle`）、`src/lib/articles-source.ts`（合併「靜態 67 篇恆發布 + DB 佇列」，**靜態 slug 優先**、DB 掛掉降級只回靜態）。前台 `articles` 列表/內文/sitemap 皆 import `articles-source` 且 ISR revalidate=120；`/articles/[slug]` 另加 `dynamicParams=true`（到點 slug 首次造訪即時渲染、免部署）。
+- **後台**：`/admin/articles`（佇列 UI：改狀態/排程時間/順序、立即發布、下架、刪除）。
+- **灌新稿流程**：`Article` 形狀 JSON 放 `scripts/drafts/*.json`（gitignore，不進 git）→ `node scripts/seed-articles.mjs`（讀 `.env.local`、驗證、撞靜態 slug 會擋、upsert 進 draft）→ 到 `/admin/articles` 設排程。
+- ⚠️ 撞名規則：DB slug 與 67 篇靜態文撞名者，前台永遠不顯示（靜態優先）——灌稿前先確認 slug 不撞。
 
 ### 環境變數（值存 Vercel production + 本機 `.env.local`，皆 gitignore）
 `SUPABASE_URL` / `SUPABASE_ANON_KEY` / `HUANGXI_ADMIN_SECRET` / `ADMIN_PASSWORD` / `ADMIN_SESSION_SECRET` / `NEXT_PUBLIC_GA_ID` / `RESEND_API_KEY` / `NOTIFY_EMAIL` / `NOTIFY_FROM`
@@ -66,13 +74,14 @@
 ## 📌 待辦 / 下一步（未完成）
 
 1. ⚠️ **使用者動作**：撤銷 2026-07-01 用來設 Email Routing 的兩組 Cloudflare API token（`cfut_`、`cfat_`）。撤銷不影響已設好的 Email Routing。
-2. **內容產出**：已完成 15 篇（支票 9 + 企業融資集群 G 6）。**W5–W12（約 8 篇）尚未寫**。
-   - 產文方式：在 `src/lib/articles.ts` 的 `articles` 陣列加物件（企業融資主題設 `author: '理財顧問 張揚'`，支票主題不設=預設李誠信）→ build → deploy → 把 content-plan 對應列 ⬜ 改 ✅。
+2. **內容產出**：靜態文章 67 篇 + DB 排程 14 篇（07/11–07/26 自動上線中）。content-plan 的 **W5–W12 若尚有缺口**可續補。
+   - 產文兩種方式：①（永久 SEO 骨幹）在 `src/lib/articles.ts` 的 `articles` 陣列加物件（企業融資設 `author: '理財顧問 張揚'`，支票不設=預設李誠信）→ build → deploy。②（排程/批次）走排程系統：JSON 放 `scripts/drafts/` → `seed-articles.mjs` → `/admin/articles` 排程，到點免部署自動上線。
 3. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、GSC 提交/檢查 sitemap、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。
 4. **後台密碼**：目前是自動產生的隨機密碼，使用者可要求改成好記的（改 Vercel + .env.local 的 `ADMIN_PASSWORD`）。
 5. （可選）後台加篩選/匯出 CSV、Cloudflare AI 爬蟲封鎖規則等增強。
 
 ### 已完成（原待辦）
+- ✅ **後台排程發文系統合併上線**（2026-07-10，原 `scheduling-work` 分支）：14 篇排程文自動發文中。見上方架構段落。
 - ✅ 公開聯絡資訊：電話 0981-109769、地址 高雄市新興區民權一路251號21樓、信箱 service@huangxi.tw（全站 placeholder 已清）
 - ✅ 企業融資集群 G 6 篇文章
 - ✅ Email 收信：Cloudflare Email Routing service@huangxi.tw→jyuli780@gmail.com
