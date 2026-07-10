@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getAllArticles } from '@/lib/articles'
+import { getAllArticles } from '@/lib/articles-source'
 import { SITE_URL } from '@/lib/site'
+
+// ISR：讓 DB 排程文章到點後自動出現在列表（免重新部署）
+export const revalidate = 120
 
 export const metadata: Metadata = {
   title: '知識專欄 | 支票貼現・支票貸款實用指南',
@@ -45,7 +48,7 @@ export default async function ArticlesPage({
   searchParams: Promise<{ page?: string; category?: string }>
 }) {
   const { page: pageParam, category: categoryParam } = await searchParams
-  const allPosts = getAllArticles()
+  const allPosts = await getAllArticles()
 
   // Collect unique categories in display order
   const categorySet = new Set(allPosts.map((p) => p.category))

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { isAuthed } from '@/lib/auth'
 import { listConsultations, serviceLabel, STATUS_LABELS } from '@/lib/consultations'
@@ -50,11 +51,20 @@ export default async function AdminPage() {
             )}
           </p>
         </div>
-        <form action={logout}>
-          <button className="text-sm text-gray-500 hover:text-[#0D2B5E] border border-gray-200 rounded-lg px-4 py-2 transition-colors">
-            登出
-          </button>
-        </form>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/articles"
+            className="text-sm text-white rounded-lg px-4 py-2 font-medium transition-opacity hover:opacity-90"
+            style={{ backgroundColor: '#0D2B5E' }}
+          >
+            文章排程 →
+          </Link>
+          <form action={logout}>
+            <button className="text-sm text-gray-500 hover:text-[#0D2B5E] border border-gray-200 rounded-lg px-4 py-2 transition-colors">
+              登出
+            </button>
+          </form>
+        </div>
       </div>
 
       {rows.length === 0 ? (

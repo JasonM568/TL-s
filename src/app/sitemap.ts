@@ -1,8 +1,11 @@
 import type { MetadataRoute } from 'next'
-import { getAllArticles } from '@/lib/articles'
+import { getAllArticles } from '@/lib/articles-source'
 import { SITE_URL } from '@/lib/site'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// ISR：DB 排程文章到點後自動進 sitemap
+export const revalidate = 120
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
 
   const staticPages: MetadataRoute.Sitemap = [
@@ -18,7 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/contact`, lastModified: now, changeFrequency: 'yearly', priority: 0.6 },
   ]
 
-  const articlePages: MetadataRoute.Sitemap = getAllArticles().map((a) => ({
+  const articlePages: MetadataRoute.Sitemap = (await getAllArticles()).map((a) => ({
     url: `${SITE_URL}/articles/${a.slug}`,
     lastModified: new Date(a.updated ?? a.date),
     changeFrequency: 'monthly',
