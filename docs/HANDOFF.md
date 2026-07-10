@@ -46,7 +46,8 @@
 - **5 支 security definer RPC**：`huangxi_public_articles()`（前台，DB 端已過濾 status=scheduled 且 publish_at≤now）、`huangxi_list_articles(p_secret)`（後台全佇列）、`huangxi_upsert_article(p_secret,p_article)`（灌稿，預設 draft、on-conflict 只更新內容不動排程）、`huangxi_update_article_schedule(...)`、`huangxi_delete_article(...)`。
 - **程式**：`src/lib/articles-db.ts`（DB 存取 + `rowToArticle`）、`src/lib/articles-source.ts`（合併「靜態 67 篇恆發布 + DB 佇列」，**靜態 slug 優先**、DB 掛掉降級只回靜態）。前台 `articles` 列表/內文/sitemap 皆 import `articles-source` 且 ISR revalidate=120；`/articles/[slug]` 另加 `dynamicParams=true`（到點 slug 首次造訪即時渲染、免部署）。
 - **後台**：`/admin/articles`（佇列 UI：改狀態/排程時間/順序、立即發布、下架、刪除）。
-- **灌新稿流程**：`Article` 形狀 JSON 放 `scripts/drafts/*.json`（gitignore，不進 git）→ `node scripts/seed-articles.mjs`（讀 `.env.local`、驗證、撞靜態 slug 會擋、upsert 進 draft）→ 到 `/admin/articles` 設排程。
+- **後台預覽**（2026-07-10 加）：佇列每列的「預覽 →」連到 `/admin/articles/preview/[slug]`（`isAuthed` 守門、`force-dynamic`、noindex），用 `huangxi_list_articles` 讀**任何狀態**的 DB 列渲染，讓草稿/排程中文章上線前可先看。版面由 `src/app/articles/[slug]/ArticleView.tsx` 共用元件提供（公開頁與預覽頁共用；公開頁的 JSON-LD/metadata 仍留在 `page.tsx`）。`articles-db.ts` 的 `getDbRowBySlug` 供此頁取單列。
+- **灌新稿流程**：`Article` 形狀 JSON 放 `scripts/drafts/*.json`（gitignore，不進 git）→ `node scripts/seed-articles.mjs`（讀 `.env.local`、驗證、撞靜態 slug 會擋、upsert 進 draft）→ 到 `/admin/articles` 設排程（可先按「預覽 →」看內容）。
 - ⚠️ 撞名規則：DB slug 與 67 篇靜態文撞名者，前台永遠不顯示（靜態優先）——灌稿前先確認 slug 不撞。
 
 ### 環境變數（值存 Vercel production + 本機 `.env.local`，皆 gitignore）
