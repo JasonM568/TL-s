@@ -1,7 +1,7 @@
 # HANDOFF — 黃璽理財管理顧問 網站
 
 > 交接與工作紀錄。下次啟動先讀「快速上手」段落即可無縫接軌。
-> 最後更新：2026-07-10
+> 最後更新：2026-07-14
 
 ---
 
@@ -18,7 +18,7 @@
 - **每次改完流程**：`npm run build` → `git commit` → `vercel deploy --prod` → curl 驗證正式站
 - ⚠️ **開工/部署前務必先 `git fetch` 檢查 `origin/main`**（此 repo 有多條平行開發線；vercel deploy 用本地 tree 覆蓋線上、不看遠端。2026-07-10 曾因此把正式站蓋掉，見 WORKLOG）。
 - ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **14 篇支票/票據長文排程 07/11–07/26 自動發文中**（2 篇與既有靜態長文撞名已封存）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`，跑 `node scripts/seed-articles.mjs`（進 draft）→ 到 `/admin/articles` 排程。詳見架構段落。
-- 聯絡電話：**0982-697803**（2026-07-10 更新）。⚠️ `scheduling-work` 舊分支曾用錯號 `0982-691803`，合併時已排除、勿再引入。
+- 聯絡電話：**0982-691803**（2026-07-14 Jason 確認更正，全站 7 處 + 首頁 JSON-LD 已更新）。⚠️ 舊號 `0982-697803` 已作廢、勿再引入（2026-07-10 的記載相反，以本行為準）。
 
 ---
 
