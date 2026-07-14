@@ -11,6 +11,10 @@
 - Jason 確認正確號碼為 **0982-691803**（07-10 記載的 0982-697803 反而是錯的，末三碼 7↔1 對調）。
 - 全站 0982-697803 → 0982-691803：首頁 JSON-LD（`+886-982-691803`）、聯絡頁 ×3、FAQ、/zhi-piao-dui-xian、Footer 共 7 處。
 - 同步更正 `docs/HANDOFF.md` 快速上手段落的號碼記載與警告方向。
+- 部署 prod 並 curl 驗證：/contact ×8、首頁 JSON-LD ×2、/faq ×4 全為新號碼，線上無殘留舊號。
+
+**新發現：GitHub push 會自動觸發 Vercel 部署**
+- 部署清單出現兩筆 production（push 後一筆、CLI 一筆），證實 GitHub 整合已生效，與 HANDOFF 舊記載「純手動 CLI 部署」不符。已補進 HANDOFF 警告：push 前務必本地 build 綠燈。
 
 ---
 
