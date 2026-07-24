@@ -6,3 +6,4 @@ tsconfig.tsbuildinfo
 
 # 文章草稿暫存區（內容已進 Supabase；保留 README，忽略草稿 JSON）
 scripts/drafts/*.json
+scripts/drafts-batch2/*.json

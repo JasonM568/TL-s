@@ -155,3 +155,36 @@
 
 只要在對話說「幫我寫 W1 的文章」或「寫 支票貼現是什麼 這篇」，
 我會依規格撰稿、加進 articles.ts、build 驗證後部署。
+
+---
+
+## 第二批選題（2026-07-24 依 GSC 數據規劃，已全數排程）
+
+依 2026-07-24 GSC 前 28 天數據制定：曝光 7/5 起翻 6-8 倍但點擊仍低，故三管齊下——
+①擴寫卡在第 3-5 頁的舊文（跳票組、企業融資 pillar）②改寫排名前 10 但 CTR 0 的 title/meta ③新增 16 篇擴大覆蓋。
+
+### 16 篇新文（DB 排程 07/27–08/11，每日 10:00 自動上線）
+
+| 日期 | slug | 主題 | 集群 | 作者 |
+|---|---|---|---|---|
+| 07/27 | zhi-piao-zen-me-xie | 支票怎麼寫 | 票據民生 | 李誠信 |
+| 07/28 | zhi-piao-yi-shi-gua-shi | 支票遺失/掛失 | 票據民生 | 李誠信 |
+| 07/29 | xin-bao-ji-jin | 信保基金 | 企業融資 G | 張揚 |
+| 07/30 | zhi-piao-ru-zhang-shi-jian | 支票入帳時間 | 票據民生 | 李誠信 |
+| 07/31 | dang-pu-vs-zhi-piao-tie-xian | 當舖 vs 票貼 | 比較決策 | 李誠信 |
+| 08/01 | zhi-piao-ti-shi-qi-xian | 支票提示期限 | 票據民生 | 李誠信 |
+| 08/02 | qing-chuang-dai-kuan | 青年創業貸款 | 企業融資 G | 張揚 |
+| 08/03 | zhi-piao-xie-cuo | 支票寫錯 | 票據民生 | 李誠信 |
+| 08/04 | gong-si-lian-zheng | 公司聯徵 | 企業融資 G | 張揚 |
+| 08/05 | tai-zhi-yin-hang-ben-piao | 台支/銀行本票 | 票據民生 | 李誠信 |
+| 08/06 | fu-ze-ren-xin-yong-dai-kuan | 負責人信用不良 | 企業融資 G | 張揚 |
+| 08/07 | hua-xian-zhi-piao | 劃線支票 | 票據民生 | 李誠信 |
+| 08/08 | fa-piao-rong-zi | 發票融資 | 企業融資 G | 張揚 |
+| 08/09 | can-yin-ye-zi-jin-zhou-zhuan | 餐飲業周轉 | 產業情境 | 張揚 |
+| 08/10 | she-bei-rong-zi | 設備融資 | 企業融資 G | 張揚 |
+| 08/11 | nian-guan-zi-jin-zhou-zhuan | 年關資金 | 產業情境 | 張揚 |
+
+### 同批完成的優化（2026-07-24 部署）
+- 擴寫：zhi-piao-tiao-piao-zen-me-ban（3,156 字，並修正票據刑罰已廢除等過時資訊）、dui-xian-hou-tiao-piao（2,672 字）、zhi-piao-tie-xian-shi-shen-me（3,369 字）、/qi-ye-dai-kuan pillar（+1,109 字：比較表、情境指引、FAQ+3）
+- title/meta 改寫 8 篇：piao-tie-li-lv-hang-qing、zhi-piao-bei-shu、zhi-piao-dui-xian-dang-ri、ji-qi-zhi-piao-dui-xian、zhi-piao-dui-xian-zha-pian ＋ 3 篇移除「| 黃璽理財」雙重品牌尾綴
+- 下次檢視：8 月中旬看 GSC——重點觀察「跳票怎麼辦」「支票貼現」「企業融資」排名變化與新文曝光

@@ -50,6 +50,72 @@ const features = [
   { icon: '🤝', title: '專人評估', desc: '一對一免費諮詢，量身規劃企業資金策略' },
 ]
 
+const channelComparison = [
+  {
+    channel: '銀行企業貸款',
+    speed: '約 1～4 週',
+    review: '需財報、營業與往來紀錄，審核嚴格',
+    collateral: '視方案而定，常需擔保或保證',
+    fit: '體質健全、時間充裕的中長期資金需求',
+    highlight: false,
+  },
+  {
+    channel: '信用貸款',
+    speed: '相對較快',
+    review: '看企業與負責人信用狀況',
+    collateral: '免擔保品',
+    fit: '金額不大、想快速取得的短期週轉金',
+    highlight: false,
+  },
+  {
+    channel: '票據融資（支票貼現／支票貸款）',
+    speed: '最快當日',
+    review: '主看支票與發票人信用，彈性最大',
+    collateral: '以客戶支票為基礎',
+    fit: '手上有客戶支票、急需現金週轉的企業',
+    highlight: true,
+  },
+  {
+    channel: '擔保貸款',
+    speed: '需估價作業，時間中等',
+    review: '看擔保品價值與企業還款能力',
+    collateral: '不動產、設備等資產',
+    fit: '有資產、需要較高額度的企業',
+    highlight: false,
+  },
+  {
+    channel: '應收帳款融資',
+    speed: '中等',
+    review: '看買方信用與帳款品質',
+    collateral: '以應收帳款為基礎',
+    fit: 'B2B 帳期長、想加速回收貨款的企業',
+    highlight: false,
+  },
+]
+
+const scenarios = [
+  {
+    title: '手上有客戶開立的遠期支票，眼前就要付款',
+    answer: '票據融資（支票貼現／支票貸款）',
+    desc: '票貼審核主看支票與發票人信用，對公司財報、成立年限要求彈性，最快當日撥款，是所有企業融資方式中速度最快的一種。',
+  },
+  {
+    title: '要採購設備、擴充產能，金額較大、不急於一時',
+    answer: '銀行企業貸款或擔保貸款',
+    desc: '中長期、大額的資金需求，優先評估利率較低的銀行企業貸款；若有不動產或設備可供擔保，擔保貸款能取得更高額度與較優條件。',
+  },
+  {
+    title: '沒有擔保品、也沒有客票，需要一筆週轉金',
+    answer: '信用貸款',
+    desc: '以企業與負責人信用申請，免擔保品、流程相對簡便，適合金額不大的短期週轉。信用狀況越好，條件越有空間。',
+  },
+  {
+    title: '帳期太長，貨款收得慢、現金卡在應收帳款',
+    answer: '應收帳款融資，或搭配票據融資',
+    desc: 'B2B 帳期長的企業可用應收帳款融資加速回收；若客戶付款方式是開立遠期支票，直接以支票貼現變現往往更快、更單純。',
+  },
+]
+
 const faqs = [
   {
     q: '企業貸款和企業融資有什麼不同？',
@@ -70,6 +136,18 @@ const faqs = [
   {
     q: '申請企業貸款需要準備哪些文件？',
     a: '基本包含公司登記文件、負責人身分證明；依方案不同可能需要財務資料、擔保品文件或支票正本。實際文件清單請洽詢專員，我們提供免費評估。',
+  },
+  {
+    q: '企業融資的額度大概怎麼評估？',
+    a: '不同管道的評估基礎不同：銀行企業貸款主要看營業額、財報與還款能力；擔保貸款看擔保品價值；票據融資則以支票票面金額為基礎，扣除貼現費用後即為實拿金額。實際額度依審核結果而定，建議先免費諮詢評估。',
+  },
+  {
+    q: '公司或負責人信用有瑕疵，還能申請企業融資嗎？',
+    a: '不一定沒機會。銀行貸款對信用紀錄要求較高，但票據融資審核的重心是「支票發票人」的信用，而非持票公司本身，因此就算公司信用條件較弱，只要手上有信用良好的客戶支票，仍有機會取得週轉資金。',
+  },
+  {
+    q: '企業貸款利率和票據融資費率怎麼比較？',
+    a: '銀行企業貸款以年利率計，成本相對低但審核與撥款時間較長；票據融資一般以月費率計，適合短期週轉，優勢在速度與彈性。建議依資金的「使用期間」選擇：長期資金找銀行貸款，短期缺口用票據融資，必要時兩者搭配運用。實際利率與費率依各機構審核為準。',
   },
 ]
 
@@ -253,6 +331,51 @@ export default function QiYeDaiKuanPage() {
         </div>
       </section>
 
+      {/* 企業融資管道比較表 */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold text-[#0D2B5E] mb-3 text-center">企業融資管道比較表</h2>
+          <p className="text-gray-500 text-center mb-10">五種常見企業貸款與融資方式，速度、審核重點、適用情境一次看</p>
+          <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm bg-white">
+            <table className="w-full text-sm text-left">
+              <thead>
+                <tr className="text-white" style={{ backgroundColor: '#0E4D52' }}>
+                  <th className="px-4 py-3 font-semibold whitespace-nowrap">融資管道</th>
+                  <th className="px-4 py-3 font-semibold whitespace-nowrap">撥款速度</th>
+                  <th className="px-4 py-3 font-semibold">審核重點</th>
+                  <th className="px-4 py-3 font-semibold">擔保基礎</th>
+                  <th className="px-4 py-3 font-semibold">適合情境</th>
+                </tr>
+              </thead>
+              <tbody>
+                {channelComparison.map((c) => (
+                  <tr
+                    key={c.channel}
+                    className={`border-t border-gray-100 ${c.highlight ? 'bg-[#F0F9F8]' : 'bg-white'}`}
+                  >
+                    <td className="px-4 py-3 font-semibold text-[#0D2B5E]">
+                      {c.channel}
+                      {c.highlight && (
+                        <span className="ml-2 text-xs text-white px-2 py-0.5 rounded-full whitespace-nowrap" style={{ backgroundColor: '#0E4D52' }}>
+                          最快
+                        </span>
+                      )}
+                    </td>
+                    <td className={`px-4 py-3 whitespace-nowrap ${c.highlight ? 'font-bold text-[#0E4D52]' : 'text-gray-600'}`}>{c.speed}</td>
+                    <td className="px-4 py-3 text-gray-600">{c.review}</td>
+                    <td className="px-4 py-3 text-gray-600">{c.collateral}</td>
+                    <td className="px-4 py-3 text-gray-600">{c.fit}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs text-gray-400 mt-4 text-center">
+            上表為一般實務概況，實際速度、條件與利率費率依各機構審核結果而定，僅供評估方向參考。
+          </p>
+        </div>
+      </section>
+
       {/* Cross-sell to check services */}
       <section className="py-16 px-4" style={{ backgroundColor: '#0D2B5E' }}>
         <div className="max-w-4xl mx-auto text-center text-white">
@@ -277,6 +400,32 @@ export default function QiYeDaiKuanPage() {
               了解支票貸款 →
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* 不同情境該選哪種企業融資 */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold text-[#0D2B5E] mb-3 text-center">不同情境該選哪種企業融資？</h2>
+          <p className="text-gray-500 text-center mb-10">
+            企業貸款沒有標準答案，依「資金急迫度、手上資源、使用期間」對號入座最快
+          </p>
+          <div className="grid md:grid-cols-2 gap-6">
+            {scenarios.map((s) => (
+              <div key={s.title} className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+                <p className="text-sm text-gray-500 mb-2">情境</p>
+                <h3 className="font-bold text-[#0D2B5E] mb-3 leading-relaxed">{s.title}</h3>
+                <p className="text-sm font-semibold text-[#0E4D52] mb-2">
+                  建議方向：{s.answer}
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-gray-600 text-sm leading-relaxed max-w-3xl mx-auto mt-8 text-center">
+            實務上，許多中小企業會把不同的企業融資工具搭配使用：長期投資走銀行企業貸款、短期缺口用票據融資補位，
+            讓資金成本與取得速度取得平衡。若不確定自己的狀況適合哪種組合，歡迎免費諮詢，由顧問協助評估。
+          </p>
         </div>
       </section>
 
