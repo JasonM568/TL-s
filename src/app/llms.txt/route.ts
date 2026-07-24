@@ -6,11 +6,11 @@ import { SITE_URL, SITE_NAME, SITE_TAGLINE, LINE_ADD_URL } from '@/lib/site'
 // ISR：DB 排程文章到點後自動進索引（與 sitemap.ts 一致）
 export const revalidate = 120
 
-const SERVICE_PAGES: Array<[string, string]> = [
-  ['/zhi-piao-tie-xian', '支票貼現——持有未到期支票提前變現，當日撥款'],
-  ['/zhi-piao-dui-xian', '支票兌現——各類支票快速兌現服務'],
-  ['/zhi-piao-dai-kuan', '支票貸款——以支票為憑據的短期融資'],
-  ['/qi-ye-dai-kuan', '企業貸款・企業融資——中小企業資金管道總覽'],
+const SERVICE_PAGES: Array<[string, string, string?]> = [
+  ['/zhi-piao-tie-xian', '支票貼現', '持有未到期支票提前變現，當日撥款'],
+  ['/zhi-piao-dui-xian', '支票兌現', '各類支票快速兌現服務'],
+  ['/zhi-piao-dai-kuan', '支票貸款', '以支票為憑據的短期融資'],
+  ['/qi-ye-dai-kuan', '企業貸款・企業融資', '中小企業資金管道總覽'],
   ['/fei-lv-ji-suan', '費率試算工具'],
   ['/faq', '常見問題'],
   ['/ming-ci-jie-shi', '票據金融名詞解釋'],
@@ -35,7 +35,7 @@ export async function GET() {
     '',
     '## 服務頁',
     '',
-    ...SERVICE_PAGES.map(([path, note]) => `- [${note.split('——')[0]}](${SITE_URL}${path})：${note}`),
+    ...SERVICE_PAGES.map(([path, label, note]) => `- [${label}](${SITE_URL}${path})${note ? `：${note}` : ''}`),
     '',
     `## 文章（共 ${articles.length} 篇，全文純文字版：${SITE_URL}/llms-full.txt）`,
   ]
