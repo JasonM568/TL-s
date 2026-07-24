@@ -5,6 +5,37 @@
 
 ---
 
+## 2026-07-24
+
+**AI 爬蟲抓取修復（Cloudflare）**
+- 發現 Cloudflare「受管理的 robots.txt」在檔案頂部注入 Managed Content，把 Google-Extended/GPTBot/ClaudeBot/CCBot 等全部 `Disallow: /`，與自家 `robots.ts` 的 Allow 規則打架——這是 AI 爬蟲抓取被擋的主因。Jason 已在 Cloudflare 關閉該功能，線上 robots.txt 恢復乾淨（已驗證）。
+- 決策：目標是衝 AI 曝光，故全開；若日後想擋純訓練爬蟲（CCBot/Bytespider），在 `robots.ts` 自行控制，不再開 Cloudflare 管理功能。
+
+**GSC 數據分析（前 28 天：75 點擊 / 4,370 曝光）**
+- 曝光 7/5 起翻 6–8 倍（日 30-45 → 150-350），策略正在生效；DB 排程文〈票期計算〉上線數日即成全站點擊第一（排名 7）。
+- 瓶頸：①「跳票」字群（合計曝光 136）卡第 3-5 頁，對應舊薄文；②多個字排名前 10 但 CTR 0（title 不吸引人）；③「支票貼現」頭部字卡第一二頁交界（10.4）。
+
+**內容三步優化（依數據執行，commit 9d42a2c）**
+- 擴寫 4 篇：跳票攻略（3,156 字，修正「票據刑罰已廢除」等過時資訊）、兌現後跳票（2,672 字）、支票貼現是什麼（3,369 字）、/qi-ye-dai-kuan pillar +1,109 字（比較表/情境指引/FAQ+3）。
+- title/meta 改寫 8 篇：5 篇把零點擊查詢字（即期票是什麼、票貼行情、申請支票要多久、支票兌現詐騙、禁背支票）佈進標題；3 篇移除「| 黃璽理財」雙重品牌尾綴（線上實測會變成「…| 黃璽理財 | 黃璽理財管理顧問」）。
+- 16 篇新文（每篇 2,400–3,000 字）：票據民生 7（支票怎麼寫/遺失/入帳/提示期限/寫錯/台支/劃線）+ 企業融資 6（信保基金/青創/聯徵/負責人信用/發票融資/設備融資）+ 情境比較 3（當舖 vs 票貼/餐飲業/年關）。JSON 在 `scripts/drafts-batch2/`（gitignore），已 seed 進 Supabase 並排程 **07/27–08/11 每日 10:00**。發文佇列從 7/26 斷稿延長到 8/11。
+- 決策：民生高搜量字（支票怎麼寫等）搜量是票貼字數倍，用來衝曝光；企業融資群集餵 pillar 權威；擴寫優先於加量（81 篇已夠多，薄才是問題）。
+
+**AEO：llms.txt + llms-full.txt**
+- Jason 提議做「隱藏英文版」給 AI 爬蟲；評估後否決（cloaking，Google 垃圾內容政策風險；中文問句用不到英文版），改做正規方案：`/llms.txt`（全站索引：服務頁 + 79 篇文章分類清單）+ `/llms-full.txt`（全部已發布文章的 Markdown 全文，含來源 URL/作者/日期）。兩者 ISR 120 秒，排程未發布文章不會提前洩漏（已驗證）。新增 `src/lib/article-markdown.ts`（Block→Markdown）。
+
+**雜項**
+- 修正記憶筆記過時資訊（曾誤稱站上聯絡資訊是 placeholder，實際 7/1 已補齊）。
+- GSC 匯出 zip 與 .DS_Store 移出版控，`.gitignore` 加 `docs/*.zip`、`.DS_Store`。
+
+**未完成 / 待辦**
+- 8 月中旬回看 GSC：「跳票怎麼辦」「支票貼現」「企業融資」排名與新文曝光；Cloudflare AI Crawl Control 看 /llms.txt 抓取量。
+- 尚有 ~60 篇舊靜態文平均僅 1,200 字，可依 GSC 數據分批擴寫。
+- Vercel Web Analytics 未開通（開了 Claude 可直接查瀏覽數）。
+- Google 商家檔案、Bing/IndexNow 仍未做（沿用舊待辦）。
+
+---
+
 ## 2026-07-14
 
 **聯絡電話更正**
