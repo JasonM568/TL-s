@@ -8,3 +8,4 @@ tsconfig.tsbuildinfo
 scripts/drafts/*.json
 scripts/drafts-batch2/*.json
 .DS_Store
+docs/*.zip
