@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer style={{ backgroundColor: '#0D2B5E' }} className="text-white">
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-3">黃璽理財管理顧問</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
@@ -23,6 +23,15 @@ export default function Footer() {
               <li><Link href="/articles" className="hover:text-white transition-colors">知識專欄</Link></li>
               <li><Link href="/faq" className="hover:text-white transition-colors">常見問題</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">聯絡我們</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-3 text-[#C9922A]">服務地區</h4>
+            <ul className="space-y-2 text-sm text-gray-300">
+              <li><Link href="/gaoxiong-zhi-piao-tie-xian" className="hover:text-white transition-colors">高雄支票貼現</Link></li>
+              <li><Link href="/gaoxiong-piao-tie" className="hover:text-white transition-colors">高雄票貼</Link></li>
+              <li className="text-gray-400">服務範圍：高雄・台南・屏東</li>
             </ul>
           </div>
 

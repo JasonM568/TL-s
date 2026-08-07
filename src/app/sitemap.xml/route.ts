@@ -21,6 +21,8 @@ const STATIC_PAGES: Entry[] = [
   { url: `${SITE_URL}/zhi-piao-dai-kuan`, changefreq: 'monthly', priority: '0.9' },
   { url: `${SITE_URL}/zhi-piao-dui-xian`, changefreq: 'monthly', priority: '0.9' },
   { url: `${SITE_URL}/qi-ye-dai-kuan`, changefreq: 'monthly', priority: '0.9' },
+  { url: `${SITE_URL}/gaoxiong-zhi-piao-tie-xian`, changefreq: 'monthly', priority: '0.9' },
+  { url: `${SITE_URL}/gaoxiong-piao-tie`, changefreq: 'monthly', priority: '0.9' },
   { url: `${SITE_URL}/articles`, changefreq: 'weekly', priority: '0.8' },
   { url: `${SITE_URL}/faq`, changefreq: 'monthly', priority: '0.7' },
   { url: `${SITE_URL}/ming-ci-jie-shi`, changefreq: 'monthly', priority: '0.7' },

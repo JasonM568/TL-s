@@ -11,6 +11,8 @@ const SERVICE_PAGES: Array<[string, string, string?]> = [
   ['/zhi-piao-dui-xian', '支票兌現', '各類支票快速兌現服務'],
   ['/zhi-piao-dai-kuan', '支票貸款', '以支票為憑據的短期融資'],
   ['/qi-ye-dai-kuan', '企業貸款・企業融資', '中小企業資金管道總覽'],
+  ['/gaoxiong-zhi-piao-tie-xian', '高雄支票貼現', '高雄在地辦理，服務高雄台南屏東'],
+  ['/gaoxiong-piao-tie', '高雄票貼', '銀行/當鋪/民間管道比較與在地服務'],
   ['/fei-lv-ji-suan', '費率試算工具'],
   ['/faq', '常見問題'],
   ['/ming-ci-jie-shi', '票據金融名詞解釋'],

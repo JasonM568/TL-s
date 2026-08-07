@@ -162,6 +162,108 @@ export default function FeiLvJiSuanPage() {
             </p>
           </div>
 
+          {/* 計算邏輯說明 */}
+          <div className="mt-10 bg-white border border-gray-100 rounded-2xl shadow-sm p-8">
+            <h2 className="text-xl font-bold text-[#0D2B5E] mb-4">貼現手續費是怎麼算出來的？</h2>
+            <div className="space-y-4 text-gray-600 text-sm leading-relaxed">
+              <p>
+                支票貼現的本質是「用時間換現金」：你提前拿到票款，業者承擔等待票期與兌現的風險，
+                手續費（俗稱貼現息）就是這段時間的資金成本。計算只有一條公式：
+              </p>
+              <div className="bg-[#F0F4FF] rounded-xl p-5 text-center font-bold text-[#0D2B5E]">
+                手續費 ＝ 票面金額 × 月費率 × 票期月數（票期天數 ÷ 30）
+              </div>
+              <p>
+                <strong className="text-gray-800">到手金額 ＝ 票面金額 − 手續費</strong>。
+                注意三個實務細節：一、票期以「今天到支票發票日（到期日）」的實際天數計算，
+                不是整月起跳；二、月費率是「月」費率，換算年利率要乘以 12，
+                比較不同管道成本時務必統一單位；三、正派業者的報價就是這條公式算出來的數字，
+                若簽約時多出「開辦費」「帳管費」「保證金」等名目，請提高警覺。
+              </p>
+              <p>
+                費率高低由三個因素決定，影響力依序是：
+                <strong className="text-gray-800">發票人信用</strong>（票信正常與否、過往兌現紀錄）、
+                <strong className="text-gray-800">票期長短</strong>（越長風險越高）、
+                <strong className="text-gray-800">票面金額</strong>（大額票單位成本較低）。
+                這也是為什麼同一家公司的兩張票，報價可能不同。
+              </p>
+            </div>
+          </div>
+
+          {/* 三種情境實例 */}
+          <div className="mt-8 bg-white border border-gray-100 rounded-2xl shadow-sm p-8">
+            <h2 className="text-xl font-bold text-[#0D2B5E] mb-6">三種常見情境試算</h2>
+            <div className="space-y-5">
+              <div className="border-l-4 pl-4 py-1" style={{ borderColor: '#C9922A' }}>
+                <h3 className="font-bold text-gray-800 text-sm mb-1">情境一：短票期、大金額（貿易貨款）</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  票面 200 萬、票期 45 天、月費率 1.5%。
+                  手續費 = 200 萬 × 1.5% × 1.5 個月 = 4.5 萬，<strong className="text-gray-800">到手約 195.5 萬</strong>。
+                  短票期的總成本低，是最划算的貼現情境。
+                </p>
+              </div>
+              <div className="border-l-4 pl-4 py-1" style={{ borderColor: '#C9922A' }}>
+                <h3 className="font-bold text-gray-800 text-sm mb-1">情境二：標準票期（製造業客票）</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  票面 100 萬、票期 90 天、月費率 2%。
+                  手續費 = 100 萬 × 2% × 3 個月 = 6 萬，<strong className="text-gray-800">到手約 94 萬</strong>。
+                  90 天是台灣商業票據最常見的票期，此區間的報價競爭也最透明。
+                </p>
+              </div>
+              <div className="border-l-4 pl-4 py-1" style={{ borderColor: '#C9922A' }}>
+                <h3 className="font-bold text-gray-800 text-sm mb-1">情境三：長票期（工程尾款票）</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  票面 150 萬、票期 180 天、月費率 2.5%。
+                  手續費 = 150 萬 × 2.5% × 6 個月 = 22.5 萬，<strong className="text-gray-800">到手約 127.5 萬</strong>。
+                  長票期手續費總額明顯偏高，建議評估「部分貼現」——只貼現在需要的金額，
+                  其餘票款等到期兌現，降低整體成本。
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-gray-400 mt-5">※ 以上為公式示範，非報價；實際費率依個別案件評估結果為準。</p>
+          </div>
+
+          {/* 市場行情 */}
+          <div className="mt-8 bg-white border border-gray-100 rounded-2xl shadow-sm p-8">
+            <h2 className="text-xl font-bold text-[#0D2B5E] mb-4">目前市場費率區間參考</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b-2 border-gray-100 text-left text-gray-500">
+                    <th className="py-3 pr-4 font-semibold">管道</th>
+                    <th className="py-3 pr-4 font-semibold">常見費率水準</th>
+                    <th className="py-3 font-semibold">備註</th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-600">
+                  <tr className="border-b border-gray-50">
+                    <td className="py-3 pr-4 font-medium text-gray-800">銀行票貼</td>
+                    <td className="py-3 pr-4">年利率約 3%～8%</td>
+                    <td className="py-3">成本最低，但需財報審查、額度受限、3～7 個工作天</td>
+                  </tr>
+                  <tr className="border-b border-gray-50">
+                    <td className="py-3 pr-4 font-medium text-gray-800">民間票貼</td>
+                    <td className="py-3 pr-4">月費率約 1.5%～3%</td>
+                    <td className="py-3">看發票人信用，最快當日撥款；本公司屬此類</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 pr-4 font-medium text-gray-800">當鋪收票</td>
+                    <td className="py-3 pr-4">依當舖業法計息</td>
+                    <td className="py-3">以質當邏輯計價，多為極短期小額週轉</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-gray-600 text-sm leading-relaxed mt-4">
+              提醒：費率不是唯一的比較基準。「報價是否書面、有無隱藏費用、是否當面核票對保」
+              這些交易安全因素，比差零點幾個百分點的費率更重要。
+              管道差異的完整比較見
+              <Link href="/gaoxiong-piao-tie" className="text-[#0D2B5E] underline underline-offset-2 mx-1">高雄票貼管道指南</Link>，
+              行情變化見
+              <Link href="/articles/piao-tie-li-lv-hang-qing" className="text-[#0D2B5E] underline underline-offset-2 mx-1">票貼利率行情</Link>。
+            </p>
+          </div>
+
           {/* CTA */}
           <div className="mt-8 rounded-xl p-8 text-center text-white" style={{ backgroundColor: '#0D2B5E' }}>
             <h2 className="text-lg font-bold mb-2">想知道您的票實際費率？</h2>

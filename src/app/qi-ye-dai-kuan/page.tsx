@@ -276,7 +276,9 @@ export default function QiYeDaiKuanPage() {
                 </p>
                 <p>
                   我們不綁單一產品，而是依您的企業狀況、手上資源與資金急迫程度，
-                  媒合最合適的企業融資方案。
+                  媒合最合適的企業融資方案。基礎概念可先讀
+                  <Link href="/articles/qi-ye-rong-zi-shi-shen-me" className="text-[#0D2B5E] underline underline-offset-2 mx-1">企業融資是什麼</Link>與
+                  <Link href="/articles/qi-ye-dai-kuan-shen-qing" className="text-[#0D2B5E] underline underline-offset-2 mx-1">企業貸款申請攻略</Link>。
                 </p>
               </div>
             </div>
@@ -425,7 +427,11 @@ export default function QiYeDaiKuanPage() {
           </div>
           <p className="text-gray-600 text-sm leading-relaxed max-w-3xl mx-auto mt-8 text-center">
             實務上，許多中小企業會把不同的企業融資工具搭配使用：長期投資走銀行企業貸款、短期缺口用票據融資補位，
-            讓資金成本與取得速度取得平衡。若不確定自己的狀況適合哪種組合，歡迎免費諮詢，由顧問協助評估。
+            讓資金成本與取得速度取得平衡。管道細節可延伸閱讀
+            <Link href="/articles/yin-hang-qi-ye-dai-kuan-vs-min-jian" className="text-[#0D2B5E] underline underline-offset-2 mx-1">銀行 vs 民間企業貸款</Link>、
+            <Link href="/articles/xin-bao-ji-jin" className="text-[#0D2B5E] underline underline-offset-2 mx-1">信保基金申請</Link>、
+            <Link href="/articles/ying-shou-zhang-kuan-rong-zi" className="text-[#0D2B5E] underline underline-offset-2 mx-1">應收帳款融資</Link>。
+            若不確定自己的狀況適合哪種組合，歡迎免費諮詢，由顧問協助評估。
           </p>
         </div>
       </section>
@@ -443,6 +449,9 @@ export default function QiYeDaiKuanPage() {
             ))}
             <p className="text-sm text-gray-500 mt-6 text-center">
               不確定是否符合條件？歡迎免費諮詢，我們依您的狀況提供個別評估。
+              公司信用狀況的自我檢查可參考
+              <Link href="/articles/gong-si-lian-zheng" className="text-[#0D2B5E] underline underline-offset-2 mx-1">公司聯徵報告解讀</Link>與
+              <Link href="/articles/fu-ze-ren-xin-yong-dai-kuan" className="text-[#0D2B5E] underline underline-offset-2 mx-1">負責人信用的影響</Link>。
             </p>
           </div>
         </div>
