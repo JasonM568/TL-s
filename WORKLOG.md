@@ -13,7 +13,13 @@
 - **[P1-3] 服務頁擴充**：tie-xian 加必備文件（逐項為什麼）/當日撥款時程表/可辦不可辦清單/銀行當鋪三方比較表/FAQ 5→9、內文 10 條連結；dai-kuan 加三種還款方式/貸款vs貼現情境示例/FAQ 4→9；fei-lv-ji-suan 加計算邏輯推導/三情境試算/市場費率區間表（767→2,500+ 字元）；qi-ye-dai-kuan 補 7 條內文文章連結（原本 0 條）。
 - **[P2-2] 第一批 5 篇薄文重寫**（原地保留 URL、updated=2026-08-07）：duo-zhang-zhi-piao-tie-xian（704→3,055）、zhi-piao-tie-xian-feng-xian（722→3,011）、min-jian-piao-tie（783→3,000）、ke-piao-tie-xian（844→3,001）、he-fa-piao-tie-ye-zhe（874→3,006）。每篇 H2 改真實問句＋緊接答案句、含本站獨有實務段（分票計費 vs 加權費率、跳票後時間線、七問電話檢查法、客票分級表、收票習慣管理）、FAQ 擴至 5-8 題。
 - 盤點備忘：靜態 31 篇裡 <2,000 字元的遠多於稽核估的 20 篇（含支票兌現系列多篇 900-1,300）。下批建議：di-yi-ci-piao-tie、zhi-piao-tie-xian-shou-xu-fei、yuan-qi-zhi-piao-tie-xian、tui-piao-ji-lu、piao-tie-li-lv-hang-qing。
-- 建置驗證：114 頁全過、兩在地頁 canonical/schema 正確、sitemap 106 URL、llms.txt 同步。**尚未部署**（等 Jason 授權或自行跑 `vercel deploy --prod`）。
+- 建置驗證：114 頁全過、兩在地頁 canonical/schema 正確、sitemap 106 URL、llms.txt 同步。
+
+**GSC 年度數據分析 + 舊網址 301 修復 + 部署（同日第三批）**
+- Jason 匯出 GSC 一年成效（365 天：292 點擊/16,433 曝光）。關鍵發現：①週曝光 6 週 ×7（W23 169→W32 2,802），策略生效中；②「支票貼現」曝光 1,014 次但 /zhi-piao-tie-xian 頁全年僅 7 次曝光——canonical 傷害被數據證實；③在地詞 0 筆；④**126 個舊 WordPress 網址仍在索引、年曝光 7,000+、全部 404**（稽核建議書未發現）。
+- 修復：`src/lib/legacy-redirects.ts` 126 條 301 按主題對應（貼現/貸款/發票融資/企業融資/知識庫），中文網址 percent-encoding。基準快照存 `docs/gsc-baseline-2026-08-07.md`（含 CTR=0 title 改寫候選 12 字）。
+- Supermetrics MCP 已連 GSC（sc-domain:huangxi.tw）但免費試用過期無法查數，之後用 GSC 匯出 CSV 或 Windsor.ai。
+- **已部署正式站**（Jason 授權）：在地頁 200、舊網址 308 兩段轉址到位、sitemap 106 URL、重寫文 wordCount 上線。待 Jason：GSC 重新提交 sitemap + 5 個修正頁「要求建立索引」。
 
 **SEO 稽核工程項目修復（依 OPZ/黃璽理財_SEO優化建議書）**
 - 收到惠邦行銷 SEO 稽核建議書（健康分數 56/100，見 `OPZ/`），本次先修完全部「純工程」項目：
