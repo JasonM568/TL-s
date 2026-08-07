@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import { legacyRedirects } from './src/lib/legacy-redirects'
 
 const nextConfig: NextConfig = {
   // 舊 WordPress 網址 301 轉址到新站對應頁面（保留 SEO 權重、避免使用者撲空）
@@ -19,6 +20,8 @@ const nextConfig: NextConfig = {
         destination: '/zhi-piao-tie-xian',
         permanent: true,
       },
+      // 其餘 126 條舊 WordPress 網址（GSC 實測仍有曝光者）→ 對應主題頁
+      ...legacyRedirects,
     ]
   },
   // 金融類網站信任面加分項：資安檢測工具與企業客戶 IT 稽核會查驗
