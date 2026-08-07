@@ -5,6 +5,7 @@ import { SITE_URL, SITE_NAME } from '@/lib/site'
 export const metadata: Metadata = {
   title: '支票貸款 | 支票擔保企業融資',
   description: '支票貸款服務，以企業持有支票作為擔保，取得所需資金。額度彈性、審核快速。了解支票貸款條件、流程，立即免費諮詢。',
+  alternates: { canonical: `${SITE_URL}/zhi-piao-dai-kuan` },
 }
 
 const compareItems = [

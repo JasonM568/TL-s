@@ -35,7 +35,6 @@ export const metadata: Metadata = {
   },
   description: '專業企業融資服務，支票貼現、支票貸款快速審核，協助中小企業解決資金周轉問題。24小時諮詢，最快當日撥款。',
   keywords: ['支票貸款', '支票貼現', '企業融資', '票貼', '企業周轉金', '支票融資', '遠期支票貸款', '支票借款'],
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'zh_TW',

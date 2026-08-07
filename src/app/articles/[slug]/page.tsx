@@ -49,12 +49,24 @@ export default async function ArticlePage({ params }: Props) {
     .sort((a) => (a.category === article.category ? -1 : 1))
     .slice(0, 3)
 
+  // 正文純文字字數（標題 + 段落 + 列表 + FAQ）
+  const wordCount = [
+    article.h1,
+    ...article.content.map((b) =>
+      'text' in b ? b.text : 'items' in b ? b.items.join('') : ''
+    ),
+    ...(article.faqs ?? []).flatMap((f) => [f.q, f.a]),
+  ].join('').length
+
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.h1,
     description: article.description,
     keywords: article.keywords.join(', '),
+    articleSection: article.category,
+    wordCount,
+    inLanguage: 'zh-TW',
     datePublished: article.date,
     dateModified: article.updated ?? article.date,
     author: {

@@ -4,6 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: '支票貸款・支票貼現 | 企業資金周轉首選 | 黃璽理財管理顧問',
   description: '支票貼現、支票貸款專業服務。遠期支票快速換現金，最快24小時內審核撥款。中小企業資金周轉首選，安全合法，費率透明。立即免費諮詢。',
+  alternates: { canonical: '/' },
 }
 
 const stats = [
@@ -119,7 +120,14 @@ export default function HomePage() {
               opens: '09:00',
               closes: '18:00',
             },
-            areaServed: { '@type': 'Country', name: 'Taiwan', alternateName: '台灣' },
+            areaServed: [
+              { '@type': 'City', name: '高雄市' },
+              { '@type': 'City', name: '台南市' },
+              { '@type': 'AdministrativeArea', name: '屏東縣' },
+            ],
+            priceRange: '$$',
+            hasMap: 'https://www.google.com/maps/search/?api=1&query=高雄市新興區民權一路251號21樓',
+            sameAs: ['https://lin.ee/Qw6v7OD'],
             knowsAbout: ['支票貼現', '票貼', '支票貸款', '企業融資', '企業貸款', '票據融資', '企業資金周轉'],
             hasOfferCatalog: {
               '@type': 'OfferCatalog',
@@ -155,6 +163,22 @@ export default function HomePage() {
               ],
             },
             serviceType: ['支票貼現', '支票貸款', '企業貸款', '企業融資'],
+          }),
+        }}
+      />
+      {/* JSON-LD：WebSite 實體（與 #organization 串接） */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            '@id': 'https://huangxi.tw/#website',
+            name: '黃璽理財管理顧問',
+            alternateName: '黃璽票貼',
+            url: 'https://huangxi.tw',
+            inLanguage: 'zh-TW',
+            publisher: { '@id': 'https://huangxi.tw/#organization' },
           }),
         }}
       />

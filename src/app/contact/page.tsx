@@ -1,16 +1,19 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
-import { LINE_ADD_URL } from '@/lib/site'
+import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
+import { LINE_ADD_URL, SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '聯絡我們 | 免費諮詢支票貸款・支票貼現',
   description: '立即聯絡黃璽理財管理顧問，免費諮詢支票貼現、支票貸款服務。電話：0982-691803，週一至週五 09:00-18:00。',
+  alternates: { canonical: `${SITE_URL}/contact` },
 }
 
 export default function ContactPage() {
   return (
     <>
+      <BreadcrumbJsonLd name="聯絡我們" path="/contact" />
       {/* Hero */}
       <section style={{ backgroundColor: '#0D2B5E' }} className="text-white py-16 px-4">
         <div className="max-w-6xl mx-auto">

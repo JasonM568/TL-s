@@ -5,7 +5,17 @@
 
 ---
 
-## 2026-07-31
+## 2026-08-07
+
+**SEO 稽核工程項目修復（依 OPZ/黃璽理財_SEO優化建議書）**
+- 收到惠邦行銷 SEO 稽核建議書（健康分數 56/100，見 `OPZ/`），本次先修完全部「純工程」項目：
+- **[P0-1] canonical 修正**：根因是 `layout.tsx` 全站 `alternates.canonical: '/'`，未自行宣告的頁面（tie-xian/dai-kuan/qi-ye/faq/contact 共 5 頁）全部繼承指向首頁，把商業頁排名資格讓渡給首頁。修法：5 頁各自補 canonical；並把 layout 的 canonical 移到首頁 `page.tsx`，杜絕未來新頁再犯。
+- **[P1-1] sitemap ISR 失效修復**：`app/sitemap.ts`（metadata route）的 `revalidate = 120` 在正式站未生效，sitemap 凍結在 7/31 build 時間（87 篇 vs llms.txt 94 篇，7 篇 8 月 DB 排程文進不了索引）。改寫為 `app/sitemap.xml/route.ts` route handler（與 llms.txt 同模式、同 `getAllArticles()` 資料源），lastmod 改用文章真實日期、靜態頁不再用 build 當下時間充數。本地驗證 104 URL（10 靜態 + 94 文章）。
+- **[P1-2] www 301**：next.config 加 host 條件轉址 `www.huangxi.tw/* → 301 → huangxi.tw/$1`（原本 www 回 200 雙網址並存）。
+- **[P2-6] 安全標頭**：X-Content-Type-Options / X-Frame-Options / Referrer-Policy。
+- **[P1-7] Schema 補強**：首頁新增 WebSite schema（@id 串 #organization）；FinancialService 補 priceRange/hasMap/sameAs(LINE)、areaServed 由 Country 改為高雄/台南/屏東（配合在地 SEO 方向）；Article schema 補 articleSection/wordCount/inLanguage；contact 補 BreadcrumbList（其餘頁面本來就有——稽核說服務頁缺 BreadcrumbList/HowTo 與現況不符，實際已存在）。
+- **待使用者提供才能做**：統編/負責人/成立年份（P0-2 關於我們頁 + schema taxID）、Google 商家檔案（P0-3）、辦公室與團隊照片（P2-1）、市話（P1-6）、logo 圖檔（public/ 目前是空的）。內容類（在地頁 P0-4、服務頁擴寫 P1-3、作者頁 P1-4）另行安排。
+- 部署後續：GSC 對 5 頁跑「即時網址測試」+ 重新提交 sitemap（需 Jason 操作）。
 
 **以票交所官方 FAQ 擴寫跳票文與票信查詢文**
 - 爬取台灣票據交換所「票信查詢常見問答」（twnch.org.tw/inqService05.html，34 題）存進 `docs/references/twnch-faq-inqService05.md`，作為票據主題的官方佐證來源庫。
