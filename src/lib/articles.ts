@@ -10,6 +10,8 @@ export type Block =
   | { type: 'callout'; text: string }
   // 內部連結區塊：以關鍵字錨點連向金錢頁或其他文章
   | { type: 'related'; href: string; label: string; note: string }
+  // 法規依據區塊：連向票據交換所、全國法規資料庫等官方來源（外部連結、新分頁開啟）
+  | { type: 'source'; href: string; label: string; note?: string }
 
 export type Article = {
   slug: string

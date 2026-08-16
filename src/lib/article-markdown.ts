@@ -18,6 +18,8 @@ function blockToMarkdown(b: Block): string {
       return `> ${b.text}`
     case 'related':
       return `→ [${b.label}](${SITE_URL}${b.href})：${b.note}`
+    case 'source':
+      return `法規依據：[${b.label}](${b.href})${b.note ? `　${b.note}` : ''}`
   }
 }
 

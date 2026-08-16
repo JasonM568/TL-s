@@ -41,7 +41,7 @@ function staticSlugs() {
   return set
 }
 
-const BLOCK_TYPES = new Set(['p', 'h2', 'h3', 'ul', 'ol', 'callout', 'related'])
+const BLOCK_TYPES = new Set(['p', 'h2', 'h3', 'ul', 'ol', 'callout', 'related', 'source'])
 function validate(a, staticSet) {
   const errs = []
   for (const f of ['slug', 'title', 'h1', 'description', 'category', 'excerpt', 'content']) {
@@ -54,6 +54,7 @@ function validate(a, staticSet) {
       if (!BLOCK_TYPES.has(b?.type)) errs.push(`content[${i}] type 非法：${b?.type}`)
       if ((b?.type === 'ul' || b?.type === 'ol') && !Array.isArray(b.items)) errs.push(`content[${i}] 缺 items`)
       if (b?.type === 'related' && !b.href) errs.push(`content[${i}] related 缺 href`)
+      if (b?.type === 'source' && !/^https?:\/\//.test(b.href || '')) errs.push(`content[${i}] source 需絕對網址`)
     })
   if (staticSet.has(a.slug)) errs.push(`slug 與靜態文章撞名（會被忽略）：${a.slug}`)
   return errs

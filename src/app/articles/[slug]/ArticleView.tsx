@@ -67,6 +67,25 @@ export function renderBlock(block: Block, i: number) {
           <span className="text-[#C9922A] text-xl shrink-0 group-hover:translate-x-1 transition-transform">→</span>
         </Link>
       )
+    case 'source':
+      return (
+        <a
+          key={i}
+          href={block.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group my-6 flex items-start justify-between gap-4 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-5 hover:border-[#0D2B5E] hover:bg-white transition-all"
+        >
+          <div>
+            <p className="text-xs text-gray-400 mb-1">法規依據・官方來源</p>
+            <p className="font-bold text-[#0D2B5E] underline decoration-gray-300 underline-offset-4 group-hover:decoration-[#C9922A]">
+              {block.label}
+            </p>
+            {block.note && <p className="text-sm text-gray-500 mt-1">{block.note}</p>}
+          </div>
+          <span className="text-gray-400 text-lg shrink-0 group-hover:text-[#C9922A] transition-colors">↗</span>
+        </a>
+      )
   }
 }
 
