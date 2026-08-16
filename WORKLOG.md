@@ -5,6 +5,41 @@
 
 ---
 
+## 2026-08-17
+
+**排程佇列盤點：發現斷稿 4 天**
+- 開工先查排程進度（`git fetch` 確認與 origin/main 同步在 45a5b9b、tree 乾淨）。Supabase MCP 這次回 `permission denied`，改寫臨時 node 腳本用 `huangxi_list_articles` RPC 直查（`.env.local` 載入方式抄 seed-articles.mjs）。
+- 結果：33 篇 scheduled **全部已到點**、未來待發 0、draft 0 → **08/14–08/17 斷稿 4 天**（第三批只排到 08/13）。HANDOFF 原記載「30 篇排到 08/11」也不正確（漏了第三批 3 篇）。
+
+**第四批 14 篇：選題 + 產稿 + 排程 08/18–08/31**
+- 選題依 `docs/serp-reports/serp-score-2026-08-08.md` 三條主軸（明細見 content-plan 第四批段落）：
+  ①**跳票叢集 5 篇**（P2 機會分數最高：跳票怎麼辦 +3.0／支票跳票 +2.4／跳票 +1.4，全卡第 4–5 頁，原本只有 `zhi-piao-tiao-piao-zen-me-ban` 一篇孤島樞紐頁，缺衛星文）：追索權／法律途徑／退票理由單／預警訊號／軋票。
+  ②**P1 striking-distance 補洞 4 篇**（有曝光但站上無對應專文）：貼現是什麼(15.0)／支票換現金(16.3)／保理(16.2)／票貼好做嗎(12.9)。
+  ③**企業融資 pillar 加厚 3 篇**（企業融資 35.0 第 4 頁）＋**產業長尾 2 篇**（延續餐飲/製造/營建系列：批發經銷、物流貨運）。
+- 刻意**不**新增「支票融資」專文——SERP 報告點名同類相殘是「支票貼現」卡 10.4 名的主因，該詞應靠既有 `zhi-piao-tie-xian-shi-shen-me` 擴寫而非再開新頁。
+- 產稿共 28,000+ 字（每篇 1,700–2,750 字、3–6 條內部連結）。QA 腳本檢查：0 slug 撞名（比對靜態 67 + DB 35）、0 死連結、檔名＝slug、description 長度合規。5 篇偏短者補「常見問題」h3 段（兼顧 AEO 問答型搜尋）。
+- 草稿源檔進 git（`scripts/drafts-batch4/`，比照 batch3；batch1/2 仍被 gitignore）。
+
+**新增 `source` 區塊（法規依據卡）— 依 Jason 中途指示**
+- 需求：「深度型的文章都要加入法規連結，增加公信力」。既有 `related` 不適用（會渲染成「延伸閱讀」、同分頁開啟、且 href 是站內相對路徑）。
+- 作法：`Block` union 加 `{ type:'source', href, label, note? }`；`ArticleView` 渲染成虛線「法規依據・官方來源」卡（`target=_blank rel="noopener noreferrer"`）；`article-markdown.ts` 同步輸出到 `llms-full.txt`；`seed-articles.mjs` 加入白名單並驗證必須是絕對網址。DB 的 content 是 jsonb，新型別免 migration。
+- ⚠️ 過程教訓：憑記憶猜的票據法 pcode `G0380044` 其實是「商業銀行設立標準」。**所有法規連結都先 curl 驗證標題與條文內容才寫入**——票據法正確為 `G0380028`（§22 時效／§130 提示期限／§131 拒絕證書／§123 本票裁定／§144-1 已刪除＝票據刑罰不再適用）、民訴 `B0010001`（§508 支付命令／§516 異議 20 日）、民法 `B0000001`（§294 債權讓與，保理法源），另加票交所 inqservice02／inqService05。
+- 內容正確性也用官方條文對過：支票追索權時效（對發票人 1 年、對前手 4 個月、背書人對前手 2 個月）、支票**不適用**本票裁定、退票理由單＝拒絕證書同一效力。
+
+**上線**
+- `npm run build` 綠燈 → commit `a8022cc`（稿件＋source 區塊）→ `vercel deploy --prod` READY → 14 篇由 draft 改 scheduled，08/18–08/31 每日 10:00（UTC 02:00）。
+- 部署順序有先後依賴：`source` 是新 block type，舊版 render 會**靜默略過**（不會壞頁，但整塊內容消失），所以必須先部署再排程。
+- 佇列現況：**47 篇 scheduled（33 已上線 + 14 待發）**，最後一篇 08/31。
+
+**未完成 / 待辦**
+- ⚠️ **09/01 起又會斷稿**——下批請在 08/25 前備好，別再等到期才發現。
+- **DB 排程文不支援 `faqs`**（`huangxi_articles` 無此欄、`rowToArticle` 未映射）→ 所有排程文都沒有 FAQPage schema，與 SERP 報告 P0「補 FAQ schema」建議衝突。要補需：加欄位 + 改 `huangxi_upsert_article` RPC + 改映射 + 前台 JSON-LD。
+- P0 的 9 個 title/meta 改寫、12 組兌現/貼現同類相殘合併＋301（需 Jason 決策）皆未動工。
+- `source` 卡片視覺未肉眼驗證（build/型別過關，首篇 08/18 才公開）；可在 `/admin/articles/preview/zhi-piao-zhui-suo-quan` 先看。
+- 舊文中發現數條指向不存在 slug 的 related 連結（如 `/articles/zhi-piao-dui-xian`、`zhi-piao-tian-xie`、`zhi-piao-guo-qi`、`zhi-piao-dui-xian-shi-jian`），未修，下次可一併清理。
+
+---
+
 ## 2026-08-08
 
 **七大叢集排名總盤點 + SERP 機會分數評分系統**

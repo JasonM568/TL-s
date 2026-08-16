@@ -78,7 +78,8 @@
 ## 📌 待辦 / 下一步（未完成）
 
 1. ⚠️ **使用者動作**：撤銷 2026-07-01 用來設 Email Routing 的兩組 Cloudflare API token（`cfut_`、`cfat_`）。撤銷不影響已設好的 Email Routing。
-2. **內容產出**：靜態文章 67 篇 + DB 排程 14 篇（07/11–07/26 自動上線中）。content-plan 的 **W5–W12 若尚有缺口**可續補。
+2. **內容產出**：靜態文章 67 篇 + DB 佇列 47 篇（第一～四批，排到 **2026-08-31**）。⚠️ **09/01 起無稿，下批請在 08/25 前備好**（2026-08-14~17 曾因此斷稿 4 天）。選題方法見 `docs/content-plan.md` 第四批段落（依 SERP 機會分數）。
+   - ⚠️ **DB 排程文不支援 `faqs` 欄位**（`huangxi_articles` 無此欄、`rowToArticle` 未映射）→ 排程文沒有 FAQPage schema。要補需加欄位＋改 `huangxi_upsert_article` RPC＋改映射＋前台 JSON-LD。靜態 `articles.ts` 的文章則有。
    - 產文兩種方式：①（永久 SEO 骨幹）在 `src/lib/articles.ts` 的 `articles` 陣列加物件（企業融資設 `author: '理財顧問 張揚'`，支票不設=預設李誠信）→ build → deploy。②（排程/批次）走排程系統：JSON 放 `scripts/drafts/` → `seed-articles.mjs` → `/admin/articles` 排程，到點免部署自動上線。
 3. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、GSC 提交/檢查 sitemap、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。
 4. **後台密碼**：目前是自動產生的隨機密碼，使用者可要求改成好記的（改 Vercel + .env.local 的 `ADMIN_PASSWORD`）。
@@ -89,6 +90,8 @@
    - ② P0 帶 9 個 title/meta 改寫（票貼詐騙/即期票是什麼/票貼行情/申請支票要多久/禁背支票/兌現/支票兌現詐騙/票據種類/客票貼現）。
    - ③ 跳票樞紐頁叢集化（跳票家族 136 曝光卡 4–5 頁）；④ F 票信叢集 7 篇無曝光文逐篇 GSC 請求建立索引。
    - **~9/4 重新匯 GSC 跑 `python3 scripts/serp_score.py <zip> --save`**：自動對照上份快照列排名升降，驗證 canonical/301 成效。
+   - ✅ 2026-08-17 已針對 ③（跳票叢集化）與 P1 striking distance 產出第四批 14 篇（08/18–08/31 排程中），效果請於 9 月的 GSC 快照驗證。
+7. **舊文死連結清理**：部分已發布文章的 `related` 指向不存在的 slug（`/articles/zhi-piao-dui-xian`、`zhi-piao-tian-xie`、`zhi-piao-guo-qi`、`zhi-piao-dui-xian-shi-jian`），需修正或改指向正確文章。
 
 ### 已完成（原待辦）
 - ✅ **後台排程發文系統合併上線**（2026-07-10，原 `scheduling-work` 分支）：14 篇排程文自動發文中。見上方架構段落。
