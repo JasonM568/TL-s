@@ -18,7 +18,7 @@
 - **每次改完流程**：`npm run build` → `git commit` → `vercel deploy --prod` → curl 驗證正式站
 - ⚠️ **開工/部署前務必先 `git fetch` 檢查 `origin/main`**（此 repo 有多條平行開發線；vercel deploy 用本地 tree 覆蓋線上、不看遠端。2026-07-10 曾因此把正式站蓋掉，見 WORKLOG）。
 - ⚠️ **`git push` 到 GitHub main 會自動觸發 Vercel production 部署**（2026-07-14 實測發現，與上面「純手動 CLI 部署」的舊認知不同）。push 前確保本地 build 綠燈，否則會直接把壞版本推上線。
-- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **30 篇排程中：第一批 14 篇 07/11–07/26 + 第二批 16 篇 07/27–08/11**（依 2026-07-24 GSC 數據選題，見 `docs/content-plan.md` 第二批段落；2 篇與既有靜態長文撞名已封存）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
+- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **47 篇在佇列：第一批 14 篇 07/11–07/26、第二批 16 篇 07/27–08/11、第三批 3 篇（07/31、08/12–08/13）、第四批 14 篇 08/18–08/31**（第四批依 2026-08-08 SERP 機會分數選題＝跳票叢集 5＋P1 補洞 4＋企業融資 3＋產業長尾 2，見 `docs/content-plan.md`；另 2 篇與既有靜態長文撞名已封存）。⚠️ 08/14–08/17 有 4 天斷稿（第三批排到 08/13 就沒了），下批請在前一批到期前先補。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
 - ✅ **AI 爬蟲/AEO 已就緒**（2026-07-24）：Cloudflare「受管理的 robots.txt」已關閉（它曾注入 Disallow 擋掉 Google-Extended/GPTBot 等，是 AI 抓取失敗主因）；新增 `/llms.txt`（全站索引）與 `/llms-full.txt`（已發布文章全文 Markdown），ISR 120 秒自動同步排程文章。觀測點：Cloudflare AI Crawl Control。
 - 聯絡電話：**0982-691803**（2026-07-14 Jason 確認更正，全站 7 處 + 首頁 JSON-LD 已更新）。⚠️ 舊號 `0982-697803` 已作廢、勿再引入（2026-07-10 的記載相反，以本行為準）。
 
@@ -49,7 +49,8 @@
 - **程式**：`src/lib/articles-db.ts`（DB 存取 + `rowToArticle`）、`src/lib/articles-source.ts`（合併「靜態 67 篇恆發布 + DB 佇列」，**靜態 slug 優先**、DB 掛掉降級只回靜態）。前台 `articles` 列表/內文/sitemap 皆 import `articles-source` 且 ISR revalidate=120；`/articles/[slug]` 另加 `dynamicParams=true`（到點 slug 首次造訪即時渲染、免部署）。
 - **後台**：`/admin/articles`（佇列 UI：改狀態/排程時間/順序、立即發布、下架、刪除）。
 - **後台預覽**（2026-07-10 加）：佇列每列的「預覽 →」連到 `/admin/articles/preview/[slug]`（`isAuthed` 守門、`force-dynamic`、noindex），用 `huangxi_list_articles` 讀**任何狀態**的 DB 列渲染，讓草稿/排程中文章上線前可先看。版面由 `src/app/articles/[slug]/ArticleView.tsx` 共用元件提供（公開頁與預覽頁共用；公開頁的 JSON-LD/metadata 仍留在 `page.tsx`）。`articles-db.ts` 的 `getDbRowBySlug` 供此頁取單列。
-- **灌新稿流程**：`Article` 形狀 JSON 放 `scripts/drafts/*.json`（gitignore，不進 git）→ `node scripts/seed-articles.mjs`（讀 `.env.local`、驗證、撞靜態 slug 會擋、upsert 進 draft）→ 到 `/admin/articles` 設排程（可先按「預覽 →」看內容）。
+- **灌新稿流程**：`Article` 形狀 JSON 放 `scripts/drafts/*.json`（gitignore，不進 git）→ `node scripts/seed-articles.mjs`（讀 `.env.local`、驗證、撞靜態 slug 會擋、upsert 進 draft）→ 到 `/admin/articles` 設排程（可先按「預覽 →」看內容）。批次目錄可帶參數：`node scripts/seed-articles.mjs scripts/drafts-batch4`（batch3、batch4 有進 git，batch1/2 被 gitignore）。
+- **`source` 區塊（2026-08-17 加）**：`{ type:'source', href, label, note? }` ＝法規／官方來源卡，外部連結新分頁開啟，用於深度法規文提高公信力（Jason 指示：深度型文章都要附官方法規連結）。seed 腳本會驗證必須是絕對網址。**寫入前務必 curl 驗證該 pcode／網址真的存在且內容相符**（票據法 pcode 是 `G0380028`，別猜）。
 - ⚠️ 撞名規則：DB slug 與 67 篇靜態文撞名者，前台永遠不顯示（靜態優先）——灌稿前先確認 slug 不撞。
 
 ### 環境變數（值存 Vercel production + 本機 `.env.local`，皆 gitignore）
