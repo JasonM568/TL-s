@@ -18,7 +18,7 @@
 - **每次改完流程**：`npm run build` → `git commit` → `vercel deploy --prod` → curl 驗證正式站
 - ⚠️ **開工/部署前務必先 `git fetch` 檢查 `origin/main`**（此 repo 有多條平行開發線；vercel deploy 用本地 tree 覆蓋線上、不看遠端。2026-07-10 曾因此把正式站蓋掉，見 WORKLOG）。
 - ⚠️ **`git push` 到 GitHub main 會自動觸發 Vercel production 部署**（2026-07-14 實測發現，與上面「純手動 CLI 部署」的舊認知不同）。push 前確保本地 build 綠燈，否則會直接把壞版本推上線。
-- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **48 篇 scheduled（35 已上線 + 13 待發）+ 2 篇 archived、draft 0**（2026-08-19 直查 DB 實測）：第一批 14 篇 07/11–07/26、第二批 16 篇 07/27–08/11、第三批 3 篇（07/31、08/12–08/13）、第四批 14 篇 08/18–08/31、第五批 1 篇（`jin-zhi-bei-shu-zhuan-rang`，09/01）。第四批依 2026-08-08 SERP 機會分數選題＝跳票叢集 5＋P1 補洞 4＋企業融資 3＋產業長尾 2，見 `docs/content-plan.md`；另 2 篇與既有靜態長文撞名已封存。⚠️ **最後一篇是 09/01，09/02 起斷稿**（08/14–08/17 已經斷過 4 天）。⚠️ **查佇列別只信文件，直接查 DB**：Supabase MCP 常回 `permission denied`，改用 `huangxi_list_articles` RPC 直查（`.env.local` 取 `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`HUANGXI_ADMIN_SECRET`，curl POST 即可）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
+- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **62 篇 scheduled（35 已上線 + 27 待發）+ 2 篇 archived、draft 0**（2026-08-19 收工時直查 DB 實測）：第一批 14 篇 07/11–07/26、第二批 16 篇 07/27–08/11、第三批 3 篇（07/31、08/12–08/13）、第四批 14 篇 08/18–08/31、第五批 1 篇 09/01、**第六批 14 篇 09/02–09/15**。第四批依 2026-08-08 SERP 機會分數選題；第六批依 2026-08-19 GSC query×page 對照選題（拆承接過載頁＋填真空白，見 `docs/content-plan.md`）；另 2 篇與既有靜態長文撞名已封存。⚠️ **08/20–09/15 連續每日一篇、零斷稿；09/16 起無稿**，第七批請在 09/10 前備好。⚠️ **查佇列別只信文件，直接查 DB**：Supabase MCP 常回 `permission denied`，改用 `huangxi_list_articles` RPC 直查（`.env.local` 取 `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`HUANGXI_ADMIN_SECRET`，curl POST 即可）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
 - ✅ **AI 爬蟲/AEO 已就緒**（2026-07-24）：Cloudflare「受管理的 robots.txt」已關閉（它曾注入 Disallow 擋掉 Google-Extended/GPTBot 等，是 AI 抓取失敗主因）；新增 `/llms.txt`（全站索引）與 `/llms-full.txt`（已發布文章全文 Markdown），ISR 120 秒自動同步排程文章。觀測點：Cloudflare AI Crawl Control。
 - 聯絡電話：**0982-691803**（2026-07-14 Jason 確認更正，全站 7 處 + 首頁 JSON-LD 已更新）。⚠️ 舊號 `0982-697803` 已作廢、勿再引入（2026-07-10 的記載相反，以本行為準）。
 
@@ -35,7 +35,8 @@
 | Email 通知（寄） | Resend（網域 huangxi.tw 已驗證）。寄 `notify@huangxi.tw` → 收 `jyuli780@gmail.com`。Resend 帳號註冊於 306465@gmail.com |
 | Email 收信（轉發） | Cloudflare Email Routing：`service@huangxi.tw` → 轉發到 `jyuli780@gmail.com`（2026-07-01 以 Cloudflare API 設定；根網域 MX=route*.mx.cloudflare.net、SPF、DKIM cf2024-1）|
 | 分析 | GA4 `G-XG4CMC7JYE`（資源 ID `372168473`，帳號 `153975104`，名稱「黃璽理財支票貼 - GA4」，時區 Asia/Taipei）|
-| GA4 程式化讀取 | **服務帳戶 `ga4-reader@huangxi-analytics.iam.gserviceaccount.com`**（GCP 專案 `huangxi-analytics` / `165422715325`，2026-08-19 建）。金鑰在 **`~/.config/ga4/ga4-reader.json`（repo 外、chmod 600，切勿移入 repo——會被 vercel deploy 一起上傳）**。已啟用 Analytics Data API 並在 GA4 加為「檢視者」。用 `google-auth` + `AuthorizedSession` 直打 `analyticsdata.googleapis.com/v1beta/properties/{id}:runReport`，本機已裝、免裝新套件。同一組帳戶只要再啟用 Search Console API + 在 GSC 加使用者即可讀 GSC。⚠️ Supermetrics MCP 也接了 GA4，但**團隊試用 2026-06-08 已到期**，查詢一律回 `TRIAL_EXPIRED`，別再繞那條路。|
+| GA4／GSC 程式化讀取 | **服務帳戶 `ga4-reader@huangxi-analytics.iam.gserviceaccount.com`**（GCP 專案 `huangxi-analytics` / `165422715325`，2026-08-19 建）。金鑰在 **`~/.config/ga4/ga4-reader.json`（repo 外、chmod 600，切勿移入 repo——會被 vercel deploy 一起上傳）**。已啟用 Analytics Data API 與 Search Console API，並分別在 GA4 加為「檢視者」、在 GSC 加為使用者。GSC 可存取 3 個資源：`sc-domain:huangxi.tw`、`sc-domain:huibang.com.tw`、`sc-domain:yuhobeef.com.tw`。只依賴本機已裝的 `google-auth`，免裝新套件。⚠️ Supermetrics MCP 也接了 GA4，但**團隊試用 2026-06-08 已到期**，查詢一律回 `TRIAL_EXPIRED`，別再繞那條路。|
+| 報表工具（`scripts/`）| `ga4_report.py`（GA4，**預設只算台灣**，濾掉機器人；`--days` / `--country all` / `--property <id>` 可換 48 個客戶資源）、`gsc_report.py`（GSC；`--compare` 期間比較、`--striking` 選題機會、`--list` 列資源）、`apply_meta.py`（批次改 DB 文的 title/description，會自動回讀比對防漏欄位）。|
 | LINE | 官方帳號加好友 `https://lin.ee/Qw6v7OD` |
 
 ### 資料庫細節（Supabase hb-erp，與其他 ERP 資料共用專案、以表名隔離）
@@ -77,6 +78,7 @@
   - **GA4 事件 `line_add_click`**，以 `cta_location` 區分 5 個入口：`floating` / `article_end` / `calculator_result` / `calculator_bottom` / `contact_card`。
   - 誘因法源：票交所 FAQ 壹-Q7「查詢票據信用資料得免提示證件及公司大小章」＝查他人票信免對方同意；壹-Q2 第 3 點可用「付款行磁字代號＋帳號」查詢，兩者印在票面上 → **客戶只要在 LINE 傳一張支票照片就能受理**。
 - GoogleAnalytics 排除 `/admin`（2026-08-19）：後台操作不是網站流量。`FloatingLine` 早就排除了，GA 漏掉。
+- **title/meta 改寫 10 篇（2026-08-19，commit `72525fd`）**：標的＝GSC「排名已在第 1 頁但 CTR=0」約 500 曝光。靜態 3 篇（title+h1+description）＋DB 7 篇（走 `apply_meta.py`）。改寫理由與當時的曝光基準存 `scripts/title-rewrites-2026-08-19.json`，一個月後用 `gsc_report.py --days 28 --compare` 對照驗收。⚠️ Google 重抓標題需 1–3 週且可能自行改寫，短期沒變化屬正常，**不要來回改**。
 - 聯絡電話 0981-109769（已移除市話）
 - 舊 WordPress 網址 301 轉址（`next.config.ts`：/blogs→/articles、票據融資文章→/zhi-piao-tie-xian）+ 友善 404
 
@@ -85,7 +87,9 @@
 ## 📌 待辦 / 下一步（未完成）
 
 1. ⚠️ **使用者動作**：撤銷 2026-07-01 用來設 Email Routing 的兩組 Cloudflare API token（`cfut_`、`cfat_`）。撤銷不影響已設好的 Email Routing。
-2. **內容產出**：靜態文章 67 篇 + DB 佇列 48 篇（第一～五批，排到 **2026-09-01**）。⚠️ **09/02 起無稿，第六批請在 08/28 前備好**（2026-08-14~17 曾因此斷稿 4 天）。第六批選題請重跑 `python3 scripts/serp_score.py <新的 GSC zip> --save` 後依機會分數決定，別憑印象選。選題方法見 `docs/content-plan.md` 第四批段落（依 SERP 機會分數）。
+2. **內容產出**：靜態文章 67 篇 + DB 佇列 62 篇（第一～六批，排到 **2026-09-15**）。⚠️ **09/16 起無稿，第七批請在 09/10 前備好**（2026-08-14~17 曾因此斷稿 4 天）。
+   - **選題一律用數據，別憑印象。** 現在有兩條路：①`python3 scripts/gsc_report.py --striking`（即時、免匯檔，推薦）；②`python3 scripts/serp_score.py <GSC zip> --save`（可對照上份快照的排名升降）。
+   - ⚠️ **選題前務必先看「一個查詢由哪一頁承接」**，否則會寫出相殘的文章。2026-08-19 就發現 `piao-xin-cha-xun` 一頁扛 44 個查詢／628 曝光、`zhi-piao-ru-zhang-shi-jian` 扛 68 個查詢／327 曝光——這種頁面該「拆衛星文分擔」，而不是再寫同主題的文章去搶。查法：GSC API 用 `dimensions:['query','page']`。選題方法見 `docs/content-plan.md` 第四批段落（依 SERP 機會分數）。
    - ⚠️ **DB 排程文不支援 `faqs` 欄位**（`huangxi_articles` 無此欄、`rowToArticle` 未映射）→ 排程文沒有 FAQPage schema。要補需加欄位＋改 `huangxi_upsert_article` RPC＋改映射＋前台 JSON-LD。靜態 `articles.ts` 的文章則有。
    - 產文兩種方式：①（永久 SEO 骨幹）在 `src/lib/articles.ts` 的 `articles` 陣列加物件（企業融資設 `author: '理財顧問 張揚'`，支票不設=預設李誠信）→ build → deploy。②（排程/批次）走排程系統：JSON 放 `scripts/drafts/` → `seed-articles.mjs` → `/admin/articles` 排程，到點免部署自動上線。
 3. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、GSC 提交/檢查 sitemap、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。
