@@ -18,7 +18,7 @@
 - **每次改完流程**：`npm run build` → `git commit` → `vercel deploy --prod` → curl 驗證正式站
 - ⚠️ **開工/部署前務必先 `git fetch` 檢查 `origin/main`**（此 repo 有多條平行開發線；vercel deploy 用本地 tree 覆蓋線上、不看遠端。2026-07-10 曾因此把正式站蓋掉，見 WORKLOG）。
 - ⚠️ **`git push` 到 GitHub main 會自動觸發 Vercel production 部署**（2026-07-14 實測發現，與上面「純手動 CLI 部署」的舊認知不同）。push 前確保本地 build 綠燈，否則會直接把壞版本推上線。
-- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **47 篇在佇列：第一批 14 篇 07/11–07/26、第二批 16 篇 07/27–08/11、第三批 3 篇（07/31、08/12–08/13）、第四批 14 篇 08/18–08/31**（第四批依 2026-08-08 SERP 機會分數選題＝跳票叢集 5＋P1 補洞 4＋企業融資 3＋產業長尾 2，見 `docs/content-plan.md`；另 2 篇與既有靜態長文撞名已封存）。⚠️ 08/14–08/17 有 4 天斷稿（第三批排到 08/13 就沒了），下批請在前一批到期前先補。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
+- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **48 篇 scheduled（35 已上線 + 13 待發）+ 2 篇 archived、draft 0**（2026-08-19 直查 DB 實測）：第一批 14 篇 07/11–07/26、第二批 16 篇 07/27–08/11、第三批 3 篇（07/31、08/12–08/13）、第四批 14 篇 08/18–08/31、第五批 1 篇（`jin-zhi-bei-shu-zhuan-rang`，09/01）。第四批依 2026-08-08 SERP 機會分數選題＝跳票叢集 5＋P1 補洞 4＋企業融資 3＋產業長尾 2，見 `docs/content-plan.md`；另 2 篇與既有靜態長文撞名已封存。⚠️ **最後一篇是 09/01，09/02 起斷稿**（08/14–08/17 已經斷過 4 天）。⚠️ **查佇列別只信文件，直接查 DB**：Supabase MCP 常回 `permission denied`，改用 `huangxi_list_articles` RPC 直查（`.env.local` 取 `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`HUANGXI_ADMIN_SECRET`，curl POST 即可）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
 - ✅ **AI 爬蟲/AEO 已就緒**（2026-07-24）：Cloudflare「受管理的 robots.txt」已關閉（它曾注入 Disallow 擋掉 Google-Extended/GPTBot 等，是 AI 抓取失敗主因）；新增 `/llms.txt`（全站索引）與 `/llms-full.txt`（已發布文章全文 Markdown），ISR 120 秒自動同步排程文章。觀測點：Cloudflare AI Crawl Control。
 - 聯絡電話：**0982-691803**（2026-07-14 Jason 確認更正，全站 7 處 + 首頁 JSON-LD 已更新）。⚠️ 舊號 `0982-697803` 已作廢、勿再引入（2026-07-10 的記載相反，以本行為準）。
 
@@ -34,7 +34,8 @@
 | 資料庫 | Supabase 專案 **hb-erp**（ref `hzegtnihbpweppxsrsck`, ap-southeast-2），表 `huangxi_consultations` |
 | Email 通知（寄） | Resend（網域 huangxi.tw 已驗證）。寄 `notify@huangxi.tw` → 收 `jyuli780@gmail.com`。Resend 帳號註冊於 306465@gmail.com |
 | Email 收信（轉發） | Cloudflare Email Routing：`service@huangxi.tw` → 轉發到 `jyuli780@gmail.com`（2026-07-01 以 Cloudflare API 設定；根網域 MX=route*.mx.cloudflare.net、SPF、DKIM cf2024-1）|
-| 分析 | GA4 `G-XG4CMC7JYE` |
+| 分析 | GA4 `G-XG4CMC7JYE`（資源 ID `372168473`，帳號 `153975104`，名稱「黃璽理財支票貼 - GA4」，時區 Asia/Taipei）|
+| GA4 程式化讀取 | **服務帳戶 `ga4-reader@huangxi-analytics.iam.gserviceaccount.com`**（GCP 專案 `huangxi-analytics` / `165422715325`，2026-08-19 建）。金鑰在 **`~/.config/ga4/ga4-reader.json`（repo 外、chmod 600，切勿移入 repo——會被 vercel deploy 一起上傳）**。已啟用 Analytics Data API 並在 GA4 加為「檢視者」。用 `google-auth` + `AuthorizedSession` 直打 `analyticsdata.googleapis.com/v1beta/properties/{id}:runReport`，本機已裝、免裝新套件。同一組帳戶只要再啟用 Search Console API + 在 GSC 加使用者即可讀 GSC。⚠️ Supermetrics MCP 也接了 GA4，但**團隊試用 2026-06-08 已到期**，查詢一律回 `TRIAL_EXPIRED`，別再繞那條路。|
 | LINE | 官方帳號加好友 `https://lin.ee/Qw6v7OD` |
 
 ### 資料庫細節（Supabase hb-erp，與其他 ERP 資料共用專案、以表名隔離）
@@ -69,7 +70,13 @@
 - GA4 串接（含表單送出 generate_lead 事件）
 - 諮詢表單 → Supabase + Email 通知（Resend）
 - 可登入後台 /admin（列表、狀態管理、登出）
-- LINE 全站浮動按鈕（`src/components/FloatingLine.tsx`）+ 聯絡頁 LINE 卡
+- **轉換層改版（2026-08-19，commit `6aa6e47`）**：主 CTA 由「免費諮詢→表單」改為「**免費查票信**→LINE」。
+  - 共用元件 `src/components/LineCta.tsx`：`LineCtaBlock`（完整 CTA 區塊）／`LineLink`（有埋點的 LINE 連結）。
+  - 套用處：文章頁文末（`ArticleView.tsx`，全站主要落地點）、費率試算頁**結果區＋底部**、聯絡頁 LINE 卡、全站浮動按鈕（`FloatingLine.tsx`，文案改「免費查票信」且手機版補上文字）。
+  - ⚠️ **文案集中在 `src/lib/site.ts` 的 4 個常數**（`LINE_CTA_LABEL` / `_HEADLINE` / `_BODY` / `_ASSURANCE`），要換誘因改這裡即可全站同步，不用動元件。
+  - **GA4 事件 `line_add_click`**，以 `cta_location` 區分 5 個入口：`floating` / `article_end` / `calculator_result` / `calculator_bottom` / `contact_card`。
+  - 誘因法源：票交所 FAQ 壹-Q7「查詢票據信用資料得免提示證件及公司大小章」＝查他人票信免對方同意；壹-Q2 第 3 點可用「付款行磁字代號＋帳號」查詢，兩者印在票面上 → **客戶只要在 LINE 傳一張支票照片就能受理**。
+- GoogleAnalytics 排除 `/admin`（2026-08-19）：後台操作不是網站流量。`FloatingLine` 早就排除了，GA 漏掉。
 - 聯絡電話 0981-109769（已移除市話）
 - 舊 WordPress 網址 301 轉址（`next.config.ts`：/blogs→/articles、票據融資文章→/zhi-piao-tie-xian）+ 友善 404
 
@@ -78,7 +85,7 @@
 ## 📌 待辦 / 下一步（未完成）
 
 1. ⚠️ **使用者動作**：撤銷 2026-07-01 用來設 Email Routing 的兩組 Cloudflare API token（`cfut_`、`cfat_`）。撤銷不影響已設好的 Email Routing。
-2. **內容產出**：靜態文章 67 篇 + DB 佇列 47 篇（第一～四批，排到 **2026-08-31**）。⚠️ **09/01 起無稿，下批請在 08/25 前備好**（2026-08-14~17 曾因此斷稿 4 天）。選題方法見 `docs/content-plan.md` 第四批段落（依 SERP 機會分數）。
+2. **內容產出**：靜態文章 67 篇 + DB 佇列 48 篇（第一～五批，排到 **2026-09-01**）。⚠️ **09/02 起無稿，第六批請在 08/28 前備好**（2026-08-14~17 曾因此斷稿 4 天）。第六批選題請重跑 `python3 scripts/serp_score.py <新的 GSC zip> --save` 後依機會分數決定，別憑印象選。選題方法見 `docs/content-plan.md` 第四批段落（依 SERP 機會分數）。
    - ⚠️ **DB 排程文不支援 `faqs` 欄位**（`huangxi_articles` 無此欄、`rowToArticle` 未映射）→ 排程文沒有 FAQPage schema。要補需加欄位＋改 `huangxi_upsert_article` RPC＋改映射＋前台 JSON-LD。靜態 `articles.ts` 的文章則有。
    - 產文兩種方式：①（永久 SEO 骨幹）在 `src/lib/articles.ts` 的 `articles` 陣列加物件（企業融資設 `author: '理財顧問 張揚'`，支票不設=預設李誠信）→ build → deploy。②（排程/批次）走排程系統：JSON 放 `scripts/drafts/` → `seed-articles.mjs` → `/admin/articles` 排程，到點免部署自動上線。
 3. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、GSC 提交/檢查 sitemap、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。
