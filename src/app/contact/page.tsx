@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import ContactForm from '@/components/ContactForm'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
-import { LINE_ADD_URL, SITE_URL } from '@/lib/site'
+import { LineLink } from '@/components/LineCta'
+import { LINE_CTA_LABEL, LINE_CTA_ASSURANCE, SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: '聯絡我們 | 免費諮詢支票貸款・支票貼現',
@@ -54,20 +55,20 @@ export default function ContactPage() {
                   </div>
                 </a>
 
-                <a
-                  href={LINE_ADD_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <LineLink
+                  location="contact_card"
                   className="flex items-start gap-4 p-5 rounded-xl transition-opacity hover:opacity-90"
                   style={{ backgroundColor: '#06C755' }}
                 >
                   <span className="text-2xl">💬</span>
                   <div>
                     <h3 className="font-bold text-white mb-1">LINE 線上諮詢</h3>
-                    <p className="text-white font-bold text-lg">加入好友即時諮詢</p>
-                    <p className="text-white/80 text-sm mt-1">點此加入 LINE 官方帳號</p>
+                    <p className="text-white font-bold text-lg">{LINE_CTA_LABEL}</p>
+                    <p className="text-white/80 text-sm mt-1">
+                      加好友傳一張支票照片，免費幫你查發票人票信。{LINE_CTA_ASSURANCE}
+                    </p>
                   </div>
-                </a>
+                </LineLink>
 
                 <div className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl">
                   <span className="text-2xl">✉️</span>

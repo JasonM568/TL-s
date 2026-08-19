@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { articleAuthor, type Article, type Block } from '@/lib/articles-source'
+import LineCtaBlock from '@/components/LineCta'
 
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split('-')
@@ -166,23 +167,8 @@ export default function ArticleView({
             本文僅供一般資訊參考，不構成任何融資建議。實際條件與費率依個別評估結果為準。
           </div>
 
-          {/* 文末 CTA */}
-          <div
-            className="mt-10 rounded-xl p-8 text-center text-white"
-            style={{ backgroundColor: '#0D2B5E' }}
-          >
-            <h2 className="text-xl font-bold mb-3">需要進一步的協助嗎？</h2>
-            <p className="text-gray-300 text-sm mb-6">
-              提供免費初步評估，專業顧問一對一為您說明最適合的方案
-            </p>
-            <Link
-              href="/contact"
-              className="inline-block px-8 py-3 rounded font-bold text-white transition-opacity hover:opacity-90"
-              style={{ backgroundColor: '#C9922A' }}
-            >
-              免費諮詢
-            </Link>
-          </div>
+          {/* 文末 CTA：LINE 為主、表單為輔（文章頁是全站主要落地點） */}
+          <LineCtaBlock location="article_end" className="mt-10" />
         </div>
       </article>
 

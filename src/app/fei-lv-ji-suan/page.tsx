@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import LineCtaBlock, { LineLink } from '@/components/LineCta'
+import { LINE_CTA_LABEL, LINE_CTA_ASSURANCE } from '@/lib/site'
 
 function formatTWD(n: number): string {
   return new Intl.NumberFormat('zh-TW').format(Math.round(n))
@@ -154,6 +156,26 @@ export default function FeiLvJiSuanPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* 算完當下＝全站意圖最高的瞬間，就地承接 */}
+                <div className="mt-6 pt-5 border-t border-[#0D2B5E]/10">
+                  <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                    這是用<strong className="text-gray-800">你自己輸入的費率</strong>算的。實際費率取決於發票人票信——
+                    加 LINE 傳一張支票照片，我們<strong className="text-gray-800">免費幫你查發票人的票信紀錄</strong>，
+                    並回覆這張票的實際報價區間。
+                  </p>
+                  <LineLink
+                    location="calculator_result"
+                    className="flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full font-bold text-white transition-all hover:opacity-90 hover:shadow-lg"
+                    style={{ backgroundColor: '#06C755' }}
+                  >
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                      <path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.02 3.55 7.39 8.35 8.03.33.07.77.22.88.5.1.25.07.64.03.89l-.14.85c-.04.25-.2.99.86.54 1.07-.45 5.76-3.39 7.86-5.81C21.4 14.4 22 12.36 22 10.13 22 5.64 17.52 2 12 2z" />
+                    </svg>
+                    {LINE_CTA_LABEL}・取得實際報價
+                  </LineLink>
+                  <p className="text-center text-xs text-gray-400 mt-3">{LINE_CTA_ASSURANCE}</p>
+                </div>
               </div>
             )}
 
@@ -265,19 +287,13 @@ export default function FeiLvJiSuanPage() {
           </div>
 
           {/* CTA */}
-          <div className="mt-8 rounded-xl p-8 text-center text-white" style={{ backgroundColor: '#0D2B5E' }}>
-            <h2 className="text-lg font-bold mb-2">想知道您的票實際費率？</h2>
-            <p className="text-gray-300 text-sm mb-5">
-              提供票面金額與到期日，專業顧問免費為您評估最低費率
-            </p>
-            <Link
-              href="/contact"
-              className="inline-block px-8 py-3 rounded font-bold text-white transition-opacity hover:opacity-90"
-              style={{ backgroundColor: '#C9922A' }}
-            >
-              免費獲取報價
-            </Link>
-          </div>
+          <LineCtaBlock
+            location="calculator_bottom"
+            headline="想知道你的票實際費率？"
+            body="費率高低幾乎全看發票人票信。加 LINE 傳一張支票照片，我們免費幫你查發票人的票信紀錄，並回覆這張票的實際報價區間。"
+            className="mt-8"
+          />
+
 
           {/* Related articles */}
           <div className="mt-8 space-y-3">

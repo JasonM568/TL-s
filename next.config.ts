@@ -15,6 +15,8 @@ const nextConfig: NextConfig = {
       { source: '/blogs', destination: '/articles', permanent: true },
       { source: '/blog', destination: '/articles', permanent: true },
       { source: '/blogs/:slug*', destination: '/articles', permanent: true },
+      // 舊 WP 成功案例自訂文章型態（2026-08-19 GA4 實測仍在收流量、實際 404）
+      { source: '/success_case/:slug*', destination: '/zhi-piao-tie-xian', permanent: true },
       {
         source: '/trade-bill-financing-boosting-your-cash-flow',
         destination: '/zhi-piao-tie-xian',

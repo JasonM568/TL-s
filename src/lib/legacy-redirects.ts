@@ -19,6 +19,8 @@ export const legacyRedirects = [
   { source: '/business-loan-interest-rates', destination: '/qi-ye-dai-kuan', permanent: true },
   { source: '/business-loan-success-cases', destination: '/qi-ye-dai-kuan', permanent: true },
   { source: '/can-bill-discounting-boost-your-working-capital', destination: '/zhi-piao-tie-xian', permanent: true },
+  // 2026-08-19 GA4 實測補漏：這兩條仍在收到流量但先前漏建對應，實際回 404。
+  { source: '/can-invoice-factoring-improve-your-smes-finances', destination: '/articles/ying-shou-zhang-kuan-rong-zi', permanent: true },
   { source: '/category/%E4%BC%81%E6%A5%AD%E8%B2%B8%E6%AC%BE%E8%88%87%E8%9E%8D%E8%B3%87', destination: '/articles', permanent: true },
   { source: '/check-cashing-loans-vs-traditional-loans', destination: '/zhi-piao-dai-kuan', permanent: true },
   { source: '/check-discount-application-process', destination: '/zhi-piao-tie-xian', permanent: true },
