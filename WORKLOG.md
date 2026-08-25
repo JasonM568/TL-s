@@ -65,13 +65,24 @@
 - ❌ **Indexing API 這條路不通**：唯讀探測顯示 GCP 專案 `165422715325` 未啟用；且 Google 官方限定它只能用於 JobPosting／BroadcastEvent，拿來推一般文章頁違反使用條款。**別走這條。**
 - ✅ **Jason 已於 2026-08-25 在 GSC 後台手動完成兩項**：①對 `/articles/hua-xian-zhi-piao` 按「要求建立索引」；②在「索引 → 網頁 → 找不到網頁 (404)」按「驗證修正」（涵蓋那 67 個舊 WordPress 網址）。驗證程序通常跑幾天到兩週。
 
+**🟠 真 bug 三：robots.txt 對 Googlebot 封鎖了全站 CSS／JS**
+- Jason 追問 GSC 的「遭到 robots.txt 封鎖」。先確定範圍：**全站只有 3 條 Disallow（`/admin`、`/api`、`/_next/`）**，用 robots parser 拿線上 robots.txt 對 Googlebot 實跑確認，且內容與 `robots.ts` 產出逐字相符 → **不是 Cloudflare 注入的**（2026-07-24 關掉的「受管理的 robots.txt」沒復發）。
+- Jason 提供的範例網址證實是 `/_next/static/chunks/*.js`，而且**三個裡有兩個是同一支 chunk、只有 `?dpl=` 部署 ID 不同** → 每次部署都產生一批新網址，**數量只增不減**，這就是數字會「很高」的原因。
+- 問題本質：`/_next/` 底下是全站的 CSS 與 JS，**Google 官方明講不要封鎖**，擋了 Googlebot 算繪時只會看到沒有樣式的頁面。內容索引本身沒受影響（113/114 已建索引，證明 HTML 讀得到），受損的是版面／行動裝置相容性評估。
+- `robots.ts` 原本註解寫「只爬 HTML 頁面，不爬 JS bundle」——這個用意對 **AI 爬蟲**合理（省 crawl budget），但不該套到 Googlebot 身上。
+- 修法：`'*'` 群組只留 `/admin`、`/api`。**9 個具名 AI 爬蟲群組完全不動**——robots.txt 只套用最相符的那一組，具名群組不受 `'*'` 影響，原用意完整保留。
+- 線上驗收（robots parser 實跑）：Googlebot 對兩個範例網址與 `/_next/static/css/app.css` 皆 ✅ 允許、`/admin` 與 `/api/consultations` 仍 🔴 封鎖；GPTBot／ClaudeBot 對 `/_next/` 仍 🔴 封鎖、對文章頁 ✅ 允許。
+- ⚠️ **副作用預告**：這批網址會從「遭到 robots.txt 封鎖」移到「已檢索 - 目前尚未建立索引」。**這是正常的**，JS 檔本來就不該被當網頁索引，別看到後者變多又跑去修。
+
 **Commits**
 - `870a5bd` fix(seo): sitemap 凍結修復 + 4 條站內死連結
 - `5792c7b` fix(seo): sitemap 改 force-dynamic（移除 Cache-Control 不足以解凍）
-- 兩次都跑過 `npm run build` → `vercel deploy --prod`（使用者當次授權）並 curl 驗收。
+- `c552f60` docs: 記錄 GSC 索引盤查與 sitemap 解凍
+- `95d532a` fix(seo): robots.txt 不再對一般爬蟲封鎖 /_next/
+- 三次程式碼變更都跑過 `npm run build` → `vercel deploy --prod`（使用者當次授權）並 curl 驗收。
 
 **未完成 / 待辦**
-- ⚠️ **這兩個 commit 還沒 push 到 origin/main（本地 ahead 2）**。正式站已是最新版（走 CLI 部署），但遠端落後 —— 依這個 repo 的平行開發風險，下次開工前要嘛 push、要嘛先確認沒有別條線覆蓋。
+- ⚠️ **這 4 個 commit 還沒 push 到 origin/main（本地 ahead 4）**。正式站已是最新版（走 CLI 部署），但遠端落後 —— 依這個 repo 的平行開發風險，下次開工前要嘛 push、要嘛先確認沒有別條線覆蓋。
 - 約 2026-09-08 用 `gsc_report.py --days 28 --compare` 回頭驗收：那 94 個「未建立索引」應大幅下降、且 8/20 之後的文章要開始出現曝光（驗證 sitemap 解凍真的有效）。
 - `/articles?page=N` 分頁改 self-canonical（低優先）。
 - 第七批稿件仍需在 09/10 前備好（09/16 起無稿，沿用 08-19 的待辦）。

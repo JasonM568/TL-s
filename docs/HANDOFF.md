@@ -115,7 +115,11 @@
    - ❌ **Indexing API 別走**：GCP 專案 `165422715325` 未啟用，且 Google 官方限定只能用於 JobPosting／BroadcastEvent，推一般文章頁違反使用條款。
    - 📅 **約 2026-09-08 回頭驗收**：`gsc_report.py --days 28 --compare`，那 94 個應大幅下降，且 8/20 之後的文章要開始有曝光（驗證 sitemap 解凍生效）。
 
-9. **`/articles?page=N` 分頁 canonical（低優先）**：8 個分頁被 Google 索引，我們的 `userCanonical` 指向 `/articles` 但 `googleCanonical` 是分頁自己＝**Google 忽略了我們的 canonical**。Google 官方對分頁的建議本來就是 self-canonical，現在的寫法逆著來。影響小。
+9. ✅ **robots.txt 不再對 Googlebot 封鎖 `/_next/`（2026-08-25 修，commit `95d532a`）**：GSC「遭到 robots.txt 封鎖」的來源就是 `/_next/static/chunks/*.js`，且同一支 chunk 每次部署會帶新的 `?dpl=` 部署 ID → 網址數量只增不減。`/_next/` 是全站 CSS／JS，Google 官方明講不要擋。
+   - ⚠️ **`src/app/robots.ts` 的 `'*'` 群組只能擋 `/admin`、`/api`，不要再把 `/_next/` 加回去。** 9 個具名 AI 爬蟲群組維持擋 `/_next/`（robots.txt 只套用最相符的那一組，不受 `'*'` 影響）。
+   - ⚠️ 副作用正常：這批網址會移到「已檢索 - 目前尚未建立索引」，JS 檔本來就不該被當網頁索引，**別再去修**。
+
+10. **`/articles?page=N` 分頁 canonical（低優先）**：8 個分頁被 Google 索引，我們的 `userCanonical` 指向 `/articles` 但 `googleCanonical` 是分頁自己＝**Google 忽略了我們的 canonical**。Google 官方對分頁的建議本來就是 self-canonical，現在的寫法逆著來。影響小。
 
 ### 已完成（原待辦）
 - ✅ **後台排程發文系統合併上線**（2026-07-10，原 `scheduling-work` 分支）：14 篇排程文自動發文中。見上方架構段落。
