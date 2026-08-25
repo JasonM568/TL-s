@@ -74,6 +74,23 @@
 - 線上驗收（robots parser 實跑）：Googlebot 對兩個範例網址與 `/_next/static/css/app.css` 皆 ✅ 允許、`/admin` 與 `/api/consultations` 仍 🔴 封鎖；GPTBot／ClaudeBot 對 `/_next/` 仍 🔴 封鎖、對文章頁 ✅ 允許。
 - ⚠️ **副作用預告**：這批網址會從「遭到 robots.txt 封鎖」移到「已檢索 - 目前尚未建立索引」。**這是正常的**，JS 檔本來就不該被當網頁索引，別看到後者變多又跑去修。
 
+**排除 Cloudflare 嫌疑（Jason 問「是不是 Cloudflare 擋住了」）**
+- 四個角度全部排除：①Cloudflare 送出的 robots.txt 與 `robots.ts` 產出逐字相符，沒有注入；②用 Googlebot UA 抓首頁／文章頁／robots.txt／sitemap.xml／chunk 全部 **200**；③回應無 `cf-mitigated` 標頭、無挑戰頁；④**最硬的證據＝Google 自己的抓取記錄** `pageFetchState: SUCCESSFUL`、最近一次 2026-08-24T23:02。
+- 另一個推理捷徑：**GSC 的「遭到 robots.txt 封鎖」依定義只可能來自 robots.txt**。Cloudflare 擋的話會歸到「禁止存取 (403)」或「伺服器錯誤 (5xx)」，是不同桶子。看到這個標籤就直接去看 `robots.ts`，不用繞。
+- 📌 順帶量到：**Cloudflare 對 robots.txt 快取 4 小時**（`max-age=14400`），加上 Google 自己快取約 24 小時 → **改 robots.txt 後最慢隔天才會反映到 GSC**，不要以為沒生效就重複改。
+
+**GSC 端後續（2026-08-25 進行中，尚未完成）**
+- Jason 已在「設定 → robots.txt」按「要求重新檢索」。當下查證：正式站送新版沒錯、Cloudflare `age: 0` 沒餵舊快取，但 Google 端那兩支 chunk 仍是 `DISALLOWED`（最後檢索 8/18、8/20）。
+- ⚠️ **這不代表沒生效**——「重抓 robots.txt」與「重抓那些 chunk 網址本身」是兩件分開排程的事，URL Inspection 顯示的是上次檢索時的狀態，**拿它判斷會誤判成沒修好**。
+- ✅ **唯一即時驗證點＝GSC 的「測試線上網址」**（當場抓、當場套最新 robots.txt），robots.txt 一更新這裡立刻翻，不必等 chunk 被重新檢索。
+- ⚠️ **順序不能跳**：robots.txt 更新前按「驗證修正」必定失敗，失敗後冷卻更久。正確順序＝要求重新檢索 → 測試線上網址確認解封 → 才按驗證修正。
+- ⚠️ 測試要用 `14mrh2-p_w84d.js` 那支；`28a9z-me7gs4j.js?dpl=dpl_GiwdMa88...` 的實體檔案**已經 404**（舊部署被 Vercel 回收），拿它測會混淆。
+- **驗收標準不是歸零**：那批網址會分流成「直接消失（舊 dpl 被回收）」「移到已檢索-目前尚未建立索引（正常，JS 檔本來就不該被當網頁索引，別再去修）」「少量快取殘留」。真正該看的是**不再隨每次部署往上長**。
+
+**未處理：GSC robots.txt 報表的 line 43 警告**
+- 內容是 `Host: https://huangxi.tw`（來源 `src/app/robots.ts` 的 `host: SITE_URL`）。`Host` 是 **Yandex 專用指令，Google 不支援**，所以標成「略過的規則」。
+- **無害**，不影響抓取或索引；指定主網域的正規做法（www→主網域 301 ＋ 每頁 canonical）本來就已經做好了。已告知 Jason 可移可不移，**他未決定，先留著**，下次有其他改動時再一起帶上去省一次部署。
+
 **Commits**
 - `870a5bd` fix(seo): sitemap 凍結修復 + 4 條站內死連結
 - `5792c7b` fix(seo): sitemap 改 force-dynamic（移除 Cache-Control 不足以解凍）
@@ -82,8 +99,10 @@
 - 三次程式碼變更都跑過 `npm run build` → `vercel deploy --prod`（使用者當次授權）並 curl 驗收。
 
 **未完成 / 待辦**
-- ⚠️ **這 4 個 commit 還沒 push 到 origin/main（本地 ahead 4）**。正式站已是最新版（走 CLI 部署），但遠端落後 —— 依這個 repo 的平行開發風險，下次開工前要嘛 push、要嘛先確認沒有別條線覆蓋。
-- 約 2026-09-08 用 `gsc_report.py --days 28 --compare` 回頭驗收：那 94 個「未建立索引」應大幅下降、且 8/20 之後的文章要開始出現曝光（驗證 sitemap 解凍真的有效）。
+- 🔜 **Jason 明天（08/26）要回頭看 GSC「設定 → robots.txt」**：若已顯示新版（`Disallow` 只剩 `/admin`、`/api`）→ 用「測試線上網址」確認 chunk 解封 → 才按「驗證修正」。**若隔天仍顯示舊版（含 `Disallow: /_next/`），那才是真的有問題要查。**
+- ⏳ 一週後（約 09/01）若「遭到 robots.txt 封鎖」還在漲，代表 `robots.ts` 被別條開發線改回去了（平行開發風險），不是這次的修復失效。
+- 📅 約 2026-09-08 用 `gsc_report.py --days 28 --compare` 回頭驗收：那 94 個「未建立索引」應大幅下降、且 8/20 之後的文章要開始出現曝光（驗證 sitemap 解凍真的有效）。
+- `src/app/robots.ts` 的 `host: SITE_URL` 可移除以清掉 GSC 警告（Jason 未決定，無害，下次順手帶）。
 - `/articles?page=N` 分頁改 self-canonical（低優先）。
 - 第七批稿件仍需在 09/10 前備好（09/16 起無稿，沿用 08-19 的待辦）。
 

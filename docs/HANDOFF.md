@@ -118,6 +118,13 @@
 9. ✅ **robots.txt 不再對 Googlebot 封鎖 `/_next/`（2026-08-25 修，commit `95d532a`）**：GSC「遭到 robots.txt 封鎖」的來源就是 `/_next/static/chunks/*.js`，且同一支 chunk 每次部署會帶新的 `?dpl=` 部署 ID → 網址數量只增不減。`/_next/` 是全站 CSS／JS，Google 官方明講不要擋。
    - ⚠️ **`src/app/robots.ts` 的 `'*'` 群組只能擋 `/admin`、`/api`，不要再把 `/_next/` 加回去。** 9 個具名 AI 爬蟲群組維持擋 `/_next/`（robots.txt 只套用最相符的那一組，不受 `'*'` 影響）。
    - ⚠️ 副作用正常：這批網址會移到「已檢索 - 目前尚未建立索引」，JS 檔本來就不該被當網頁索引，**別再去修**。
+   - ❌ **不是 Cloudflare**（Jason 問過，四個角度排除）：CF 送的 robots.txt 與 `robots.ts` 產出逐字相符、Googlebot UA 抓全站資源皆 200、無 `cf-mitigated` 標頭、Google 自己的記錄是 `pageFetchState: SUCCESSFUL`。**推理捷徑：GSC 的「遭到 robots.txt 封鎖」依定義只可能來自 robots.txt**，CF 擋的話會歸到「禁止存取 (403)」或「伺服器錯誤 (5xx)」，是不同桶子。
+   - 📌 **改 robots.txt 後最慢隔天才反映到 GSC**：Cloudflare 快取 4 小時（`max-age=14400`）＋ Google 自己快取約 24 小時。**別以為沒生效就重複改。**
+   - 🔜 **進行中（2026-08-25 起）**：Jason 已按「設定 → robots.txt →要求重新檢索」。**正確順序不能跳**＝要求重新檢索 →「**測試線上網址**」確認解封 → 才按「驗證修正」（robots.txt 更新前按驗證必定失敗，且冷卻更久）。
+     - ⚠️ **別用 URL Inspection 的 `robotsTxtState` 判斷有沒有修好**：那顯示的是「上次檢索時」的狀態，重抓 robots.txt 與重抓 chunk 是兩件分開排程的事，會誤判成沒生效。**唯一即時驗證點是「測試線上網址」**（當場抓、當場套最新 robots.txt）。
+     - ⚠️ 測試要用 `14mrh2-p_w84d.js` 那支；`28a9z-me7gs4j.js?dpl=dpl_GiwdMa88...` 實體檔案**已 404**（舊部署被 Vercel 回收），拿它測會混淆。
+     - **驗收標準不是歸零**，而是「不再隨每次部署往上長」。
+   - 📌 GSC robots.txt 報表的 **line 43 警告 = `Host: https://huangxi.tw`**（來源 `robots.ts` 的 `host: SITE_URL`）。`Host` 是 Yandex 專用指令、Google 不支援，故標「略過的規則」。**無害**（主網域已靠 www→301 ＋ canonical 指定）。Jason 未決定是否移除，先留著，下次有其他改動再順手帶。
 
 10. **`/articles?page=N` 分頁 canonical（低優先）**：8 個分頁被 Google 索引，我們的 `userCanonical` 指向 `/articles` 但 `googleCanonical` 是分頁自己＝**Google 忽略了我們的 canonical**。Google 官方對分頁的建議本來就是 self-canonical，現在的寫法逆著來。影響小。
 
