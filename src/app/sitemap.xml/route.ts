@@ -71,8 +71,11 @@ export async function GET() {
 
   return new Response(xml + '\n', {
     headers: {
+      // ⚠️ 不要在這裡自訂 Cache-Control：會覆蓋掉 ISR 的
+      // s-maxage=120, stale-while-revalidate，讓 sitemap 凍結在 build 那份。
+      // 2026-08-24 實測：線上 sitemap 卡在 8/19 部署當下（102 篇），
+      // 8/20 後上線的 5 篇文章進不了索引；/llms.txt 沒設此標頭所以正常更新。
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=0, must-revalidate',
     },
   })
 }
