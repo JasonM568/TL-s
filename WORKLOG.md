@@ -5,6 +5,79 @@
 
 ---
 
+## 2026-08-24 ~ 08-25
+
+**起點：Jason 說「GSC 的未建立索引很高」**
+
+**先把「高」拆開看，不要憑印象猜**
+- 方法：GSC **URL Inspection API**（`urlInspection.index.inspect`）逐一掃描 Google 已知的 218 個網址（sitemap 114 個 ＋ GSC 近 90 天有曝光但不在 sitemap 的 104 個）。服務帳戶 `ga4-reader@...` 權限為 `siteFullUser`，唯讀 scope 即可跑檢查。
+- **結論：數字高但 95% 是正常的。** sitemap 內 114 個網址 **113 個「已提交並建立索引」**，內容頁幾乎滿分。
+- 「未建立索引」那 94 個全在 sitemap 之外，是舊 WordPress 站的殘影：
+
+  | Google 記錄 | 數量 | 判讀 |
+  |---|---|---|
+  | 找不到網頁 (404) | 67 | ⚠️ **過期資料**。最後檢索日全部 ≤ 2026-08-07 ＝ 126 條 301 上線那天（commit `0415930`）。實測現況全部回 308，等重抓就會自動轉成「網頁會自動重新導向」 |
+  | 網頁會自動重新導向 | 16 | ✅ 正常，已被重抓到新規則 |
+  | 替代網頁（有適當標準標記） | 11 | ✅ 正常，全是 `www.` 重複頁，canonical 正確 |
+
+- ⚠️ **教訓（同 08-19 那條的延續）**：「未建立索引很高」這種體感指標，一定要先按 coverageState 分桶再判斷，否則會去修一堆本來就該長那樣的東西。真正的問題是掃描過程中順手發現的，不是原本的主訴。
+
+**🔴 真 bug 一：sitemap.xml 自 8/19 部署後凍結（每天發文每天流血）**
+- 症狀：線上 sitemap 卡在 **102 篇**、`/llms.txt` 有 **107 篇**，8/20 起上線的 5 篇（`tiao-piao-yu-jing-xun-hao`／`tie-xian-shi-shen-me`／`tui-piao-li-you-dan`／`za-piao-zi-jin-diao-du`／`zhi-piao-huan-xian-jin`）進不了 sitemap。
+- ❌ **第一次診斷是錯的**：看到 `sitemap.xml.meta` 有自訂 `cache-control: max-age=0, must-revalidate` 而 `llms.txt.meta` 沒有，判定是它覆蓋掉 ISR。移除後部署 → **還是凍結**（`age` 4 分鐘內 86→334 不歸零）。
+- ✅ **真因**：`sitemap.xml` 是 **Next 的保留 metadata 路由名稱**，即使寫成 `app/sitemap.xml/route.ts`，輸出仍被歸類為靜態檔（build 表格顯示 `○`），ISR 從頭到尾沒生效、函式根本沒被執行過。檔案開頭原本那段「改用 route handler 修掉凍結」的註解，其實只修了一半。
+- **決定性證據是 `x-vercel-id`**：sitemap 只有邊緣節點 `sin1::`；`/llms.txt` 是 `sin1::iad1::`（有進 origin）。搭配 `age` 對照更清楚——
+
+  | | 修復前 | 修復後 |
+  |---|---|---|
+  | `age` | 一路長到 639s 不歸零 | 固定 `0` |
+  | `x-vercel-cache` | 永遠 HIT | 每次 MISS |
+  | `x-vercel-id` | `sin1::` | `sin1::iad1::` |
+  | sitemap 文章數 | 102（卡在 8/19） | 108，與 llms.txt 一致 |
+
+- 修法：`export const dynamic = 'force-dynamic'`（build 表格從 `○` 變 `ƒ`）。成本可忽略，sitemap 只有爬蟲會抓。
+- ⚠️ **不要再把它改回 `revalidate`**，理由已寫進 `src/app/sitemap.xml/route.ts` 開頭註解。
+- ⚠️ 對照組留著：`/llms.txt`、`/llms-full.txt` 不是保留名稱，`revalidate = 120` 一直正常（age 每 120 秒歸零），**不用跟著改**。
+
+**🟠 真 bug 二：4 條站內 related 連結指向不存在的文章**
+- 這 4 條就是 HANDOFF 舊待辦 #7，被 Google 各自記成 404 計入「未建立索引」：
+
+  | 死連結 | 換成 |
+  |---|---|
+  | `/articles/zhi-piao-dui-xian` | `/articles/zhi-piao-dui-xian-liu-cheng` |
+  | `/articles/zhi-piao-tian-xie` | `/articles/zhi-piao-zen-me-xie` |
+  | `/articles/zhi-piao-guo-qi` | `/articles/zhi-piao-ti-shi-qi-xian`（label 一併對齊標題） |
+  | `/articles/zhi-piao-dui-xian-shi-jian` | `/articles/zhi-piao-ru-zhang-shi-jian` |
+
+- 涉及 7 篇 **DB 排程文**（`zhi-piao-bei-shu`／`wei-tuo-qu-kuan-bei-shu`／`zhi-piao-dui-xian-shou-xu-fei`／`kong-bai-zhi-piao`／`piao-qi-ji-suan`／`wai-bi-zhi-piao`／`yuan-qi-zhi-piao`）。
+- ⚠️⚠️ **重要陷阱：不能直接跑 `seed-articles.mjs` 重灌。** `scripts/drafts/` 的本地 JSON 是**舊快照**，`piao-qi-ji-suan` 的 title 在 8/19 被 `apply_meta.py` 改寫過（DB「票期怎麼算？發票日、**到期日是什麼**與提示期限一次看懂」vs 本地少了「是什麼」），重灌會把改寫吃回去。
+- 正確作法：**`huangxi_list_articles` 讀 DB 現值 → 只改 `content` 裡的 `href` → `huangxi_upsert_article` 寫回**。事後再把 DB 的 title/h1/description 同步回本地 JSON，讓 `scripts/drafts/` 不再是重灌地雷。
+- 驗證：DB 64 列零殘留死連結、狀態維持 62 scheduled + 2 archived、正式站 4 篇文章新連結都正確渲染、舊連結 0 次出現。
+
+**其他掃描發現（未處理，優先度低）**
+- `/articles?page=2..8` 共 8 個分頁被 Google 索引，`userCanonical=/articles` 但 `googleCanonical` 是分頁自己 → **Google 忽略了我們的 canonical**。Google 官方對分頁的建議本來就是 self-canonical，現在的寫法算逆著來。影響小，之後想到再改。
+- `/articles/hua-xian-zhi-piao` 在 sitemap 內但 Google 7/29 抓到 404 —— 當時還沒到發布日，卻被 `zhi-piao-zha-pian` 的 related 內鏈提早爬到。現況 200。**通則：related 指向未來排程文會製造 404**，之後選內鏈標的要確認發布日。
+
+**GSC 端能做與不能做（查證過，不是憑印象）**
+- ✅ **重新提交 sitemap（API 可做，已執行）**：`lastSubmitted` 2026-07-01 → **2026-08-25T02:44:38Z**，`lastDownloaded` 2026-08-22 → **02:44:41Z**（3 秒內就重抓），`submitted` 114（凍結版）→ **120**，errors/warnings 皆 0。
+  - ⚠️ `gsc_report.py` 用的 `webmasters.readonly` scope 會被擋 403，寫入要換成 `https://www.googleapis.com/auth/webmasters`（同一把金鑰即可）。
+- ❌ **「要求建立索引」與「驗證修正」沒有 API**。查 Search Console API 的 discovery 文件，全部方法只有 `sites.*` / `sitemaps.*` / `urlInspection.index.inspect` / `urlTestingTools.mobileFriendlyTest.run` / `searchanalytics.query` —— 那兩個按鈕只存在於網頁後台。
+- ❌ **Indexing API 這條路不通**：唯讀探測顯示 GCP 專案 `165422715325` 未啟用；且 Google 官方限定它只能用於 JobPosting／BroadcastEvent，拿來推一般文章頁違反使用條款。**別走這條。**
+- ✅ **Jason 已於 2026-08-25 在 GSC 後台手動完成兩項**：①對 `/articles/hua-xian-zhi-piao` 按「要求建立索引」；②在「索引 → 網頁 → 找不到網頁 (404)」按「驗證修正」（涵蓋那 67 個舊 WordPress 網址）。驗證程序通常跑幾天到兩週。
+
+**Commits**
+- `870a5bd` fix(seo): sitemap 凍結修復 + 4 條站內死連結
+- `5792c7b` fix(seo): sitemap 改 force-dynamic（移除 Cache-Control 不足以解凍）
+- 兩次都跑過 `npm run build` → `vercel deploy --prod`（使用者當次授權）並 curl 驗收。
+
+**未完成 / 待辦**
+- ⚠️ **這兩個 commit 還沒 push 到 origin/main（本地 ahead 2）**。正式站已是最新版（走 CLI 部署），但遠端落後 —— 依這個 repo 的平行開發風險，下次開工前要嘛 push、要嘛先確認沒有別條線覆蓋。
+- 約 2026-09-08 用 `gsc_report.py --days 28 --compare` 回頭驗收：那 94 個「未建立索引」應大幅下降、且 8/20 之後的文章要開始出現曝光（驗證 sitemap 解凍真的有效）。
+- `/articles?page=N` 分頁改 self-canonical（低優先）。
+- 第七批稿件仍需在 09/10 前備好（09/16 起無稿，沿用 08-19 的待辦）。
+
+---
+
 ## 2026-08-19
 
 **起點：Jason 問「網站上線 45 天，LINE 官方帳號人數都沒成長」**

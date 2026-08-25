@@ -1,7 +1,7 @@
 # HANDOFF — 黃璽理財管理顧問 網站
 
 > 交接與工作紀錄。下次啟動先讀「快速上手」段落即可無縫接軌。
-> 最後更新：2026-08-08
+> 最後更新：2026-08-25
 
 ---
 
@@ -19,6 +19,7 @@
 - ⚠️ **開工/部署前務必先 `git fetch` 檢查 `origin/main`**（此 repo 有多條平行開發線；vercel deploy 用本地 tree 覆蓋線上、不看遠端。2026-07-10 曾因此把正式站蓋掉，見 WORKLOG）。
 - ⚠️ **`git push` 到 GitHub main 會自動觸發 Vercel production 部署**（2026-07-14 實測發現，與上面「純手動 CLI 部署」的舊認知不同）。push 前確保本地 build 綠燈，否則會直接把壞版本推上線。
 - ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **62 篇 scheduled（35 已上線 + 27 待發）+ 2 篇 archived、draft 0**（2026-08-19 收工時直查 DB 實測）：第一批 14 篇 07/11–07/26、第二批 16 篇 07/27–08/11、第三批 3 篇（07/31、08/12–08/13）、第四批 14 篇 08/18–08/31、第五批 1 篇 09/01、**第六批 14 篇 09/02–09/15**。第四批依 2026-08-08 SERP 機會分數選題；第六批依 2026-08-19 GSC query×page 對照選題（拆承接過載頁＋填真空白，見 `docs/content-plan.md`）；另 2 篇與既有靜態長文撞名已封存。⚠️ **08/20–09/15 連續每日一篇、零斷稿；09/16 起無稿**，第七批請在 09/10 前備好。⚠️ **查佇列別只信文件，直接查 DB**：Supabase MCP 常回 `permission denied`，改用 `huangxi_list_articles` RPC 直查（`.env.local` 取 `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`HUANGXI_ADMIN_SECRET`，curl POST 即可）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
+- ⚠️ **`src/app/sitemap.xml/route.ts` 必須是 `export const dynamic = 'force-dynamic'`，不可改回 `revalidate`**（2026-08-25 修，commit `5792c7b`）。`sitemap.xml` 是 Next 的保留 metadata 路由名稱，即使寫成 route handler 也會被當**靜態檔**輸出（build 表格顯示 `○`），ISR 完全不生效、函式從來不會被執行——2026-08-19～24 期間線上 sitemap 就這樣凍結在 102 篇，5 篇已上線文章進不了索引。**判別方法：`curl -sI https://huangxi.tw/sitemap.xml` 看 `age` 會不會歸零、`x-vercel-id` 有沒有 origin 區域**（正常＝`age: 0`、每次 MISS、`sin1::iad1::`；壞掉＝age 只增不減、只有 `sin1::`）。對照組 `/llms.txt`、`/llms-full.txt` 不是保留名稱，`revalidate = 120` 一直正常，**不用跟著改**。
 - ✅ **AI 爬蟲/AEO 已就緒**（2026-07-24）：Cloudflare「受管理的 robots.txt」已關閉（它曾注入 Disallow 擋掉 Google-Extended/GPTBot 等，是 AI 抓取失敗主因）；新增 `/llms.txt`（全站索引）與 `/llms-full.txt`（已發布文章全文 Markdown），ISR 120 秒自動同步排程文章。觀測點：Cloudflare AI Crawl Control。
 - 聯絡電話：**0982-691803**（2026-07-14 Jason 確認更正，全站 7 處 + 首頁 JSON-LD 已更新）。⚠️ 舊號 `0982-697803` 已作廢、勿再引入（2026-07-10 的記載相反，以本行為準）。
 
@@ -92,7 +93,7 @@
    - ⚠️ **選題前務必先看「一個查詢由哪一頁承接」**，否則會寫出相殘的文章。2026-08-19 就發現 `piao-xin-cha-xun` 一頁扛 44 個查詢／628 曝光、`zhi-piao-ru-zhang-shi-jian` 扛 68 個查詢／327 曝光——這種頁面該「拆衛星文分擔」，而不是再寫同主題的文章去搶。查法：GSC API 用 `dimensions:['query','page']`。選題方法見 `docs/content-plan.md` 第四批段落（依 SERP 機會分數）。
    - ⚠️ **DB 排程文不支援 `faqs` 欄位**（`huangxi_articles` 無此欄、`rowToArticle` 未映射）→ 排程文沒有 FAQPage schema。要補需加欄位＋改 `huangxi_upsert_article` RPC＋改映射＋前台 JSON-LD。靜態 `articles.ts` 的文章則有。
    - 產文兩種方式：①（永久 SEO 骨幹）在 `src/lib/articles.ts` 的 `articles` 陣列加物件（企業融資設 `author: '理財顧問 張揚'`，支票不設=預設李誠信）→ build → deploy。②（排程/批次）走排程系統：JSON 放 `scripts/drafts/` → `seed-articles.mjs` → `/admin/articles` 排程，到點免部署自動上線。
-3. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、GSC 提交/檢查 sitemap、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。
+3. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。（✅ GSC sitemap 提交／檢查已於 2026-08-25 完成，見下方 GSC 段落）
 4. **後台密碼**：目前是自動產生的隨機密碼，使用者可要求改成好記的（改 Vercel + .env.local 的 `ADMIN_PASSWORD`）。
 5. （可選）後台加篩選/匯出 CSV、Cloudflare AI 爬蟲封鎖規則等增強。
 6. **SERP 排名優化（2026-08-08 盤點，依機會分數排序）**：
@@ -102,7 +103,19 @@
    - ③ 跳票樞紐頁叢集化（跳票家族 136 曝光卡 4–5 頁）；④ F 票信叢集 7 篇無曝光文逐篇 GSC 請求建立索引。
    - **~9/4 重新匯 GSC 跑 `python3 scripts/serp_score.py <zip> --save`**：自動對照上份快照列排名升降，驗證 canonical/301 成效。
    - ✅ 2026-08-17 已針對 ③（跳票叢集化）與 P1 striking distance 產出第四批 14 篇（08/18–08/31 排程中），效果請於 9 月的 GSC 快照驗證。
-7. **舊文死連結清理**：部分已發布文章的 `related` 指向不存在的 slug（`/articles/zhi-piao-dui-xian`、`zhi-piao-tian-xie`、`zhi-piao-guo-qi`、`zhi-piao-dui-xian-shi-jian`），需修正或改指向正確文章。
+7. ✅ **舊文死連結清理（2026-08-25 完成，commit `870a5bd`）**：4 條 `related` 死連結已改指向正確文章（`zhi-piao-dui-xian`→`zhi-piao-dui-xian-liu-cheng`、`zhi-piao-tian-xie`→`zhi-piao-zen-me-xie`、`zhi-piao-guo-qi`→`zhi-piao-ti-shi-qi-xian`、`zhi-piao-dui-xian-shi-jian`→`zhi-piao-ru-zhang-shi-jian`），涉及 7 篇 DB 排程文。
+   - ⚠️⚠️ **修 DB 文的內容時，絕對不要直接跑 `seed-articles.mjs` 重灌。** `scripts/drafts/` 的本地 JSON 是舊快照，會把 `apply_meta.py` 事後改寫的 title/description 蓋回去（`piao-qi-ji-suan` 就是這種情況）。正確作法：**`huangxi_list_articles` 讀 DB 現值 → 只改要動的欄位 → `huangxi_upsert_article` 寫回**，事後再把 DB 值同步回本地 JSON。
+   - ⚠️ **通則：`related` 不要指向「未來排程文」**，Google 提早爬到會記成 404（`hua-xian-zhi-piao` 就這樣被記了一筆）。選內鏈標的前先確認發布日已到。
+
+8. **GSC 索引狀態（2026-08-24~25 用 URL Inspection API 全站盤查 218 個網址）**
+   - **結論：「未建立索引」數字高但 95% 正常。** sitemap 內 114 個有 **113 個已建立索引**。「未建立索引」94 個全在 sitemap 之外＝舊 WordPress 殘影：67 個是 8/07 上 301 前的過期 404 記錄（現況全 308）、16 個已正確標示為轉址、11 個是 `www.` 重複頁（canonical 正確）。
+   - ✅ **sitemap 已用 API 重新提交**（`lastDownloaded` 2026-08-22→**2026-08-25T02:44:41Z**，`submitted` 114→**120**，errors/warnings 皆 0）。⚠️ `gsc_report.py` 的 `webmasters.readonly` scope 寫入會 403，要換 `https://www.googleapis.com/auth/webmasters`（同一把金鑰）。
+   - ✅ Jason 已於 2026-08-25 在 GSC 後台手動完成：①`/articles/hua-xian-zhi-piao` 要求建立索引；②「索引→網頁→找不到網頁 (404)」按驗證修正。驗證程序跑幾天到兩週。
+   - ❌ **「要求建立索引」與「驗證修正」沒有 API**（查過 discovery 文件，全部方法只有 `sites.*`／`sitemaps.*`／`urlInspection.index.inspect`／`urlTestingTools.mobileFriendlyTest.run`／`searchanalytics.query`），只能手點。
+   - ❌ **Indexing API 別走**：GCP 專案 `165422715325` 未啟用，且 Google 官方限定只能用於 JobPosting／BroadcastEvent，推一般文章頁違反使用條款。
+   - 📅 **約 2026-09-08 回頭驗收**：`gsc_report.py --days 28 --compare`，那 94 個應大幅下降，且 8/20 之後的文章要開始有曝光（驗證 sitemap 解凍生效）。
+
+9. **`/articles?page=N` 分頁 canonical（低優先）**：8 個分頁被 Google 索引，我們的 `userCanonical` 指向 `/articles` 但 `googleCanonical` 是分頁自己＝**Google 忽略了我們的 canonical**。Google 官方對分頁的建議本來就是 self-canonical，現在的寫法逆著來。影響小。
 
 ### 已完成（原待辦）
 - ✅ **後台排程發文系統合併上線**（2026-07-10，原 `scheduling-work` 分支）：14 篇排程文自動發文中。見上方架構段落。
