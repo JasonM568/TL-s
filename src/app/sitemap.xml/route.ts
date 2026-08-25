@@ -5,8 +5,14 @@
 import { getAllArticles } from '@/lib/articles-source'
 import { SITE_URL } from '@/lib/site'
 
-// ISR：DB 排程文章到點後自動進 sitemap（與 llms.txt 一致）
-export const revalidate = 120
+// ⚠️ 這裡不能用 ISR（revalidate = 120）。`sitemap.xml` 是 Next 的保留 metadata
+// 路由名稱，即使寫成 route handler 也會被當靜態檔輸出、由 CDN 直送，函式永遠不會
+// 被叫到——2026-08-24 實測：線上 age 一路長到 600+ 秒都不歸零、x-vercel-id 只有
+// 邊緣節點（sin1::）沒有 origin，內容凍結在 build 那份（缺 5 篇已上線文章）；
+// 同樣寫法的 /llms.txt 因為不是保留名稱，age 每 120 秒歸零、一切正常。
+// force-dynamic 讓它每次請求都真的執行，DB 排程文到點即進 sitemap。
+// 成本可忽略：sitemap 只有爬蟲會抓。
+export const dynamic = 'force-dynamic'
 
 type Entry = {
   url: string
