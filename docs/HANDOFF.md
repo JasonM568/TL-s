@@ -78,6 +78,14 @@
   - ⚠️ **文案集中在 `src/lib/site.ts` 的 4 個常數**（`LINE_CTA_LABEL` / `_HEADLINE` / `_BODY` / `_ASSURANCE`），要換誘因改這裡即可全站同步，不用動元件。
   - **GA4 事件 `line_add_click`**，以 `cta_location` 區分 5 個入口：`floating` / `article_end` / `calculator_result` / `calculator_bottom` / `contact_card`。
   - 誘因法源：票交所 FAQ 壹-Q7「查詢票據信用資料得免提示證件及公司大小章」＝查他人票信免對方同意；壹-Q2 第 3 點可用「付款行磁字代號＋帳號」查詢，兩者印在票面上 → **客戶只要在 LINE 傳一張支票照片就能受理**。
+- **CTA 依主題切換＋文中補位＋曝光埋點（2026-09-06）**：起因是 GA4 盤點發現 8/19 改版後 837 sessions 只有 4 次 `line_add_click`（0.48%）。診斷出兩個結構問題：①全站只有一個誘因「免費查票信」，但流量第一的 `zhi-piao-xie-cuo`（佔 31%）讀者是**開票的人在修填寫錯誤**，不是收票的人擔心跳票；②CTA 只在文末，而平均停留 2 分 10 秒、文章多 6 分鐘以上，多數人根本沒捲到。
+  - **4 種誘因**在 `src/lib/cta-offers.ts`：`piao-xin`（查票信／風險）｜`tie-xian`（試算實拿金額／等錢，**預設**）｜`tian-xie`（幫你看這張票／填寫疑難）｜`zhou-zhuan`（評估可調額度／企業融資）。⚠️ 四種**履行方式完全相同**（LINE 傳一張支票照片、回答一個問題），不是四種新服務。
+  - **自動分派**：`ctaVariantFor()` 依 slug／關鍵字判定，靜態與 DB 排程文共用，**不需要新增資料庫欄位、新文章不必手動指定**。129 篇實測分派：tie-xian 64／zhou-zhuan 36／piao-xin 20／tian-xie 9。
+  - ⚠️ **比對是兩段式：先跑完所有規則的 slug，再跑中文詞。** 因為中文詞會打在 keywords 上誤傷——單段式時「託收」把 `zhi-piao-ru-zhang-shi-jian`、`zhi-piao-dui-xian-shou-xu-fei`（流量第 2、3 名）判成填寫疑難。同理不要把 `feng-xian`／「風險」放進 piao-xin，會掃到 `zhi-piao-tie-xian-feng-xian`。改規則後務必重跑全站分派再上線。
+  - **文中 CTA**（`InlineLineCta`，`cta_location=article_inline`）：`inlineCtaIndex()` 取文章 50% 處、往前後找最近的 `h2` 插入（落在章節縫隙不切斷段落），前一塊是卡片就跳過避免堆疊；content 少於 10 塊不插。
+  - **浮動鈕**改成文章頁吃 variant（`floating_article`）。做法是 `FloatingLine` 排除 `/articles/<slug>`、改由 `ArticleView` 渲染 `FloatingLineButton variant=` —— **這樣是 server render，載入後不會閃一下換字**；別改成用 client store 事後設定。
+  - **新增 GA4 事件 `cta_view`**（IntersectionObserver，threshold 0.5，每次載入每個 CTA 只送一次）。有曝光才能算 view→click，才分得出「沒人看到」（改位置）還是「看到不想點」（改文案）——兩者解法相反。`line_add_click` 與 `cta_view` 都帶 `cta_location` + `cta_variant`。
+  - ⚠️⚠️ **待 Jason 手動操作（沒做的話上面的量測全部看不到）**：GA4 →「管理」→「自訂定義」→「建立自訂維度」建兩個，範圍皆為「事件」：`cta_location`（CTA 位置）、`cta_variant`（CTA 誘因）。**只對往後的資料生效、不回溯。** `scripts/ga4_report.py` 已改成會偵測並提示，建好後同一支腳本就會自動列出分入口／分誘因的曝光與點擊。
 - GoogleAnalytics 排除 `/admin`（2026-08-19）：後台操作不是網站流量。`FloatingLine` 早就排除了，GA 漏掉。
 - **title/meta 改寫 10 篇（2026-08-19，commit `72525fd`）**：標的＝GSC「排名已在第 1 頁但 CTR=0」約 500 曝光。靜態 3 篇（title+h1+description）＋DB 7 篇（走 `apply_meta.py`）。改寫理由與當時的曝光基準存 `scripts/title-rewrites-2026-08-19.json`，一個月後用 `gsc_report.py --days 28 --compare` 對照驗收。⚠️ Google 重抓標題需 1–3 週且可能自行改寫，短期沒變化屬正常，**不要來回改**。
 - 聯絡電話 0981-109769（已移除市話）

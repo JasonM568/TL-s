@@ -1,10 +1,39 @@
 import Link from 'next/link'
+import { Fragment } from 'react'
 import { articleAuthor, type Article, type Block } from '@/lib/articles-source'
-import LineCtaBlock from '@/components/LineCta'
+import LineCtaBlock, { InlineLineCta, FloatingLineButton } from '@/components/LineCta'
+import { ctaVariantFor } from '@/lib/cta-offers'
 
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split('-')
   return `${y} 年 ${Number(m)} 月 ${Number(d)} 日`
+}
+
+/**
+ * 文中 CTA 的插入點：文章中段、緊接在某個 h2 之前（落在章節縫隙，不切斷段落）。
+ *
+ * 為什麼要插這個：文末 CTA 只有讀到底的人看得到。GA4 平均停留 2 分 10 秒、
+ * 文章多在 6 分鐘以上 —— 多數讀者根本沒捲到文末就走了。
+ *
+ * 回傳 null＝這篇不插（太短，文末 CTA 已經夠近）。
+ */
+function inlineCtaIndex(content: Block[]): number | null {
+  if (content.length < 10) return null
+
+  const target = Math.floor(content.length * 0.5)
+  const window = Math.floor(content.length * 0.25)
+
+  for (let d = 0; d <= window; d++) {
+    for (const i of d === 0 ? [target] : [target - d, target + d]) {
+      if (i <= 1 || i >= content.length - 1) continue
+      if (content[i].type !== 'h2') continue
+      // 前一塊已經是卡片（延伸閱讀／法規來源／重點框）就跳過，避免卡片連續堆疊
+      const prev = content[i - 1].type
+      if (prev === 'related' || prev === 'source' || prev === 'callout') continue
+      return i
+    }
+  }
+  return null
 }
 
 export function renderBlock(block: Block, i: number) {
@@ -100,6 +129,10 @@ export default function ArticleView({
   article: Article
   related: RelatedPost[]
 }) {
+  // CTA 誘因依文章主題自動切換（見 lib/cta-offers.ts），新文章不必手動指定
+  const ctaVariant = ctaVariantFor(article)
+  const inlineAt = inlineCtaIndex(article.content)
+
   return (
     <>
       {/* Hero */}
@@ -142,7 +175,15 @@ export default function ArticleView({
       {/* Body */}
       <article className="py-10 px-4">
         <div className="max-w-3xl mx-auto">
-          {article.content.map(renderBlock)}
+          {article.content.map((block, i) => (
+            // Fragment 不產生 DOM 節點，段落間距與原本完全相同
+            <Fragment key={i}>
+              {i === inlineAt && (
+                <InlineLineCta location="article_inline" variant={ctaVariant} />
+              )}
+              {renderBlock(block, i)}
+            </Fragment>
+          ))}
 
           {/* 文章 FAQ */}
           {article.faqs && article.faqs.length > 0 && (
@@ -168,9 +209,12 @@ export default function ArticleView({
           </div>
 
           {/* 文末 CTA：LINE 為主、表單為輔（文章頁是全站主要落地點） */}
-          <LineCtaBlock location="article_end" className="mt-10" />
+          <LineCtaBlock location="article_end" variant={ctaVariant} className="mt-10" />
         </div>
       </article>
+
+      {/* 浮動 LINE 鈕：文章頁改用帶 variant 的版本，全站版 FloatingLine 已排除 /articles/<slug> */}
+      <FloatingLineButton variant={ctaVariant} />
 
       {/* Related */}
       {related.length > 0 && (

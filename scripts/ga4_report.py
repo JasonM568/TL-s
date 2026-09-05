@@ -144,17 +144,31 @@ def main():
     table('事件（找 line_add_click / generate_lead）', r,
           ['eventName'], ['eventCount', 'totalUsers'], e)
 
-    r, e = run(s, a.property, ['customEvent:cta_location'], ['eventCount'],
-               start, end, country, limit=15, order='eventCount')
-    if e and 'not a valid dimension' in e:
-        print(f'\n{"=" * 72}\nLINE 點擊：各入口表現\n{"=" * 72}')
-        print('  ⚠️ cta_location 尚未註冊為自訂維度，GA4 收得到參數但報表查不到。')
-        print('     GA4 →「管理」→「自訂定義」→「建立自訂維度」：')
-        print('       維度名稱：CTA 位置｜範圍：事件｜事件參數：cta_location')
-        print('     註冊後僅對「往後」的資料生效，不會回溯，所以越早設越好。')
-    else:
-        table('LINE 點擊：各入口表現', r, ['customEvent:cta_location'], ['eventCount'],
-              e or '埋點 2026-08-19 上線；標準報表約 24 小時回流，即時報表可立即驗。')
+    # CTA 分入口／分誘因表現。需要兩個自訂維度，缺哪個就提示哪個。
+    #
+    # 2026-09-06 起同時送 cta_view（曝光）與 line_add_click（點擊），兩者都帶
+    # cta_location 與 cta_variant。有曝光才能算 view→click，才分得出
+    # 「沒人看到」（改位置）還是「看到不想點」（改文案）—— 兩者解法相反。
+    missing = []
+    for dim, name, param in [
+        ('customEvent:cta_location', 'CTA 位置', 'cta_location'),
+        ('customEvent:cta_variant', 'CTA 誘因', 'cta_variant'),
+    ]:
+        r, e = run(s, a.property, ['eventName', dim], ['eventCount'],
+                   start, end, country, limit=30, order='eventCount')
+        if e and 'not a valid dimension' in e:
+            missing.append((name, param))
+            continue
+        table(f'CTA 曝光與點擊：分{name}', r, ['eventName', dim], ['eventCount'],
+              e or 'cta_view=曝光、line_add_click=點擊；兩者相除即該入口的說服力。')
+
+    if missing:
+        print(f'\n{"=" * 72}\nCTA 分入口／分誘因：尚未可查\n{"=" * 72}')
+        print('  ⚠️ 以下自訂維度尚未註冊，GA4 收得到參數但報表查不到：')
+        for name, param in missing:
+            print(f'       維度名稱：{name}｜範圍：事件｜事件參數：{param}')
+        print('     GA4 →「管理」→「自訂定義」→「建立自訂維度」逐一建立。')
+        print('     ⚠️ 註冊後僅對「往後」的資料生效，不會回溯，所以越早設越好。')
 
 
 if __name__ == '__main__':
