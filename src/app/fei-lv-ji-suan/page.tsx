@@ -1,28 +1,10 @@
-'use client'
-
 import Link from 'next/link'
-import { useState } from 'react'
-import LineCtaBlock, { LineLink } from '@/components/LineCta'
-import { LINE_CTA_LABEL, LINE_CTA_ASSURANCE } from '@/lib/site'
+import LineCtaBlock from '@/components/LineCta'
+import DiscountCalculator from '@/components/DiscountCalculator'
 
-function formatTWD(n: number): string {
-  return new Intl.NumberFormat('zh-TW').format(Math.round(n))
-}
-
+// 試算邏輯與 CTA 都在 DiscountCalculator（文章內嵌版共用同一份公式）。
+// 本頁只負責 hero、說明、情境、行情表與延伸閱讀。
 export default function FeiLvJiSuanPage() {
-  const [amount, setAmount] = useState('')
-  const [days, setDays] = useState('')
-  const [monthlyRate, setMonthlyRate] = useState('1.5')
-
-  const amountNum = parseFloat(amount.replace(/,/g, '')) || 0
-  const daysNum = parseInt(days) || 0
-  const rateNum = parseFloat(monthlyRate) || 0
-
-  const months = daysNum / 30
-  const fee = amountNum * (rateNum / 100) * months
-  const received = amountNum - fee
-  const hasResult = amountNum > 0 && daysNum > 0 && rateNum > 0
-
   return (
     <>
       {/* Hero */}
@@ -55,134 +37,7 @@ export default function FeiLvJiSuanPage() {
       {/* Calculator */}
       <section className="py-10 px-4">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-8">
-            <h2 className="text-xl font-bold text-[#0D2B5E] mb-6">費用試算</h2>
-
-            <div className="space-y-5">
-              {/* 票面金額 */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                  票面金額（新台幣）
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">NT$</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="10000"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="例如：1000000"
-                    className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-[#0D2B5E] focus:ring-1 focus:ring-[#0D2B5E]"
-                  />
-                </div>
-              </div>
-
-              {/* 票期 */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                  票期（天數）
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="365"
-                  value={days}
-                  onChange={(e) => setDays(e.target.value)}
-                  placeholder="例如：90（3 個月）"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-[#0D2B5E] focus:ring-1 focus:ring-[#0D2B5E]"
-                />
-                <p className="text-xs text-gray-400 mt-1">常見票期：30 天（1 月）、60 天（2 月）、90 天（3 月）、180 天（6 月）</p>
-              </div>
-
-              {/* 月費率 */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                  月費率（%）
-                </label>
-                <div className="flex gap-2 mb-2">
-                  {['1.0', '1.5', '2.0', '2.5', '3.0'].map((r) => (
-                    <button
-                      key={r}
-                      onClick={() => setMonthlyRate(r)}
-                      className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-                        monthlyRate === r
-                          ? 'text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                      style={monthlyRate === r ? { backgroundColor: '#0D2B5E' } : {}}
-                    >
-                      {r}%
-                    </button>
-                  ))}
-                </div>
-                <input
-                  type="number"
-                  min="0.1"
-                  max="5"
-                  step="0.1"
-                  value={monthlyRate}
-                  onChange={(e) => setMonthlyRate(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:border-[#0D2B5E] focus:ring-1 focus:ring-[#0D2B5E]"
-                />
-              </div>
-            </div>
-
-            {/* Result */}
-            {hasResult && (
-              <div className="mt-8 rounded-xl p-6" style={{ backgroundColor: '#F0F4FF' }}>
-                <h3 className="text-sm font-bold text-[#0D2B5E] uppercase tracking-wider mb-4">試算結果</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">票面金額</span>
-                    <span className="font-semibold text-gray-900">NT$ {formatTWD(amountNum)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">票期</span>
-                    <span className="font-semibold text-gray-900">{daysNum} 天（約 {months.toFixed(1)} 個月）</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">月費率</span>
-                    <span className="font-semibold text-gray-900">{rateNum}%</span>
-                  </div>
-                  <div className="border-t border-[#0D2B5E]/10 pt-3 mt-3">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">貼現手續費</span>
-                      <span className="font-semibold text-red-600">－ NT$ {formatTWD(fee)}</span>
-                    </div>
-                    <div className="flex justify-between mt-3">
-                      <span className="font-bold text-[#0D2B5E]">實際到手金額</span>
-                      <span className="text-xl font-bold" style={{ color: '#C9922A' }}>NT$ {formatTWD(received)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 算完當下＝全站意圖最高的瞬間，就地承接 */}
-                <div className="mt-6 pt-5 border-t border-[#0D2B5E]/10">
-                  <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                    這是用<strong className="text-gray-800">你自己輸入的費率</strong>算的。實際費率取決於發票人票信——
-                    加 LINE 傳一張支票照片，我們<strong className="text-gray-800">免費幫你查發票人的票信紀錄</strong>，
-                    並回覆這張票的實際報價區間。
-                  </p>
-                  <LineLink
-                    location="calculator_result"
-                    className="flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full font-bold text-white transition-all hover:opacity-90 hover:shadow-lg"
-                    style={{ backgroundColor: '#06C755' }}
-                  >
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
-                      <path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.02 3.55 7.39 8.35 8.03.33.07.77.22.88.5.1.25.07.64.03.89l-.14.85c-.04.25-.2.99.86.54 1.07-.45 5.76-3.39 7.86-5.81C21.4 14.4 22 12.36 22 10.13 22 5.64 17.52 2 12 2z" />
-                    </svg>
-                    {LINE_CTA_LABEL}・取得實際報價
-                  </LineLink>
-                  <p className="text-center text-xs text-gray-400 mt-3">{LINE_CTA_ASSURANCE}</p>
-                </div>
-              </div>
-            )}
-
-            <p className="text-xs text-gray-400 mt-5 leading-5">
-              本試算以月費率 × 票期月數計算，實際費率依個別案件評估（發票人信用、票面金額、公司往來紀錄）而定。
-            </p>
-          </div>
+          <DiscountCalculator location="calculator_page" />
 
           {/* 計算邏輯說明 */}
           <div className="mt-10 bg-white border border-gray-100 rounded-2xl shadow-sm p-8">

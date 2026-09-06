@@ -164,3 +164,36 @@ export function ctaOfferFor(
   const variant = ctaVariantFor(article)
   return { variant, ...CTA_OFFERS[variant] }
 }
+
+// ─────────────────────────────────────────────────────────────
+// 文章要不要就地嵌入費率試算工具
+//
+// 為什麼：2026-09-06 GA4 盤查 —— /fei-lv-ji-suan 一整個月 0 次瀏覽，
+// 全站頁/次 1.05、非文章頁只佔 1.6% 的 pageviews、/contact 0 次。
+// 使用者不會離開落地頁，工具必須搬進文章而不是連過去。
+//
+// 條件刻意收緊成「主題是等錢（tie-xian）」**且**「這篇本來就在談錢或票期」：
+// 試算表體積不小，塞進《支票兌現需要哪些文件》只會打斷閱讀。
+// ─────────────────────────────────────────────────────────────
+const CALC_SLUG = [
+  'shou-xu-fei', 'fei-yong', 'li-lv', 'e-du', 'piao-qi', 'ru-zhang',
+  'huan-xian-jin', 'ti-qian-dui-xian', 'hang-qing', 'tie-xian-shi-shen-me',
+  'yuan-qi-zhi-piao', 'da-e-zhi-piao', 'xiao-jin-e-zhi-piao', 'kuai-dao-qi',
+  'duo-zhang-zhi-piao', 'ji-suan',
+]
+const CALC_ZH = [
+  '手續費', '費用', '費率', '利率', '額度', '票期', '入帳',
+  '換現金', '實拿', '行情', '提前兌現', '怎麼算',
+]
+
+// 例外：主題雖談入帳／費用，但台幣貼現試算表對它無意義
+const CALC_EXCLUDE = ['wai-bi-zhi-piao']  // 外幣支票託收，幣別與流程都不同
+
+export function shouldEmbedCalculator(
+  article: Pick<Article, 'slug' | 'title' | 'h1' | 'keywords' | 'category'>,
+): boolean {
+  if (CALC_EXCLUDE.includes(article.slug)) return false
+  if (ctaVariantFor(article) !== 'tie-xian') return false
+  const text = [article.title, article.h1, ...(article.keywords ?? [])].join(' ')
+  return CALC_SLUG.some((s) => article.slug.includes(s)) || CALC_ZH.some((z) => text.includes(z))
+}

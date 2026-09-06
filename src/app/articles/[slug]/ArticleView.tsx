@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { Fragment } from 'react'
 import { articleAuthor, type Article, type Block } from '@/lib/articles-source'
 import LineCtaBlock, { InlineLineCta, FloatingLineButton } from '@/components/LineCta'
-import { ctaVariantFor } from '@/lib/cta-offers'
+import DiscountCalculator from '@/components/DiscountCalculator'
+import { ctaVariantFor, shouldEmbedCalculator } from '@/lib/cta-offers'
 
 function formatDate(iso: string): string {
   const [y, m, d] = iso.split('-')
@@ -132,6 +133,9 @@ export default function ArticleView({
   // CTA 誘因依文章主題自動切換（見 lib/cta-offers.ts），新文章不必手動指定
   const ctaVariant = ctaVariantFor(article)
   const inlineAt = inlineCtaIndex(article.content)
+  // 談錢／票期的文章，中段直接給工具而不是給連結。
+  // /fei-lv-ji-suan 一個月 0 瀏覽——使用者不會離開落地頁，工具得搬進來。
+  const embedCalculator = shouldEmbedCalculator(article)
 
   return (
     <>
@@ -178,9 +182,16 @@ export default function ArticleView({
           {article.content.map((block, i) => (
             // Fragment 不產生 DOM 節點，段落間距與原本完全相同
             <Fragment key={i}>
-              {i === inlineAt && (
-                <InlineLineCta location="article_inline" variant={ctaVariant} />
-              )}
+              {i === inlineAt &&
+                (embedCalculator ? (
+                  <DiscountCalculator
+                    compact
+                    location="calculator_article"
+                    variant={ctaVariant}
+                  />
+                ) : (
+                  <InlineLineCta location="article_inline" variant={ctaVariant} />
+                ))}
               {renderBlock(block, i)}
             </Fragment>
           ))}
