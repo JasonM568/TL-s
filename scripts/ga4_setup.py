@@ -7,8 +7,9 @@ GA4 設定同步（自訂維度 + 關鍵事件）
 也避免手點漏掉或名稱打錯。
 
 ⚠️ 權限：需要服務帳戶在 GA4「管理 → 資源存取管理」具備**編輯者**。
-   目前 ga4-reader@huangxi-analytics.iam.gserviceaccount.com 是「檢視者」，
-   跑這支會全部 403。升級角色後再跑。
+   ga4-reader@huangxi-analytics.iam.gserviceaccount.com 於 2026-09-06 由
+   「檢視者」升為「編輯者」以跑本腳本。若之後降回檢視者，寫入會全部 403
+   （讀取不受影響，GET 用 analytics.readonly 即可）。
 
 用法：
     python3 scripts/ga4_setup.py            # 只檢查現況，不寫入（預設）

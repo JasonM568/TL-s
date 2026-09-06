@@ -86,6 +86,12 @@
   - **浮動鈕**改成文章頁吃 variant（`floating_article`）。做法是 `FloatingLine` 排除 `/articles/<slug>`、改由 `ArticleView` 渲染 `FloatingLineButton variant=` —— **這樣是 server render，載入後不會閃一下換字**；別改成用 client store 事後設定。
   - **新增 GA4 事件 `cta_view`**（IntersectionObserver，threshold 0.5，每次載入每個 CTA 只送一次）。有曝光才能算 view→click，才分得出「沒人看到」（改位置）還是「看到不想點」（改文案）——兩者解法相反。`line_add_click` 與 `cta_view` 都帶 `cta_location` + `cta_variant`。
   - ⚠️⚠️ **待 Jason 手動操作（沒做的話上面的量測全部看不到）**：GA4 →「管理」→「自訂定義」→「建立自訂維度」建兩個，範圍皆為「事件」：`cta_location`（CTA 位置）、`cta_variant`（CTA 誘因）。**只對往後的資料生效、不回溯。** `scripts/ga4_report.py` 已改成會偵測並提示，建好後同一支腳本就會自動列出分入口／分誘因的曝光與點擊。
+- **GA4 設定補齊（2026-09-06，`scripts/ga4_setup.py`）**：用 Analytics Admin API 建立，非手點。
+  - ✅ 自訂維度 `cta_location`（CTA 位置）、`cta_variant`（CTA 誘因），範圍皆為事件。
+  - ✅ 關鍵事件 `line_add_click`（ONCE_PER_SESSION，同次造訪重複點只算一次）、`generate_lead`（ONCE_PER_EVENT）。
+  - ⚠️ **盤查發現原本的關鍵事件只有 `jf___送出諮詢`（舊 WordPress 表單外掛，現站根本不送這個事件）與 `purchase`（電商預設，本站無電商）→ 轉換數恆為 0，而且一直在量一個不存在的事件。** `jf___送出諮詢`（id 5121852488）**尚未停用**，待 Jason 決定；留著會讓關鍵事件清單持續誤導。
+  - ⚠️ **`ga4-reader@huangxi-analytics.iam.gserviceaccount.com` 已由「檢視者」升為「編輯者」**（跑寫入必須）。若只是為這次開的，做完可降回檢視者——降回後 `ga4_setup.py --apply` 會全部 403，但 `ga4_report.py` 與所有 GET 不受影響。**這把金鑰現在能改也能刪 GA4 設定，名字叫 reader 會誤導。**
+  - `ga4_setup.py` 預設 dry-run，`--apply` 才寫入；重跑安全（已存在會跳過）。
 - GoogleAnalytics 排除 `/admin`（2026-08-19）：後台操作不是網站流量。`FloatingLine` 早就排除了，GA 漏掉。
 - **title/meta 改寫 10 篇（2026-08-19，commit `72525fd`）**：標的＝GSC「排名已在第 1 頁但 CTR=0」約 500 曝光。靜態 3 篇（title+h1+description）＋DB 7 篇（走 `apply_meta.py`）。改寫理由與當時的曝光基準存 `scripts/title-rewrites-2026-08-19.json`，一個月後用 `gsc_report.py --days 28 --compare` 對照驗收。⚠️ Google 重抓標題需 1–3 週且可能自行改寫，短期沒變化屬正常，**不要來回改**。
 - 聯絡電話 0981-109769（已移除市話）
