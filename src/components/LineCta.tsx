@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useSyncExternalStore } from 'react'
 import {
   LINE_ADD_URL,
   LINE_CTA_LABEL,
@@ -64,6 +64,53 @@ function useCtaImpression(location: string, variant?: CtaVariant) {
   }, [location, variant])
 
   return ref
+}
+
+
+/**
+ * 畫面上目前有幾個文中 CTA 可見。
+ *
+ * 為什麼需要：手機把早期 CTA 放在第一屏後，它會和右下角浮動鈕（同樣是綠色
+ * LINE 按鈕、同樣的文字）疊在一起，兩顆並排看起來很粗糙。文中 CTA 進畫面時
+ * 讓浮動鈕淡出即可——桌機版面寬、不會疊，所以只在手機生效。
+ */
+let visibleInlineCtas = 0
+const visibilityListeners = new Set<() => void>()
+
+function bumpInlineCtaVisibility(delta: number) {
+  visibleInlineCtas = Math.max(0, visibleInlineCtas + delta)
+  visibilityListeners.forEach((l) => l())
+}
+
+function useAnyInlineCtaVisible(): boolean {
+  return useSyncExternalStore(
+    (cb) => {
+      visibilityListeners.add(cb)
+      return () => visibilityListeners.delete(cb)
+    },
+    () => visibleInlineCtas > 0,
+    () => false, // SSR：一律當作沒有，浮動鈕正常渲染
+  )
+}
+
+/** 掛在文中 CTA 上：進出畫面時更新計數（試算表元件也用這支） */
+export function useReportVisibility(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const el = ref.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    let counted = false
+    const io = new IntersectionObserver(
+      (es) => {
+        for (const e of es) {
+          if (e.isIntersecting && !counted) { counted = true; bumpInlineCtaVisibility(1) }
+          else if (!e.isIntersecting && counted) { counted = false; bumpInlineCtaVisibility(-1) }
+        }
+      },
+      { threshold: 0.15 },
+    )
+    io.observe(el)
+    return () => { io.disconnect(); if (counted) bumpInlineCtaVisibility(-1) }
+  }, [ref])
 }
 
 /** 有埋點的 LINE 連結。樣式由呼叫端決定，這裡只負責連結與追蹤。 */
@@ -180,6 +227,7 @@ export function InlineLineCta({
 }) {
   const offer = CTA_OFFERS[variant]
   const ref = useCtaImpression(location, variant)
+  useReportVisibility(ref)
 
   return (
     <div
@@ -209,13 +257,19 @@ export function InlineLineCta({
  */
 export function FloatingLineButton({ variant }: { variant?: CtaVariant }) {
   const label = variant ? CTA_OFFERS[variant].label : LINE_CTA_LABEL
+  // 只在手機讓路：桌機版面寬，浮動鈕不會壓到文中 CTA
+  const yieldOnMobile = useAnyInlineCtaVisible()
 
   return (
     <LineLink
       location={variant ? 'floating_article' : 'floating'}
       variant={variant}
       ariaLabel={`加入 LINE 官方帳號，${label}`}
-      className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full px-4 py-3 md:px-5 text-white shadow-lg hover:shadow-xl hover:opacity-95 transition-all"
+      className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full px-4 py-3 md:px-5 text-white shadow-lg hover:shadow-xl hover:opacity-95 transition-all ${
+        yieldOnMobile
+          ? 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto'
+          : ''
+      }`}
       style={{ backgroundColor: '#06C755' }}
     >
       <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true">

@@ -53,13 +53,13 @@ export function renderBlock(block: Block, i: number) {
       )
     case 'p':
       return (
-        <p key={i} className="text-gray-700 leading-8 mb-5">
+        <p key={i} className="text-gray-700 leading-[1.8] md:leading-8 mb-5">
           {block.text}
         </p>
       )
     case 'ul':
       return (
-        <ul key={i} className="list-disc pl-6 mb-6 space-y-2 text-gray-700 leading-7">
+        <ul key={i} className="list-disc pl-6 mb-6 space-y-2 text-gray-700 leading-[1.75] md:leading-7">
           {block.items.map((item, j) => (
             <li key={j}>{item}</li>
           ))}
@@ -67,7 +67,7 @@ export function renderBlock(block: Block, i: number) {
       )
     case 'ol':
       return (
-        <ol key={i} className="list-decimal pl-6 mb-6 space-y-2 text-gray-700 leading-7">
+        <ol key={i} className="list-decimal pl-6 mb-6 space-y-2 text-gray-700 leading-[1.75] md:leading-7">
           {block.items.map((item, j) => (
             <li key={j}>{item}</li>
           ))}
@@ -140,16 +140,16 @@ export default function ArticleView({
   return (
     <>
       {/* Hero */}
-      <section style={{ backgroundColor: '#0D2B5E' }} className="text-white py-14 px-4">
+      <section style={{ backgroundColor: '#0D2B5E' }} className="text-white py-8 md:py-14 px-4">
         <div className="max-w-3xl mx-auto">
-          <nav className="text-sm text-gray-400 mb-6">
+          <nav className="text-sm text-gray-400 mb-4 md:mb-6">
             <Link href="/" className="hover:text-white">首頁</Link>
             <span className="mx-2">/</span>
             <Link href="/articles" className="hover:text-white">知識專欄</Link>
             <span className="mx-2">/</span>
             <span className="text-white">{article.category}</span>
           </nav>
-          <div className="flex items-center gap-3 mb-4 text-xs">
+          <div className="flex items-center gap-3 mb-3 md:mb-4 text-xs">
             <span
               className="px-3 py-1 rounded-full font-medium text-white"
               style={{ backgroundColor: '#C9922A' }}
@@ -162,7 +162,7 @@ export default function ArticleView({
             <span className="text-gray-400">・約 {article.readingMinutes} 分鐘</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-bold leading-snug">{article.h1}</h1>
-          <p className="text-sm text-gray-300 mt-4">作者：{articleAuthor(article)}</p>
+          <p className="text-sm text-gray-300 mt-3 md:mt-4">作者：{articleAuthor(article)}</p>
         </div>
       </section>
 
@@ -179,6 +179,12 @@ export default function ArticleView({
       {/* Body */}
       <article className="py-10 px-4">
         <div className="max-w-3xl mx-auto">
+          {/* 手機專屬早期 CTA。手機平均參與僅 22 秒（約看完摘要就走），
+              而文中 CTA 在 50% 處＝手機第 8 屏（全篇 15.6 屏），那群人到不了。
+              桌機平均 66 秒、全篇只有 8.1 屏，不需要這個，故 md 以上隱藏。 */}
+          <div className="md:hidden">
+            <InlineLineCta location="article_top_mobile" variant={ctaVariant} className="!mt-0" />
+          </div>
           {article.content.map((block, i) => (
             // Fragment 不產生 DOM 節點，段落間距與原本完全相同
             <Fragment key={i}>

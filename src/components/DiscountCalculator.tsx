@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { LineLink } from './LineCta'
+import { LineLink, useReportVisibility } from './LineCta'
 import { LINE_CTA_ASSURANCE } from '@/lib/site'
 import type { CtaVariant } from '@/lib/cta-offers'
 
@@ -49,6 +49,8 @@ export default function DiscountCalculator({
   // 曝光：工具捲進畫面
   const boxRef = useRef<HTMLDivElement>(null)
   const viewSent = useRef(false)
+  // 試算表體積大，浮動鈕壓在上面特別明顯 —— 進畫面時讓浮動鈕在手機淡出
+  useReportVisibility(boxRef)
   useEffect(() => {
     const el = boxRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
