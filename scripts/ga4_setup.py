@@ -6,10 +6,13 @@ GA4 設定同步（自訂維度 + 關鍵事件）
 埋點送上去的參數在報表裡永遠查不到。用 API 建可留下版控紀錄，
 也避免手點漏掉或名稱打錯。
 
-⚠️ 權限：需要服務帳戶在 GA4「管理 → 資源存取管理」具備**編輯者**。
-   ga4-reader@huangxi-analytics.iam.gserviceaccount.com 於 2026-09-06 由
-   「檢視者」升為「編輯者」以跑本腳本。若之後降回檢視者，寫入會全部 403
-   （讀取不受影響，GET 用 analytics.readonly 即可）。
+⚠️ 權限：讀取（不加 --apply）只要「檢視者」；**寫入需要「編輯者」**。
+   ga4-reader@huangxi-analytics.iam.gserviceaccount.com 於 2026-09-06 臨時升為
+   編輯者跑完設定後，**已依 Jason 指示降回檢視者**（最小權限）。
+   → 現在跑 --apply 會全部 403，這是預期行為。日後若要再寫入，
+     請先在 GA4「管理 → 資源存取管理」升為編輯者，做完再降回。
+   ⚠️ 降權這件事**腳本做不到**：GA4 的使用者管理需要「管理員」角色，
+      編輯者不含此權限（accessBindings 一律 403），只能在後台手動點。
 
 用法：
     python3 scripts/ga4_setup.py            # 只檢查現況，不寫入（預設）
@@ -52,6 +55,8 @@ WANT_DIMENSIONS = [
 # 應該被算成轉換的事件。
 # ⚠️ 2026-09-06 盤查發現原本只有 jf___送出諮詢（舊 WordPress 表單外掛，現站不再送出）
 #    與 purchase（電商預設，本站無電商）→ 轉換數恆為 0。
+#    下面兩個已於 2026-09-06 建立，jf___送出諮詢 同日已取消關鍵事件標記。
+#    purchase 是 GA4 內建預設、本站永不送出，無害，故不列入 STALE。
 WANT_KEY_EVENTS = [
     ('line_add_click', 'ONCE_PER_SESSION'),  # 同一次造訪重複點 LINE 只算一次
     ('generate_lead', 'ONCE_PER_EVENT'),     # 表單每送出一筆都算
@@ -81,6 +86,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--property', default=DEFAULT_PROPERTY)
     ap.add_argument('--apply', action='store_true', help='實際寫入（預設只檢查）')
+    ap.add_argument('--disable-stale', action='store_true',
+                    help='一併取消 STALE_KEY_EVENTS 的關鍵事件標記（需搭配 --apply）')
     a = ap.parse_args()
 
     sess = session(readonly=not a.apply)
@@ -135,11 +142,20 @@ def main():
             print(f'  ❌失敗 {name:20s} HTTP {r.status_code} {r.text[:160]}')
 
     stale = [k for k in kes if k['eventName'] in STALE_KEY_EVENTS]
-    if stale:
-        print('\n  ⚠️ 下列關鍵事件現站已不再送出，建議在 GA4 後台停用（本腳本不自動刪，')
-        print('     刪掉會讓歷史報表少一個對照）：')
+    if stale and not (a.apply and a.disable_stale):
+        print('\n  ⚠️ 下列關鍵事件現站已不再送出，建議停用（要動請加 --apply --disable-stale）：')
         for k in stale:
             print(f'       {k["eventName"]}  ({k["name"].rsplit("/", 1)[1]})')
+    elif stale:
+        # 取消關鍵事件標記。事件本身與已收集的歷史資料都保留，
+        # 只是往後不再被算成轉換 —— 這正是「停用」要的效果。
+        print('\n  取消失效關鍵事件的標記：')
+        for k in stale:
+            r = sess.delete('https://analyticsadmin.googleapis.com/v1beta/' + k['name'])
+            if r.status_code in (200, 204):
+                print(f'  ✅停用 {k["eventName"]:20s} ({k["name"].rsplit("/", 1)[1]})')
+            else:
+                print(f'  ❌失敗 {k["eventName"]:20s} HTTP {r.status_code} {r.text[:160]}')
 
     if not a.apply:
         print('\n以上為檢查結果。確認無誤後加 --apply 實際寫入。')

@@ -89,8 +89,9 @@
 - **GA4 設定補齊（2026-09-06，`scripts/ga4_setup.py`）**：用 Analytics Admin API 建立，非手點。
   - ✅ 自訂維度 `cta_location`（CTA 位置）、`cta_variant`（CTA 誘因），範圍皆為事件。
   - ✅ 關鍵事件 `line_add_click`（ONCE_PER_SESSION，同次造訪重複點只算一次）、`generate_lead`（ONCE_PER_EVENT）。
-  - ⚠️ **盤查發現原本的關鍵事件只有 `jf___送出諮詢`（舊 WordPress 表單外掛，現站根本不送這個事件）與 `purchase`（電商預設，本站無電商）→ 轉換數恆為 0，而且一直在量一個不存在的事件。** `jf___送出諮詢`（id 5121852488）**尚未停用**，待 Jason 決定；留著會讓關鍵事件清單持續誤導。
-  - ⚠️ **`ga4-reader@huangxi-analytics.iam.gserviceaccount.com` 已由「檢視者」升為「編輯者」**（跑寫入必須）。若只是為這次開的，做完可降回檢視者——降回後 `ga4_setup.py --apply` 會全部 403，但 `ga4_report.py` 與所有 GET 不受影響。**這把金鑰現在能改也能刪 GA4 設定，名字叫 reader 會誤導。**
+  - ⚠️ **盤查發現原本的關鍵事件只有 `jf___送出諮詢`（舊 WordPress 表單外掛，現站根本不送這個事件）與 `purchase`（電商預設，本站無電商）→ 轉換數恆為 0，而且一直在量一個不存在的事件。** ✅ `jf___送出諮詢`（id 5121852488）已於 2026-09-06 取消關鍵事件標記（`--apply --disable-stale`；事件本身與歷史資料保留，只是往後不再算成轉換）。`purchase` 保留——GA4 內建預設、本站永不送出，無害。
+  - 🔒 **`ga4-reader@...` 已於 2026-09-06 設定完成後降回「檢視者」**（最小權限）。→ **`ga4_setup.py --apply` 現在會 403，這是預期行為**；`ga4_report.py` 等所有讀取不受影響。日後要再寫入：先在「資源存取管理」升為編輯者，做完再降回。
+  - ⚠️ **降權／升權腳本做不到**：GA4 使用者管理需要「管理員」角色，編輯者不含此權限（`accessBindings` 一律 403），只能在後台手動點。
   - `ga4_setup.py` 預設 dry-run，`--apply` 才寫入；重跑安全（已存在會跳過）。
 - **費率試算搬進文章 + 手機閱讀成本修正（2026-09-06）**：起因是 GA4 全站盤查，見下方〈2026-09-06 GA4 盤查結論〉。
   - `DiscountCalculator`（`compact` 內嵌版／頁面版共用同一份公式，`/fei-lv-ji-suan` 已改用它）。`shouldEmbedCalculator()` 命中 **28 篇**（主題須為 `tie-xian` 且該篇本來就在談錢／票期）；外幣支票排除（台幣試算套不上）。新增事件 **`calculator_result`**（真的算出數字＝意圖最高的訊號，只送一次）。
