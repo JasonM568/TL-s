@@ -39,7 +39,8 @@ def session():
     return AuthorizedSession(creds)
 
 
-def run(sess, prop, dims, mets, start, end, country=None, limit=25, order=None):
+def run(sess, prop, dims, mets, start, end, country=None, limit=25, order=None,
+        event_names=None):
     body = {
         'dateRanges': [{'startDate': start, 'endDate': end}],
         'dimensions': [{'name': d} for d in dims],
@@ -48,10 +49,18 @@ def run(sess, prop, dims, mets, start, end, country=None, limit=25, order=None):
     }
     if order:
         body['orderBys'] = [{'metric': {'metricName': order}, 'desc': True}]
+    # 篩選在伺服器端做：CTA 事件量遠小於 page_view，靠 limit 截取會被擠掉
+    clauses = []
     if country:
-        body['dimensionFilter'] = {
-            'filter': {'fieldName': 'country', 'stringFilter': {'value': country}}
-        }
+        clauses.append({'filter': {'fieldName': 'country',
+                                   'stringFilter': {'value': country}}})
+    if event_names:
+        clauses.append({'filter': {'fieldName': 'eventName',
+                                   'inListFilter': {'values': list(event_names)}}})
+    if len(clauses) == 1:
+        body['dimensionFilter'] = clauses[0]
+    elif len(clauses) > 1:
+        body['dimensionFilter'] = {'andGroup': {'expressions': clauses}}
     r = sess.post(API.format(prop), json=body)
     j = r.json()
     if r.status_code != 200:
@@ -155,7 +164,8 @@ def main():
         ('customEvent:cta_variant', 'CTA 誘因', 'cta_variant'),
     ]:
         r, e = run(s, a.property, ['eventName', dim], ['eventCount'],
-                   start, end, country, limit=30, order='eventCount')
+                   start, end, country, limit=50, order='eventCount',
+                   event_names=['cta_view', 'line_add_click', 'generate_lead'])
         if e and 'not a valid dimension' in e:
             missing.append((name, param))
             continue
