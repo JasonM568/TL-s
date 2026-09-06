@@ -124,21 +124,28 @@
    - ⚠️ **選題前務必先看「一個查詢由哪一頁承接」**，否則會寫出相殘的文章。2026-08-19 就發現 `piao-xin-cha-xun` 一頁扛 44 個查詢／628 曝光、`zhi-piao-ru-zhang-shi-jian` 扛 68 個查詢／327 曝光——這種頁面該「拆衛星文分擔」，而不是再寫同主題的文章去搶。查法：GSC API 用 `dimensions:['query','page']`。選題方法見 `docs/content-plan.md` 第四批段落（依 SERP 機會分數）。
    - ⚠️ **DB 排程文不支援 `faqs` 欄位**（`huangxi_articles` 無此欄、`rowToArticle` 未映射）→ 排程文沒有 FAQPage schema。要補需加欄位＋改 `huangxi_upsert_article` RPC＋改映射＋前台 JSON-LD。靜態 `articles.ts` 的文章則有。
    - 產文兩種方式：①（永久 SEO 骨幹）在 `src/lib/articles.ts` 的 `articles` 陣列加物件（企業融資設 `author: '理財顧問 張揚'`，支票不設=預設李誠信）→ build → deploy。②（排程/批次）走排程系統：JSON 放 `scripts/drafts/` → `seed-articles.mjs` → `/admin/articles` 排程，到點免部署自動上線。
-3. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。（✅ GSC sitemap 提交／檢查已於 2026-08-25 完成，見下方 GSC 段落）
-4. **後台密碼**：目前是自動產生的隨機密碼，使用者可要求改成好記的（改 Vercel + .env.local 的 `ADMIN_PASSWORD`）。
-5. （可選）後台加篩選/匯出 CSV、Cloudflare AI 爬蟲封鎖規則等增強。
-6. **SERP 排名優化（2026-08-08 盤點，依機會分數排序）**：
+3. 📅 **轉換成效驗收（2026-09-06 起量測，約 2026-10-06 回頭看）**——這一輪只架好量測，成效一筆都還沒進來（自訂維度不回溯）。
+   - 一週後先確認資料有進來，且 `article_top_mobile` 曝光是否明顯高於 `article_inline`。若是，就證實「手機根本捲不到中段」的判斷。
+   - **10/06 正式驗收的關鍵指標是 `頁/次` 有沒有離開 1.05。若仍是 1.05 → 永久放棄內鏈／導流策略，所有資源押單頁轉換。**
+   - 查法：`python3 scripts/ga4_report.py --days 28`（已會列出分入口／分誘因的 `cta_view` vs `line_add_click`）。
+   - 其餘結論見〈2026-09-06 GA4 盤查結論〉。
+4. **手機閱讀長度（等數據再決定）**：已做的排版與早期 CTA 只把手機從 15.6 屏壓到 15.2 屏——**CSS 治不好，根因是文章本身 8 分鐘長**。要真的解需從內容結構下手（分段、摺疊、目錄跳轉），工程量不小。先看早期 CTA 的轉換數據再決定值不值得投入。
+5. **商業大詞仍卡關（這一輪完全沒碰）**：支票貼現 10.1 名／1 click、支票貸款 15.7、票貼 23.0（皆 0 click）、企業融資與企業貸款未進榜。流量成長全來自資訊型長尾。相關做法見下方第 9 點（SERP 排名優化）。
+6. **增流量（站外）**：Google 商家檔案（本地 SEO，CP 值最高）、Bing Webmaster + IndexNow、backlinks。多需使用者登入操作。（✅ GSC sitemap 提交／檢查已於 2026-08-25 完成，見下方 GSC 段落）
+7. **後台密碼**：目前是自動產生的隨機密碼，使用者可要求改成好記的（改 Vercel + .env.local 的 `ADMIN_PASSWORD`）。
+8. （可選）後台加篩選/匯出 CSV、Cloudflare AI 爬蟲封鎖規則等增強。
+9. **SERP 排名優化（2026-08-08 盤點，依機會分數排序）**：
    - 排名現況：94 篇中 54 篇（57%）第 1 頁；商業大詞卡關（支票貼現 10.4 名/支票貸款 13.9/票貼 32.2/企業融資 35.0/企業貸款未進榜）。明細見 Downloads《黃璽理財_文章排名對照_20260808.xlsx》與 `docs/serp-reports/`。
    - ①（需 Jason 決策）執行《文章關鍵字佈局分析》分頁 3 的 **12 組兌現/貼現同類相殘合併＋301**——「支票貼現」推進第 1 頁的關鍵。
    - ② P0 帶 9 個 title/meta 改寫（票貼詐騙/即期票是什麼/票貼行情/申請支票要多久/禁背支票/兌現/支票兌現詐騙/票據種類/客票貼現）。
    - ③ 跳票樞紐頁叢集化（跳票家族 136 曝光卡 4–5 頁）；④ F 票信叢集 7 篇無曝光文逐篇 GSC 請求建立索引。
    - **~9/4 重新匯 GSC 跑 `python3 scripts/serp_score.py <zip> --save`**：自動對照上份快照列排名升降，驗證 canonical/301 成效。
    - ✅ 2026-08-17 已針對 ③（跳票叢集化）與 P1 striking distance 產出第四批 14 篇（08/18–08/31 排程中），效果請於 9 月的 GSC 快照驗證。
-7. ✅ **舊文死連結清理（2026-08-25 完成，commit `870a5bd`）**：4 條 `related` 死連結已改指向正確文章（`zhi-piao-dui-xian`→`zhi-piao-dui-xian-liu-cheng`、`zhi-piao-tian-xie`→`zhi-piao-zen-me-xie`、`zhi-piao-guo-qi`→`zhi-piao-ti-shi-qi-xian`、`zhi-piao-dui-xian-shi-jian`→`zhi-piao-ru-zhang-shi-jian`），涉及 7 篇 DB 排程文。
+10. ✅ **舊文死連結清理（2026-08-25 完成，commit `870a5bd`）**：4 條 `related` 死連結已改指向正確文章（`zhi-piao-dui-xian`→`zhi-piao-dui-xian-liu-cheng`、`zhi-piao-tian-xie`→`zhi-piao-zen-me-xie`、`zhi-piao-guo-qi`→`zhi-piao-ti-shi-qi-xian`、`zhi-piao-dui-xian-shi-jian`→`zhi-piao-ru-zhang-shi-jian`），涉及 7 篇 DB 排程文。
    - ⚠️⚠️ **修 DB 文的內容時，絕對不要直接跑 `seed-articles.mjs` 重灌。** `scripts/drafts/` 的本地 JSON 是舊快照，會把 `apply_meta.py` 事後改寫的 title/description 蓋回去（`piao-qi-ji-suan` 就是這種情況）。正確作法：**`huangxi_list_articles` 讀 DB 現值 → 只改要動的欄位 → `huangxi_upsert_article` 寫回**，事後再把 DB 值同步回本地 JSON。
    - ⚠️ **通則：`related` 不要指向「未來排程文」**，Google 提早爬到會記成 404（`hua-xian-zhi-piao` 就這樣被記了一筆）。選內鏈標的前先確認發布日已到。
 
-8. **GSC 索引狀態（2026-08-24~25 用 URL Inspection API 全站盤查 218 個網址）**
+11. **GSC 索引狀態（2026-08-24~25 用 URL Inspection API 全站盤查 218 個網址）**
    - **結論：「未建立索引」數字高但 95% 正常。** sitemap 內 114 個有 **113 個已建立索引**。「未建立索引」94 個全在 sitemap 之外＝舊 WordPress 殘影：67 個是 8/07 上 301 前的過期 404 記錄（現況全 308）、16 個已正確標示為轉址、11 個是 `www.` 重複頁（canonical 正確）。
    - ✅ **sitemap 已用 API 重新提交**（`lastDownloaded` 2026-08-22→**2026-08-25T02:44:41Z**，`submitted` 114→**120**，errors/warnings 皆 0）。⚠️ `gsc_report.py` 的 `webmasters.readonly` scope 寫入會 403，要換 `https://www.googleapis.com/auth/webmasters`（同一把金鑰）。
    - ✅ Jason 已於 2026-08-25 在 GSC 後台手動完成：①`/articles/hua-xian-zhi-piao` 要求建立索引；②「索引→網頁→找不到網頁 (404)」按驗證修正。驗證程序跑幾天到兩週。
@@ -146,7 +153,7 @@
    - ❌ **Indexing API 別走**：GCP 專案 `165422715325` 未啟用，且 Google 官方限定只能用於 JobPosting／BroadcastEvent，推一般文章頁違反使用條款。
    - 📅 **約 2026-09-08 回頭驗收**：`gsc_report.py --days 28 --compare`，那 94 個應大幅下降，且 8/20 之後的文章要開始有曝光（驗證 sitemap 解凍生效）。
 
-9. ✅ **robots.txt 不再對 Googlebot 封鎖 `/_next/`（2026-08-25 修，commit `95d532a`）**：GSC「遭到 robots.txt 封鎖」的來源就是 `/_next/static/chunks/*.js`，且同一支 chunk 每次部署會帶新的 `?dpl=` 部署 ID → 網址數量只增不減。`/_next/` 是全站 CSS／JS，Google 官方明講不要擋。
+12. ✅ **robots.txt 不再對 Googlebot 封鎖 `/_next/`（2026-08-25 修，commit `95d532a`）**：GSC「遭到 robots.txt 封鎖」的來源就是 `/_next/static/chunks/*.js`，且同一支 chunk 每次部署會帶新的 `?dpl=` 部署 ID → 網址數量只增不減。`/_next/` 是全站 CSS／JS，Google 官方明講不要擋。
    - ⚠️ **`src/app/robots.ts` 的 `'*'` 群組只能擋 `/admin`、`/api`，不要再把 `/_next/` 加回去。** 9 個具名 AI 爬蟲群組維持擋 `/_next/`（robots.txt 只套用最相符的那一組，不受 `'*'` 影響）。
    - ⚠️ 副作用正常：這批網址會移到「已檢索 - 目前尚未建立索引」，JS 檔本來就不該被當網頁索引，**別再去修**。
    - ❌ **不是 Cloudflare**（Jason 問過，四個角度排除）：CF 送的 robots.txt 與 `robots.ts` 產出逐字相符、Googlebot UA 抓全站資源皆 200、無 `cf-mitigated` 標頭、Google 自己的記錄是 `pageFetchState: SUCCESSFUL`。**推理捷徑：GSC 的「遭到 robots.txt 封鎖」依定義只可能來自 robots.txt**，CF 擋的話會歸到「禁止存取 (403)」或「伺服器錯誤 (5xx)」，是不同桶子。
@@ -157,7 +164,7 @@
      - **驗收標準不是歸零**，而是「不再隨每次部署往上長」。
    - 📌 GSC robots.txt 報表的 **line 43 警告 = `Host: https://huangxi.tw`**（來源 `robots.ts` 的 `host: SITE_URL`）。`Host` 是 Yandex 專用指令、Google 不支援，故標「略過的規則」。**無害**（主網域已靠 www→301 ＋ canonical 指定）。Jason 未決定是否移除，先留著，下次有其他改動再順手帶。
 
-10. **`/articles?page=N` 分頁 canonical（低優先）**：8 個分頁被 Google 索引，我們的 `userCanonical` 指向 `/articles` 但 `googleCanonical` 是分頁自己＝**Google 忽略了我們的 canonical**。Google 官方對分頁的建議本來就是 self-canonical，現在的寫法逆著來。影響小。
+13. **`/articles?page=N` 分頁 canonical（低優先）**：8 個分頁被 Google 索引，我們的 `userCanonical` 指向 `/articles` 但 `googleCanonical` 是分頁自己＝**Google 忽略了我們的 canonical**。Google 官方對分頁的建議本來就是 self-canonical，現在的寫法逆著來。影響小。
 
 ### 已完成（原待辦）
 - ✅ **後台排程發文系統合併上線**（2026-07-10，原 `scheduling-work` 分支）：14 篇排程文自動發文中。見上方架構段落。
