@@ -119,7 +119,9 @@
 ## 📌 待辦 / 下一步（未完成）
 
 1. ⚠️ **使用者動作**：撤銷 2026-07-01 用來設 Email Routing 的兩組 Cloudflare API token（`cfut_`、`cfat_`）。撤銷不影響已設好的 Email Routing。
-2. **內容產出**：靜態文章 67 篇 + DB 佇列 62 篇（第一～六批，排到 **2026-09-15**）。⚠️ **09/16 起無稿，第七批請在 09/10 前備好**（2026-08-14~17 曾因此斷稿 4 天）。
+2. **內容產出**：靜態文章 67 篇 + DB 佇列 73 篇（第一～七批，排到 **2026-09-26**）。⚠️ **09/27 起無稿，第八批請在 09/20 前備好**（2026-08-14~17 曾斷稿 4 天；2026-09-14 第七批也是逾期才補）。
+   - **第七批（2026-09-14 產出，11 篇，排 09/16–09/26）**：`scripts/drafts-batch7/`。選題方法＝GSC striking distance ＋ query×page 分析，全部是「從超載的樞紐頁分流子意圖」，不是寫同主題相殘。⚠️ 過程中砍掉兩個原本的選題（「支票左上角兩條線」與既有 `hua-xian-zhi-piao` 同意圖、「存支票怎麼寫」與 `zhi-piao-cun-ru-yin-hang` 重疊），**這種自我相殘在動筆前就要擋掉**。
+   - ⚠️ **選題已逼近飽和**：striking distance 清單（曝光≥10、排名 8–25）只剩 40 筆，且多數已有專頁承接。下一批要再找 10 個「不相殘」的新題會很吃力。**數據顯示瓶頸已從「覆蓋不足」轉成「排名與 CTR 不夠」**——例如 `zhi-piao-bei-shu` 535 曝光只有 2 次點擊、`zhi-piao-zen-me-xie` 440 曝光 1 次點擊、`piao-xin-cha-xun` 1,267 曝光 10 次點擊。第八批之前，先評估「改寫既有頁的 title/meta」是不是比「再寫 10 篇新的」划算。
    - **選題一律用數據，別憑印象。** 現在有兩條路：①`python3 scripts/gsc_report.py --striking`（即時、免匯檔，推薦）；②`python3 scripts/serp_score.py <GSC zip> --save`（可對照上份快照的排名升降）。
    - ⚠️ **選題前務必先看「一個查詢由哪一頁承接」**，否則會寫出相殘的文章。2026-08-19 就發現 `piao-xin-cha-xun` 一頁扛 44 個查詢／628 曝光、`zhi-piao-ru-zhang-shi-jian` 扛 68 個查詢／327 曝光——這種頁面該「拆衛星文分擔」，而不是再寫同主題的文章去搶。查法：GSC API 用 `dimensions:['query','page']`。選題方法見 `docs/content-plan.md` 第四批段落（依 SERP 機會分數）。
    - ⚠️ **DB 排程文不支援 `faqs` 欄位**（`huangxi_articles` 無此欄、`rowToArticle` 未映射）→ 排程文沒有 FAQPage schema。要補需加欄位＋改 `huangxi_upsert_article` RPC＋改映射＋前台 JSON-LD。靜態 `articles.ts` 的文章則有。

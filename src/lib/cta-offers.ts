@@ -136,6 +136,20 @@ const RULES: Array<{ variant: CtaVariant; slug: string[]; zh: string[] }> = [
   },
 ]
 
+// 例外表：slug 片段比對會誤判的少數文章，直接指定。
+//
+// 為什麼需要：slug 的「主題詞」不一定等於「讀者意圖」。
+//   ti-ren-bei-shu（替人背書）含 bei-shu → 被判成填寫疑難，
+//     但讀者要的是「先查發票人票信再決定要不要簽」。
+//   hua-xian-zhi-piao-ling-xian（劃線票怎麼領現金）含 hua-xian → 同樣被判成填寫類，
+//     但讀者要的是現金。
+// ⚠️ 只放「規則改不動、又確實判錯」的個案。能靠調整 RULES 解決的就不要加在這裡，
+//    否則例外表會長成第二套規則。
+const VARIANT_OVERRIDES: Record<string, CtaVariant> = {
+  'ti-ren-bei-shu': 'piao-xin',
+  'hua-xian-zhi-piao-ling-xian': 'tie-xian',
+}
+
 /**
  * 依文章判定該用哪個 CTA 誘因。判不出來 → DEFAULT_CTA_VARIANT。
  * 靜態文章與 DB 排程文共用（不需要新增資料庫欄位）。
@@ -144,6 +158,7 @@ export function ctaVariantFor(
   article: Pick<Article, 'slug' | 'title' | 'h1' | 'keywords' | 'category'>,
 ): CtaVariant {
   const slug = article.slug
+  if (VARIANT_OVERRIDES[slug]) return VARIANT_OVERRIDES[slug]
   const text = [article.title, article.h1, article.category, ...(article.keywords ?? [])].join(' ')
 
   // 兩段式：先跑完所有規則的 slug，再跑中文詞。
