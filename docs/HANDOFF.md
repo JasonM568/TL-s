@@ -1,7 +1,7 @@
 # HANDOFF — 黃璽理財管理顧問 網站
 
 > 交接與工作紀錄。下次啟動先讀「快速上手」段落即可無縫接軌。
-> 最後更新：2026-08-25
+> 最後更新：2026-10-19
 
 ---
 
@@ -18,7 +18,7 @@
 - **每次改完流程**：`npm run build` → `git commit` → `vercel deploy --prod` → curl 驗證正式站
 - ⚠️ **開工/部署前務必先 `git fetch` 檢查 `origin/main`**（此 repo 有多條平行開發線；vercel deploy 用本地 tree 覆蓋線上、不看遠端。2026-07-10 曾因此把正式站蓋掉，見 WORKLOG）。
 - ⚠️ **`git push` 到 GitHub main 會自動觸發 Vercel production 部署**（2026-07-14 實測發現，與上面「純手動 CLI 部署」的舊認知不同）。push 前確保本地 build 綠燈，否則會直接把壞版本推上線。
-- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **62 篇 scheduled（35 已上線 + 27 待發）+ 2 篇 archived、draft 0**（2026-08-19 收工時直查 DB 實測）：第一批 14 篇 07/11–07/26、第二批 16 篇 07/27–08/11、第三批 3 篇（07/31、08/12–08/13）、第四批 14 篇 08/18–08/31、第五批 1 篇 09/01、**第六批 14 篇 09/02–09/15**。第四批依 2026-08-08 SERP 機會分數選題；第六批依 2026-08-19 GSC query×page 對照選題（拆承接過載頁＋填真空白，見 `docs/content-plan.md`）；另 2 篇與既有靜態長文撞名已封存。⚠️ **08/20–09/15 連續每日一篇、零斷稿；09/16 起無稿**，第七批請在 09/10 前備好。⚠️ **查佇列別只信文件，直接查 DB**：Supabase MCP 常回 `permission denied`，改用 `huangxi_list_articles` RPC 直查（`.env.local` 取 `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`HUANGXI_ADMIN_SECRET`，curl POST 即可）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
+- ✅ **後台排程發文系統已合併上線**（2026-07-10，`scheduling-work` 以 additive 方式併入 main）：新文章走 Supabase `huangxi_articles` 表，草稿→排程→到點免部署自動上線（ISR revalidate=120 + `dynamicParams`）。後台入口 `/admin` →「文章排程 →」→ `/admin/articles`。目前 **62 篇 scheduled（35 已上線 + 27 待發）+ 2 篇 archived、draft 0**（2026-08-19 收工時直查 DB 實測）：第一批 14 篇 07/11–07/26、第二批 16 篇 07/27–08/11、第三批 3 篇（07/31、08/12–08/13）、第四批 14 篇 08/18–08/31、第五批 1 篇 09/01、**第六批 14 篇 09/02–09/15**。第四批依 2026-08-08 SERP 機會分數選題；第六批依 2026-08-19 GSC query×page 對照選題（拆承接過載頁＋填真空白，見 `docs/content-plan.md`）；另 2 篇與既有靜態長文撞名已封存。第七批 11 篇 09/16–09/26、**第八批 11 篇 10/20–10/30**（2026-10-19 灌入，見 `scripts/drafts-batch8/`）。⚠️ **09/27–10/19 曾斷稿 23 天；10/30 後又無稿，第九批最晚 10/27 前備好。**⚠️ **查佇列別只信文件，直接查 DB**：Supabase MCP 常回 `permission denied`，改用 `huangxi_list_articles` RPC 直查（`.env.local` 取 `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`HUANGXI_ADMIN_SECRET`，curl POST 即可）。灌新稿：把 `Article` 形狀 JSON 放 `scripts/drafts/`（或另建目錄），跑 `node scripts/seed-articles.mjs [目錄]`（進 draft）→ 到 `/admin/articles` 排程（或直接 SQL 設 status/publish_at）。詳見架構段落。
 - ⚠️ **`src/app/sitemap.xml/route.ts` 必須是 `export const dynamic = 'force-dynamic'`，不可改回 `revalidate`**（2026-08-25 修，commit `5792c7b`）。`sitemap.xml` 是 Next 的保留 metadata 路由名稱，即使寫成 route handler 也會被當**靜態檔**輸出（build 表格顯示 `○`），ISR 完全不生效、函式從來不會被執行——2026-08-19～24 期間線上 sitemap 就這樣凍結在 102 篇，5 篇已上線文章進不了索引。**判別方法：`curl -sI https://huangxi.tw/sitemap.xml` 看 `age` 會不會歸零、`x-vercel-id` 有沒有 origin 區域**（正常＝`age: 0`、每次 MISS、`sin1::iad1::`；壞掉＝age 只增不減、只有 `sin1::`）。對照組 `/llms.txt`、`/llms-full.txt` 不是保留名稱，`revalidate = 120` 一直正常，**不用跟著改**。
 - ✅ **AI 爬蟲/AEO 已就緒**（2026-07-24）：Cloudflare「受管理的 robots.txt」已關閉（它曾注入 Disallow 擋掉 Google-Extended/GPTBot 等，是 AI 抓取失敗主因）；新增 `/llms.txt`（全站索引）與 `/llms-full.txt`（已發布文章全文 Markdown），ISR 120 秒自動同步排程文章。觀測點：Cloudflare AI Crawl Control。
 - 聯絡電話：**0982-691803**（2026-07-14 Jason 確認更正，全站 7 處 + 首頁 JSON-LD 已更新）。⚠️ 舊號 `0982-697803` 已作廢、勿再引入（2026-07-10 的記載相反，以本行為準）。
