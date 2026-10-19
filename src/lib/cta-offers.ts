@@ -150,11 +150,33 @@ const VARIANT_OVERRIDES: Record<string, CtaVariant> = {
   'hua-xian-zhi-piao-ling-xian': 'tie-xian',
 }
 
+// A/B 實驗（2026-10-19 起，約兩週後用 cta_variant 的 view/click 比對再決定去留）：
+// 2026-09-07~10-19 GA4 顯示 piao-xin 轉換 2.36%（14/594），tie-xian 僅 0.51%（14/2,724）；
+// 流量最大的「等款入帳」類文章 150+ 曝光卻幾乎 0 點擊，讀者是剛收到票、擔心兌不了的人。
+// 只改 CTA 誘因；試算表是否嵌入仍看「主題變體」(topicVariantFor)，不受實驗影響。
+// 收掉實驗：清空這張表即可。
+const EXPERIMENT_VARIANTS: Record<string, CtaVariant> = {
+  'zhi-piao-ru-zhang-shi-jian': 'piao-xin',
+  'ci-jiao-piao': 'piao-xin',
+  'zhi-piao-cun-ru-yin-hang': 'piao-xin',
+  'tai-zhi-yin-hang-ben-piao': 'piao-xin',
+  'zhi-piao-dui-xian-shou-xu-fei': 'piao-xin',
+  'zhi-piao-kua-hang-cun-ru': 'piao-xin',
+  'zhi-piao-tuo-shou': 'piao-xin',
+}
+
+/** 實際顯示的 CTA 誘因：實驗表優先，否則依主題判定。 */
+export function ctaVariantFor(
+  article: Pick<Article, 'slug' | 'title' | 'h1' | 'keywords' | 'category'>,
+): CtaVariant {
+  return EXPERIMENT_VARIANTS[article.slug] ?? topicVariantFor(article)
+}
+
 /**
- * 依文章判定該用哪個 CTA 誘因。判不出來 → DEFAULT_CTA_VARIANT。
+ * 依文章「主題」判定誘因。判不出來 → DEFAULT_CTA_VARIANT。
  * 靜態文章與 DB 排程文共用（不需要新增資料庫欄位）。
  */
-export function ctaVariantFor(
+function topicVariantFor(
   article: Pick<Article, 'slug' | 'title' | 'h1' | 'keywords' | 'category'>,
 ): CtaVariant {
   const slug = article.slug
@@ -208,7 +230,7 @@ export function shouldEmbedCalculator(
   article: Pick<Article, 'slug' | 'title' | 'h1' | 'keywords' | 'category'>,
 ): boolean {
   if (CALC_EXCLUDE.includes(article.slug)) return false
-  if (ctaVariantFor(article) !== 'tie-xian') return false
+  if (topicVariantFor(article) !== 'tie-xian') return false
   const text = [article.title, article.h1, ...(article.keywords ?? [])].join(' ')
   return CALC_SLUG.some((s) => article.slug.includes(s)) || CALC_ZH.some((z) => text.includes(z))
 }
